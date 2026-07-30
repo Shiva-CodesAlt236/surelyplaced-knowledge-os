@@ -1,0 +1,81 @@
+---
+title: Getting Started
+description: Welcome to Surely Placed Knowledge OS — your structured documentation platform.
+---
+
+## Introduction
+
+**Surely Placed Knowledge OS** (SPK OS) is a documentation platform built for
+teams that value structured, discoverable, and maintainable knowledge.
+
+It is powered by [Next.js](https://nextjs.org), [Fumadocs](https://fumadocs.dev),
+and [MDX](https://mdxjs.com) — giving you the full power of React components
+inside your documentation.
+
+## Quick Start
+
+### Prerequisites
+
+- **Node.js** 18 or later
+- **pnpm** 9 or later
+
+### Installation
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/placeholder/spk-os.git
+cd spk-os
+pnpm install
+```
+
+### Development
+
+Start the development server:
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to view the platform.
+
+### Production Build
+
+```bash
+pnpm build
+pnpm start
+```
+
+## Project Structure
+
+| Path | Description |
+| --- | --- |
+| `app/` | Next.js App Router pages and layouts |
+| `content/docs/` | MDX documentation files |
+| `lib/` | Shared utilities and configuration |
+| `source.config.ts` | Fumadocs MDX collection definitions |
+| `next.config.mjs` | Next.js configuration |
+
+## Writing Documentation
+
+All documentation lives in the `content/docs/` directory. Each `.mdx` file
+becomes a page in the documentation. Files require frontmatter with at least
+a `title` field:
+
+```mdx
+---
+title: My Page Title
+description: A brief description of this page.
+---
+
+Your content here.
+```
+
+## Next Steps
+
+This is the foundation of SPK OS. Future phases will add:
+
+- Knowledge domain taxonomies
+- Multi-author workflows
+- Version-controlled content pipelines
+- Advanced search and filtering
