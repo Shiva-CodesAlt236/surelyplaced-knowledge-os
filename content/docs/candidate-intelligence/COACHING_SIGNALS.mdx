@@ -1,0 +1,79 @@
+---
+title: "Coaching Signals"
+description: "The standardized set of coaching-relevant observation codes a profile uses to flag moments worth reviewing, drawn from the Sales Coaching module's reading framework and mistake catalog."
+slug: "COACHING_SIGNALS"
+type: "framework"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "coaching-signals", "framework"]
+related: ["reading-a-sales-conversation", "common-sales-mistakes", "PROFILE_SCHEMA"]
+---
+
+# Coaching Signals
+
+> This article defines a taxonomy of coaching-relevant observation codes. It is not a performance evaluation or disciplinary record — it flags specific moments worth reviewing, consistent with the constructive, improvement-oriented framing in Sales Coaching. It contains no real or illustrative-but-realistic candidate data.
+
+## Purpose
+
+[Buyer Persona Schema](/docs/candidate-intelligence/BUYER_PERSONA_SCHEMA) records candidate-side buying patterns. This article covers the complementary advisor-side observations: specific moments in a candidate's journey worth flagging for coaching review, using the four-layer reading framework and mistake catalog already established in Sales Coaching.
+
+## Scope
+
+This taxonomy records specific, reviewable moments — not a general performance rating. It exists to make [Coach Review Framework](/docs/sales-coaching/coach-review-framework) and [Call Self-Review Checklist](/docs/sales-coaching/call-self-review-checklist) easier to apply by flagging exactly where in a candidate's journey a moment worth reviewing occurred.
+
+## Standard Structure
+
+`coaching_notes` accepts one or more coded flags, each optionally paired with a brief, factual note about what happened — never a general judgment about the advisor's overall skill.
+
+## Required Fields
+
+The defined coaching signal codes:
+
+| Code | Signal | Grounded In |
+|---|---|---|
+| `COACH-SIGNAL-MISSED` | A candidate signal was likely missed or misread | [Reading a Sales Conversation](/docs/sales-coaching/reading-a-sales-conversation) |
+| `COACH-GAP-FILLED` | An honest gap may have been filled with a guess rather than escalated | [Common Sales Mistakes](/docs/sales-coaching/common-sales-mistakes) |
+| `COACH-SCRIPT-OVER-DIAGNOSIS` | A rehearsed response may have substituted for genuine diagnosis | [Common Sales Mistakes](/docs/sales-coaching/common-sales-mistakes) |
+| `COACH-STRONG-MOMENT` | A moment worth highlighting as a positive example | [Coach Review Framework](/docs/sales-coaching/coach-review-framework) |
+| `COACH-REVIEW-REQUESTED` | The advisor has proactively flagged this conversation for review | [Call Self-Review Checklist](/docs/sales-coaching/call-self-review-checklist) |
+
+## Relationships with Other Modules
+
+Every code above points directly to a concept already defined in Sales Coaching — this schema doesn't introduce new coaching theory, only a way to flag where in a specific candidate's journey one of those existing concepts applies. A profile with coaching signals attached should be read alongside the relevant Sales Coaching article, not instead of it.
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — showing how a code would be used, without describing a real candidate or advisor:
+
+A profile might record `coaching_notes: ["COACH-STRONG-MOMENT — handled a comparison objection by asking a clarifying question before responding, consistent with Handling Price Objections"]`. No such conversation exists in this repository — this demonstrates format and tone only.
+
+## Author Guidelines
+
+Use these codes to flag specific, reviewable moments, not to render a general judgment about an advisor's overall competence. Pair each code with a brief, factual note describing what happened, written the way [Candidate Notes Standards](/docs/sales-operations/candidate-notes-standards) already requires — specific and honest, not vague. Include positive moments (`COACH-STRONG-MOMENT`) as readily as areas for growth, consistent with the constructive framing throughout Sales Coaching.
+
+## Reviewer Checklist
+
+- [ ] Is each coaching signal tied to a specific, describable moment rather than a general impression?
+- [ ] Does each note stay factual and specific, avoiding vague language?
+- [ ] Are positive moments recorded as readily as growth areas, keeping the tone constructive rather than only corrective?
+- [ ] Does this field avoid functioning as an informal disciplinary record outside the coaching framework it's meant to support?
+
+## Related Articles
+
+- [Reading a Sales Conversation](/docs/sales-coaching/reading-a-sales-conversation) — the framework several of these codes draw from directly
+- [Coach Review Framework](/docs/sales-coaching/coach-review-framework) — how a coach would use these flagged moments during review
+- [Buyer Persona Schema](/docs/candidate-intelligence/BUYER_PERSONA_SCHEMA) — the candidate-side companion to this advisor-side schema
+
+## Key Takeaways
+
+Coaching signal codes flag specific, reviewable moments in a candidate's journey using concepts already established in Sales Coaching — never a general performance rating or disciplinary record. Positive moments should be recorded as readily as growth areas, and every note should stay specific and factual.
+
+## Tags
+
+`candidate-intelligence` · `coaching-signals` · `framework`

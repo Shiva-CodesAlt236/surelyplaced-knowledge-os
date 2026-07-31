@@ -1,0 +1,81 @@
+---
+title: "Buyer Persona Schema"
+description: "The standardized set of buying-psychology signal codes a profile uses, drawn directly from the patterns already documented in the Pricing module."
+slug: "BUYER_PERSONA_SCHEMA"
+type: "framework"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "buyer-persona", "framework"]
+related: ["PROFILE_SCHEMA", "handling-price-objections", "investment-psychology"]
+---
+
+# Buyer Persona Schema
+
+> This article defines a taxonomy of observed buying-psychology signal codes. It is not a personality profiling system, a psychological diagnosis framework, or a predictor of outcome — it records what an advisor has directly observed, using categories already documented in the Pricing module. It contains no real or illustrative-but-realistic candidate data.
+
+## Purpose
+
+[Handling Price Objections](/docs/pricing/handling-price-objections) and [Investment Psychology](/docs/pricing/investment-psychology) already describe recurring patterns in how candidates approach financial decisions. This article turns those already-documented patterns into a small set of codes a profile can use to record which ones an advisor has actually observed in a specific candidate, so the observation is available for future conversations and coaching review.
+
+## Scope
+
+This schema records observed behavioral patterns only — it does not predict how a candidate will ultimately decide, does not diagnose a psychological state, and is not a substitute for treating each new conversation with genuine, fresh attention rather than relying solely on a past label.
+
+## Standard Structure
+
+`persona_signals` accepts one or more codes from the list below, each directly grounded in a pattern already described in the Pricing module.
+
+## Required Fields
+
+The defined persona signal codes:
+
+| Code | Signal | Grounded In |
+|---|---|---|
+| `PERSONA-AFFORD` | Affordability-focused objection pattern | [Handling Price Objections](/docs/pricing/handling-price-objections) |
+| `PERSONA-COMPARE` | Comparison-driven evaluation pattern | [Handling Price Objections](/docs/pricing/handling-price-objections) |
+| `PERSONA-VALUE-UNCERTAIN` | Value-uncertainty pattern | [Handling Price Objections](/docs/pricing/handling-price-objections) |
+| `PERSONA-PROXY` | Objection likely proxying a deeper concern | [Handling Price Objections](/docs/pricing/handling-price-objections) and [Investment Psychology](/docs/pricing/investment-psychology) |
+| `PERSONA-RISK-AVERSE` | Process-oriented, risk-averse evaluation style | [Supply Chain Playbook](/docs/industry-playbooks/supply-chain-playbook) |
+| `PERSONA-SKEPTIC` | Technical, skepticism-first evaluation style | [Software Engineering Playbook](/docs/industry-playbooks/software-engineering-playbook) |
+| `PERSONA-PENDING` | Not yet enough conversation history to observe a pattern | — |
+
+## Relationships with Other Modules
+
+Every code above is a pointer back to a pattern already documented elsewhere — this schema does not introduce new psychological categories. [Coaching Signals](/docs/candidate-intelligence/COACHING_SIGNALS) is the companion schema for recording advisor performance observations; this schema is specifically for candidate-side buying-behavior observations.
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — showing how a code would be selected, without describing a real candidate:
+
+A profile might record `persona_signals: ["PERSONA-COMPARE"]` after a conversation where a candidate repeatedly referenced a cheaper alternative, consistent with the comparison-objection pattern in Handling Price Objections. This is a hypothetical scenario invented purely to demonstrate code selection, not a description of anyone real.
+
+## Author Guidelines
+
+Only assign a code based on something actually observed in a real conversation, never based on assumption from a candidate's role or visa category. Multiple codes may apply and should all be recorded if genuinely observed. Use `PERSONA-PENDING` honestly rather than guessing at a pattern before enough conversation history exists, and revisit assigned codes as new conversations provide more information rather than treating an early observation as fixed.
+
+## Reviewer Checklist
+
+- [ ] Is every assigned persona code grounded in an actual observed conversation, not an assumption?
+- [ ] Are multiple applicable codes all recorded, rather than forcing a single label?
+- [ ] Is `PERSONA-PENDING` used honestly when there isn't yet enough history to assign a pattern?
+- [ ] Does the profile avoid treating an assigned code as a fixed prediction of how the candidate will ultimately decide?
+
+## Related Articles
+
+- [Handling Price Objections](/docs/pricing/handling-price-objections) — the source of four of the seven defined persona codes
+- [Investment Psychology](/docs/pricing/investment-psychology) — the psychological foundation behind the proxy-objection code
+- [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) — where `persona_signals` is defined as an optional field
+
+## Key Takeaways
+
+Buyer persona codes record observed buying-behavior patterns already documented in the Pricing module — they describe what's been seen in real conversation, not a psychological diagnosis or an outcome prediction. Multiple codes can apply, and `PERSONA-PENDING` should be used honestly when there isn't yet enough history to observe a pattern.
+
+## Tags
+
+`candidate-intelligence` · `buyer-persona` · `framework`

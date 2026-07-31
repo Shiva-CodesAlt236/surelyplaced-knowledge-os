@@ -1,0 +1,82 @@
+---
+title: "Visa Mapping"
+description: "The standardized visa/work-authorization categories a Candidate Intelligence Profile uses, mapped directly onto the seven categories already established in Visa Playbooks."
+slug: "VISA_MAPPING"
+type: "framework"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "visa-mapping", "framework"]
+related: ["PROFILE_SCHEMA", "ROLE_CLASSIFICATION", "PROFILE_QA_GUIDELINES"]
+---
+
+# Visa Mapping
+
+> This article defines a taxonomy — a fixed list of visa/work-authorization categories and codes. It contains no legal or immigration guidance, no processing timelines, and no real or illustrative-but-realistic candidate data. Any interpretation of a specific visa condition remains outside advisor authority, consistent with [Visa Discovery Framework](/docs/visa-playbooks/visa-discovery-framework).
+
+## Purpose
+
+`visa_category` in [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) requires a single, defined code. This article is the authoritative list of those codes, mapped directly to the existing Visa Playbooks module so a profile immediately connects to the correct sales guidance — never to legal interpretation.
+
+## Scope
+
+This taxonomy classifies a candidate's visa category strictly for the purpose of routing an advisor to the correct existing playbook content. It is not legal or immigration advice, and it does not define or interpret any visa condition, eligibility rule, or timeline.
+
+## Standard Structure
+
+Each visa category below maps one-to-one to an existing article in the Visa Playbooks module.
+
+## Required Fields
+
+The defined visa categories, each mapped to its corresponding playbook:
+
+| Code | Category | Maps To |
+|---|---|---|
+| `VISA-F1OPT` | F-1 OPT | [F1/OPT Playbook](/docs/visa-playbooks/f1-opt-playbook) |
+| `VISA-STEMOPT` | STEM OPT Extension | [STEM OPT Playbook](/docs/visa-playbooks/stem-opt-playbook) |
+| `VISA-H1B` | H-1B | [H-1B Playbook](/docs/visa-playbooks/h1b-playbook) |
+| `VISA-H4EAD` | H-4 EAD | [H4 EAD Playbook](/docs/visa-playbooks/h4-ead-playbook) |
+| `VISA-GC` | Green Card (in process or held) | [Green Card Playbook](/docs/visa-playbooks/green-card-playbook) |
+| `VISA-CAWP` | Canada Work Permit | [Canada Work Permit Playbook](/docs/visa-playbooks/canada-work-permit-playbook) |
+| `VISA-UKGRAD` | UK Graduate Visa | [UK Graduate Visa Playbook](/docs/visa-playbooks/uk-graduate-visa-playbook) |
+| `VISA-PENDING` | Category Pending | No existing playbook matches (for example, a visa category such as L-1, O-1, or TN) — see [Visa Discovery Framework](/docs/visa-playbooks/visa-discovery-framework) for the general, non-legal-advice approach until a specific playbook exists |
+
+## Relationships with Other Modules
+
+This taxonomy is a direct index into Visa Playbooks and carries the same non-legal-advice boundary established there — a profile using these codes should never be read as containing or implying legal or immigration guidance. [Coaching Signals](/docs/candidate-intelligence/COACHING_SIGNALS) may reference visa-related urgency observed in a conversation, but always by pointing back to the relevant playbook rather than restating or interpreting visa specifics within the profile itself.
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — showing how a code would be selected, without describing a real candidate or any legal detail:
+
+A profile for a candidate whose situation matches the general pattern described in the H-1B Playbook would use `visa_category: "VISA-H1B"`. No such candidate exists in this repository, and this example states nothing about eligibility, timeline, or approval likelihood — it demonstrates code selection only.
+
+## Author Guidelines
+
+Assign the code based only on what the candidate has stated about their own status — never infer or assume a visa category. Use `VISA-PENDING` honestly when a candidate's situation doesn't match an existing category, and never attempt to fill this field with legal interpretation or a category that hasn't been confirmed by the candidate themselves.
+
+## Reviewer Checklist
+
+- [ ] Is the assigned visa code one of the eight defined codes above, not a freeform or invented category?
+- [ ] Is the code based on what the candidate directly stated, not advisor assumption?
+- [ ] Does the profile avoid stating any legal interpretation, eligibility conclusion, or processing timeline anywhere near this field?
+- [ ] Is `VISA-PENDING` used honestly where no category fits?
+
+## Related Articles
+
+- [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) — where `visa_category` is defined as a required field
+- [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION) — the companion classification system for professional role
+- [Profile QA Guidelines](/docs/candidate-intelligence/PROFILE_QA_GUIDELINES) — how this field is checked for compliance with the non-legal-advice standard
+
+## Key Takeaways
+
+Visa classification uses eight defined codes, seven mapped directly to existing Visa Playbooks and one reserved for categories not yet covered. This taxonomy exists purely to route a profile to correct existing guidance and carries forward the same non-legal-advice boundary established throughout Visa Playbooks — it never interprets a visa condition or states a timeline.
+
+## Tags
+
+`candidate-intelligence` · `visa-mapping` · `framework`

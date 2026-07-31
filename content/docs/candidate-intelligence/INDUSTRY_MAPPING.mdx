@@ -1,0 +1,70 @@
+---
+title: "Industry Mapping"
+description: "How industry/sector context is recorded when it diverges from a candidate's role classification, and how a profile combines both to route to the full set of applicable guidance."
+slug: "INDUSTRY_MAPPING"
+type: "framework"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "industry-mapping", "framework"]
+related: ["ROLE_CLASSIFICATION", "PROFILE_SCHEMA", "composite-case-study-opt-software-engineer"]
+---
+
+# Industry Mapping
+
+> This article defines how sector context is recorded in a profile — it does not introduce a second, separate taxonomy from [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION). It contains no real or illustrative-but-realistic candidate data, and no hiring or market statistics.
+
+## Purpose
+
+[Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION) covers what a candidate *does* — their functional role. Industry Playbooks' nine existing categories already combine function and sector in most cases (Software Engineering, Healthcare, Supply Chain, and so on). This article covers the smaller number of cases where a candidate's employer sector genuinely diverges from their functional role — for example, a Business Analyst whose domain experience is specifically in healthcare, or a Project Manager working within a supply chain organization — and how a profile should record that divergence without inventing a separate, undocumented sector taxonomy.
+
+## Scope
+
+This article covers `industry_category` specifically in cases where it differs from `role_category`. Where the two align — the common case — `industry_category` simply repeats the `role_category` code, and this article's guidance doesn't add anything further.
+
+## Standard Structure
+
+`industry_category` is populated in one of two ways: as a direct copy of `role_category` when the candidate's functional role and sector align (the default, common case), or as a secondary flag when they diverge, pointing to whichever existing playbook best describes the candidate's actual sector context, even if a different playbook describes their functional role.
+
+## Required Fields
+
+`industry_category` uses the same ten codes defined in [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION) — this article does not define new codes. An additional field, `industry_divergence_note`, is used only when `role_category` and `industry_category` differ, and should briefly and factually describe the divergence (for example, "functional role is Business Analyst; domain sector is Healthcare") without adding evaluative commentary.
+
+## Relationships with Other Modules
+
+This article depends entirely on [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION) for its code list and exists only to handle the edge case that classification doesn't fully cover on its own. The composite case study [OPT Software Engineer](/docs/sales-coaching/composite-case-study-opt-software-engineer) illustrates a related but distinct kind of combination — a candidate whose visa category and role category both carry independent weight in a conversation — which is a useful parallel for thinking about industry divergence, though it doesn't itself involve a role/sector split.
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — showing how divergence would be recorded, without describing a real candidate:
+
+A profile where the candidate's functional role matches the Business Analyst Playbook but their actual domain experience is specifically in a healthcare organization might record `role_category: "ROLE-BA"`, `industry_category: "ROLE-HEALTH"`, and `industry_divergence_note: "Functional role is business analysis; sector context is healthcare — advisor should draw on both playbooks as relevant."` No such candidate exists in this repository — this demonstrates the divergence pattern only.
+
+## Author Guidelines
+
+Default to setting `industry_category` equal to `role_category` unless there's a genuine, candidate-stated reason to record a divergence. Never invent a sector category that isn't one of the ten codes already defined in Role Classification — if a candidate's actual sector doesn't match any existing code, treat it the same as an unmapped role: use `ROLE-PENDING` rather than inventing a new, undocumented category.
+
+## Reviewer Checklist
+
+- [ ] Is `industry_category` either identical to `role_category`, or accompanied by a factual `industry_divergence_note`?
+- [ ] Does the divergence note stay factual and free of evaluative commentary or invented statistics?
+- [ ] Does `industry_category` use only the ten codes already defined in Role Classification, never a new invented sector?
+
+## Related Articles
+
+- [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION) — the taxonomy this article's codes are drawn from directly
+- [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) — where `industry_category` is defined as an optional field
+- [Composite Case Study: OPT Software Engineer](/docs/sales-coaching/composite-case-study-opt-software-engineer) — an illustrative parallel for handling a candidate with two independently significant classification dimensions
+
+## Key Takeaways
+
+Industry context in a profile defaults to matching a candidate's role classification and only diverges when a candidate's actual sector genuinely differs from their functional role — recorded with a brief, factual note rather than a new invented taxonomy. No new sector categories exist beyond the ten already defined in Role Classification.
+
+## Tags
+
+`candidate-intelligence` · `industry-mapping` · `framework`

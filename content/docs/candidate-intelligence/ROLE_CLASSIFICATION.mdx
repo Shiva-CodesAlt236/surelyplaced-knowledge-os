@@ -1,0 +1,83 @@
+---
+title: "Role Classification"
+description: "The standardized role categories a Candidate Intelligence Profile uses, mapped directly onto the nine categories already established in Industry Playbooks."
+slug: "ROLE_CLASSIFICATION"
+type: "framework"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "role-classification", "framework"]
+related: ["PROFILE_SCHEMA", "INDUSTRY_MAPPING", "TECHNOLOGY_MAPPING"]
+---
+
+# Role Classification
+
+> This article defines a taxonomy — a fixed list of role categories and codes. It does not describe any actual candidate, and no code below is attached to real or illustrative-but-realistic candidate data.
+
+## Purpose
+
+`role_category` in [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) requires a single, defined code rather than freeform text. This article is the authoritative list of those codes, so every profile classifies a candidate's professional role the same way.
+
+## Scope
+
+This taxonomy classifies a candidate's professional role for the purpose of routing an advisor to the correct existing playbook content — it is not a technical skills assessment, a hiring evaluation, or a substitute for genuine discovery conversation with the candidate.
+
+## Standard Structure
+
+Each role category below maps one-to-one to an existing article in the Industry Playbooks module, so classifying a candidate immediately connects a profile to the relevant sales guidance already documented there.
+
+## Required Fields
+
+The defined role categories, each mapped to its corresponding playbook:
+
+| Code | Category | Maps To |
+|---|---|---|
+| `ROLE-SWE` | Software Engineering | [Software Engineering Playbook](/docs/industry-playbooks/software-engineering-playbook) |
+| `ROLE-DATA` | Data & AI | [Data and AI Playbook](/docs/industry-playbooks/data-and-ai-playbook) |
+| `ROLE-SEC` | Cybersecurity | [Cybersecurity Playbook](/docs/industry-playbooks/cybersecurity-playbook) |
+| `ROLE-CLOUD` | Cloud & DevOps | [Cloud DevOps Playbook](/docs/industry-playbooks/cloud-devops-playbook) |
+| `ROLE-QA` | QA & Testing | [QA Testing Playbook](/docs/industry-playbooks/qa-testing-playbook) |
+| `ROLE-HEALTH` | Healthcare | [Healthcare Playbook](/docs/industry-playbooks/healthcare-playbook) |
+| `ROLE-SUPPLY` | Supply Chain | [Supply Chain Playbook](/docs/industry-playbooks/supply-chain-playbook) |
+| `ROLE-BA` | Business Analyst | [Business Analyst Playbook](/docs/industry-playbooks/business-analyst-playbook) |
+| `ROLE-PM` | Project Manager | [Project Manager Playbook](/docs/industry-playbooks/project-manager-playbook) |
+| `ROLE-PENDING` | Category Pending | No existing playbook matches — see [Industry Discovery Framework](/docs/industry-playbooks/industry-discovery-framework) for the general approach until a specific playbook exists |
+
+## Relationships with Other Modules
+
+This taxonomy is a direct index into Industry Playbooks — it doesn't introduce any role definition or evaluation criteria of its own. [Industry Mapping](/docs/candidate-intelligence/INDUSTRY_MAPPING) uses these same codes to route profile data to playbook content, and [Technology Mapping](/docs/candidate-intelligence/TECHNOLOGY_MAPPING) records technical context within whichever role category applies.
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — showing how a code would be selected, without describing a real candidate:
+
+A profile for a candidate whose professional background matches the pattern described in the Cloud DevOps Playbook would use `role_category: "ROLE-CLOUD"`. No such candidate exists in this repository — this demonstrates code selection only.
+
+## Author Guidelines
+
+Assign the code that best matches a candidate's actual professional background, based on genuine discovery conversation — never assign a code based on assumption alone. Use `ROLE-PENDING` honestly when a candidate's background doesn't clearly match any existing category, rather than forcing an inaccurate fit for the sake of completing the field.
+
+## Reviewer Checklist
+
+- [ ] Is the assigned role code one of the ten defined codes above, not a freeform or invented category?
+- [ ] Does the assigned code genuinely reflect the candidate's actual background, based on real discovery rather than assumption?
+- [ ] Is `ROLE-PENDING` used honestly where no category fits, rather than a forced approximation?
+
+## Related Articles
+
+- [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) — where `role_category` is defined as a required field
+- [Industry Mapping](/docs/candidate-intelligence/INDUSTRY_MAPPING) — how this classification connects a profile to playbook content
+- [Technology Mapping](/docs/candidate-intelligence/TECHNOLOGY_MAPPING) — the technical-context fields recorded within a role category
+
+## Key Takeaways
+
+Role classification uses ten defined codes, nine mapped directly to existing Industry Playbooks and one reserved for cases that don't yet fit an existing category. This taxonomy exists to route a profile to the correct existing guidance, not to introduce new role definitions or technical evaluation criteria.
+
+## Tags
+
+`candidate-intelligence` · `role-classification` · `framework`

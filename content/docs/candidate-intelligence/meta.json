@@ -1,0 +1,15 @@
+{
+  "title": "Candidate Intelligence Framework",
+  "pages": [
+    "README",
+    "PROFILE_SCHEMA",
+    "PROFILE_TEMPLATE",
+    "ROLE_CLASSIFICATION",
+    "VISA_MAPPING",
+    "INDUSTRY_MAPPING",
+    "TECHNOLOGY_MAPPING",
+    "BUYER_PERSONA_SCHEMA",
+    "COACHING_SIGNALS",
+    "PROFILE_QA_GUIDELINES"
+  ]
+}

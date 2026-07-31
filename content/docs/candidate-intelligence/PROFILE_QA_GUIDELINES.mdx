@@ -1,0 +1,86 @@
+---
+title: "Profile QA Guidelines"
+description: "How a completed Candidate Intelligence Profile should be checked once one is actually written in a future sprint — the QA standard this framework itself was held to."
+slug: "PROFILE_QA_GUIDELINES"
+type: "framework"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "qa", "framework"]
+related: ["PROFILE_SCHEMA", "PROFILE_TEMPLATE", "README"]
+---
+
+# Profile QA Guidelines
+
+> This article defines how a future, actual Candidate Intelligence Profile should be quality-checked. No such profile exists yet in this repository — this is the standard it will be checked against once one is written.
+
+## Purpose
+
+Every other module in this Knowledge OS closes with a QA pass before being considered complete. This article defines what that pass should look like for a future Candidate Intelligence Profile, so quality is checked consistently once real profiles start being written under this framework.
+
+## Scope
+
+This article applies to any future actual Candidate Intelligence Profile built from [Profile Template](/docs/candidate-intelligence/PROFILE_TEMPLATE). It does not itself perform QA on this framework sprint's structural documents — though the checklist below happens to describe the same discipline this sprint's own QA process followed.
+
+## Standard Structure
+
+QA for a completed profile covers five areas: schema compliance, classification accuracy, non-invention discipline, internal consistency, and tone.
+
+## Required Fields
+
+Not applicable at the QA-guidance level — the fields being checked are defined in [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA).
+
+## Relationships with Other Modules
+
+This QA approach mirrors the QA discipline already applied at the end of every sprint in this Knowledge OS — frontmatter and required-field checks, internal link verification, and a non-invention scan specific to this module's risk area (candidate data and hiring statistics, rather than pricing or visa specifics).
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — a hypothetical QA finding, not a real review:
+
+A hypothetical review might flag a field like `technology_summary: "strong senior-level engineer"` as a violation, since it states a competence judgment not directly attributed to the candidate's own words, contrary to [Technology Mapping](/docs/candidate-intelligence/TECHNOLOGY_MAPPING). This is a demonstration of the kind of issue QA should catch, not a real finding from a real profile.
+
+## Author Guidelines
+
+When authoring a profile, self-check against the reviewer checklist below before submitting it for review — most compliance issues are easier to catch while writing than after.
+
+## Reviewer Checklist
+
+**Schema compliance**
+- [ ] Are all required fields from [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) present and populated?
+- [ ] Does every coded field use a value actually defined in its corresponding classification document, not a freeform or invented value?
+
+**Classification accuracy**
+- [ ] Is each classification code (role, visa, industry) genuinely grounded in what the candidate has stated, not advisor assumption?
+- [ ] Are "pending" designations used honestly where no category fits, rather than a forced or inaccurate match?
+
+**Non-invention discipline**
+- [ ] Does the profile contain zero invented salary figures, hiring statistics, or placement outcome claims?
+- [ ] Does the profile avoid any legal or immigration interpretation beyond the visa category code itself?
+- [ ] Does the profile avoid any unconfirmed company policy detail?
+
+**Internal consistency**
+- [ ] Do `role_category` and `industry_category` follow the divergence rules in [Industry Mapping](/docs/candidate-intelligence/INDUSTRY_MAPPING)?
+- [ ] Are `persona_signals` and `coaching_notes` each grounded in an actually observed conversation, not assumption?
+
+**Tone**
+- [ ] Is every field factual and non-evaluative, free of competence judgments or subjective language not directly attributed to the candidate?
+
+## Related Articles
+
+- [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) — the field definitions this QA process checks against
+- [Profile Template](/docs/candidate-intelligence/PROFILE_TEMPLATE) — the document a future profile is built from and this QA process reviews
+- [README](/docs/candidate-intelligence/README) — the module overview this QA article closes out
+
+## Key Takeaways
+
+A future Candidate Intelligence Profile should be checked for schema compliance, classification accuracy, non-invention discipline, internal consistency, and tone before being considered complete — the same rigor already applied to every other module in this Knowledge OS, focused specifically on this module's risk area: invented candidate data and hiring statistics.
+
+## Tags
+
+`candidate-intelligence` · `qa` · `framework`

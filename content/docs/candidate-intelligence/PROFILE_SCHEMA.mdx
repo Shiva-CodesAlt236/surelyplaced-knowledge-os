@@ -1,0 +1,94 @@
+---
+title: "Profile Schema"
+description: "The complete field-by-field definition of a Candidate Intelligence Profile — structure only, no actual candidate data."
+slug: "PROFILE_SCHEMA"
+type: "framework"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "schema", "framework"]
+related: ["README", "PROFILE_TEMPLATE", "ROLE_CLASSIFICATION"]
+---
+
+# Profile Schema
+
+> This article defines a schema — a set of field names, types, and allowed values. It does not contain any actual or illustrative-but-realistic candidate data. Every value shown below is a field definition, not a filled-in example.
+
+## Purpose
+
+For a future Candidate Intelligence Profile to be useful across advisors, coaches, and future modules, every profile needs to record the same information in the same structure. This article is the authoritative field-by-field definition that [Profile Template](/docs/candidate-intelligence/PROFILE_TEMPLATE) implements as a fillable document.
+
+## Scope
+
+This schema covers the fields a Candidate Intelligence Profile should contain once one is written in a future sprint. It does not cover how those fields are populated in practice (see [Author Guidelines](#author-guidelines) below and [Profile QA Guidelines](/docs/candidate-intelligence/PROFILE_QA_GUIDELINES)), and it does not itself contain any candidate information.
+
+## Standard Structure
+
+A Candidate Intelligence Profile is organized into six field groups, each corresponding to one classification document in this module:
+
+1. **Identity & Metadata** — profile ID, owning advisor, creation and last-updated dates, current funnel stage
+2. **Role Classification** — the candidate's professional role category, per [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION)
+3. **Visa Classification** — the candidate's visa/work-authorization category, per [Visa Mapping](/docs/candidate-intelligence/VISA_MAPPING)
+4. **Industry & Technology Context** — the candidate's sector and technical background, per [Industry Mapping](/docs/candidate-intelligence/INDUSTRY_MAPPING) and [Technology Mapping](/docs/candidate-intelligence/TECHNOLOGY_MAPPING)
+5. **Buyer Persona** — the candidate's observed buying psychology, per [Buyer Persona Schema](/docs/candidate-intelligence/BUYER_PERSONA_SCHEMA)
+6. **Coaching Signals** — observed signals relevant to coaching and call review, per [Coaching Signals](/docs/candidate-intelligence/COACHING_SIGNALS)
+
+## Required Fields
+
+**Identity & Metadata (required):** `profile_id` (unique identifier, format Operational Policy Pending — confirm through current internal process), `owning_advisor`, `created_date`, `last_updated_date`, `current_stage` (one of the stages defined in [Sales Workflow Overview](/docs/sales-operations/sales-workflow-overview)).
+
+**Role Classification (required):** `role_category` (a single code from [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION)), `role_category_confidence` (confirmed / tentative / category-pending).
+
+**Visa Classification (required):** `visa_category` (a single code from [Visa Mapping](/docs/candidate-intelligence/VISA_MAPPING)), `visa_category_confidence` (confirmed / tentative / category-pending). Never a specific processing timeline, approval likelihood, or legal conclusion — those are outside this schema's scope entirely, consistent with [Things We Never Say](/docs/sales-constitution/things-we-never-say).
+
+**Industry & Technology Context (optional, recommended where known):** `industry_category` (a code from [Industry Mapping](/docs/candidate-intelligence/INDUSTRY_MAPPING)), `technology_summary` (a short, non-evaluative description referencing [Technology Mapping](/docs/candidate-intelligence/TECHNOLOGY_MAPPING) categories).
+
+**Buyer Persona (optional, recommended once observed):** `persona_signals` (one or more codes from [Buyer Persona Schema](/docs/candidate-intelligence/BUYER_PERSONA_SCHEMA)).
+
+**Coaching Signals (optional, added over time):** `coaching_notes` (references to specific coded signals from [Coaching Signals](/docs/candidate-intelligence/COACHING_SIGNALS), not free-form commentary).
+
+## Relationships with Other Modules
+
+Every field group in this schema is a structured pointer into an existing module rather than a new source of truth. `role_category` and `industry_category` point into Industry Playbooks; `visa_category` points into Visa Playbooks; `persona_signals` point into Pricing's investment psychology guidance; `coaching_notes` point into Sales Coaching's reading framework. The schema's job is consistency and lookup, not duplicating what those modules already document.
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — the following shows field *shape*, not real or realistic values:
+
+```
+role_category: [code from Role Classification — e.g., a placeholder like "ROLE-X"]
+visa_category: [code from Visa Mapping — e.g., a placeholder like "VISA-X"]
+current_stage: [one of the defined funnel stages]
+```
+
+No actual role code, visa code, or candidate detail is shown here — see the individual mapping documents for the real, defined code lists.
+
+## Author Guidelines
+
+Populate every required field before considering a profile complete. Use only defined codes from the relevant mapping document — never a freeform value that isn't part of an established taxonomy. Where a candidate's situation doesn't map cleanly to an existing code, use the category's "pending" designation rather than forcing an inaccurate fit, consistent with the Operational Policy Pending pattern used throughout Sales Operations.
+
+## Reviewer Checklist
+
+- [ ] Are all required fields present and populated with valid codes from the corresponding classification document?
+- [ ] Does any field contain freeform data that should instead use a defined taxonomy code?
+- [ ] Does any field contain a specific salary, statistic, legal conclusion, or other content this schema explicitly excludes?
+- [ ] Are optional fields either populated meaningfully or left clearly blank, rather than filled with placeholder text?
+
+## Related Articles
+
+- [README](/docs/candidate-intelligence/README) — the module overview this schema is the core of
+- [Profile Template](/docs/candidate-intelligence/PROFILE_TEMPLATE) — the fillable document implementing this schema
+- [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION) — the first of six classification systems this schema references
+
+## Key Takeaways
+
+A Candidate Intelligence Profile is organized into six field groups — identity, role, visa, industry/technology, buyer persona, and coaching signals — each populated using defined codes from a corresponding classification document rather than freeform text. This schema defines structure only; no field in this article contains actual candidate data.
+
+## Tags
+
+`candidate-intelligence` · `schema` · `framework`

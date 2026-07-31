@@ -1,0 +1,99 @@
+---
+title: "Profile Template"
+description: "The blank, fillable document implementing Profile Schema — a template only, with no candidate data of any kind entered."
+slug: "PROFILE_TEMPLATE"
+type: "template"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "template", "framework"]
+related: ["PROFILE_SCHEMA", "README", "PROFILE_QA_GUIDELINES"]
+---
+
+# Profile Template
+
+> **This is a blank template, not a candidate profile.** Every field below is a placeholder to be filled in by whoever authors an actual Candidate Intelligence Profile in a future sprint. No field in this document contains real or illustrative-but-realistic candidate data.
+
+## Purpose
+
+[Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) defines the fields a profile needs. This article turns that definition into the actual document a future author copies and fills in, so every profile starts from the same structure.
+
+## Scope
+
+This template covers the document structure only. It does not contain any candidate's actual information, and it should never be published or referenced as if it described a real person.
+
+## Standard Structure
+
+The template below mirrors the six field groups defined in [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA): Identity & Metadata, Role Classification, Visa Classification, Industry & Technology Context, Buyer Persona, and Coaching Signals.
+
+## Required Fields
+
+```
+---
+profile_id: "[unique identifier — format Operational Policy Pending]"
+owning_advisor: "[advisor name]"
+created_date: "[YYYY-MM-DD]"
+last_updated_date: "[YYYY-MM-DD]"
+current_stage: "[stage — see Sales Workflow Overview]"
+
+role_category: "[code — see Role Classification]"
+role_category_confidence: "[confirmed / tentative / category-pending]"
+
+visa_category: "[code — see Visa Mapping]"
+visa_category_confidence: "[confirmed / tentative / category-pending]"
+
+industry_category: "[code — see Industry Mapping, optional]"
+technology_summary: "[short, non-evaluative summary — see Technology Mapping, optional]"
+
+persona_signals: "[one or more codes — see Buyer Persona Schema, optional]"
+
+coaching_notes: "[coded references only — see Coaching Signals, optional]"
+---
+```
+
+Every bracketed value above is a placeholder instruction, not a filled field — an actual profile replaces each bracketed instruction with a real, appropriately coded value, never with freeform prose.
+
+## Relationships with Other Modules
+
+This template is purely structural. Its actual usefulness comes entirely from the modules it points into — a completed profile using this template should read as a compact, standardized index into Discovery, Visa Playbooks, Industry Playbooks, Pricing, and Sales Coaching for one specific candidate.
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — showing how a placeholder is replaced with a properly coded value, using a generic, non-realistic placeholder code rather than a real classification value:
+
+```
+role_category: "ROLE-EXAMPLE"   ← replaced with an actual code from Role Classification
+visa_category_confidence: "confirmed"   ← one of the three defined confidence states
+```
+
+This is not a real candidate, real code, or real confidence assessment — it demonstrates format only.
+
+## Author Guidelines
+
+Copy this template as the starting point for any future actual profile. Replace every bracketed placeholder with a real value drawn from the corresponding classification document — never invent a code that isn't defined there. Leave optional fields explicitly blank (not filled with placeholder text) if the corresponding information genuinely isn't known yet, rather than guessing to complete the document.
+
+## Reviewer Checklist
+
+- [ ] Are all required fields (identity, role, visa) populated with valid, defined codes?
+- [ ] Is every field free of freeform, un-coded prose where a defined taxonomy exists?
+- [ ] Are optional fields either genuinely populated or left blank, not filled with invented placeholder content?
+- [ ] Does the completed document avoid any of the categories in [Things We Never Say](/docs/sales-constitution/things-we-never-say)?
+
+## Related Articles
+
+- [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) — the field definitions this template implements
+- [README](/docs/candidate-intelligence/README) — the module overview explaining how this template fits into the framework
+- [Profile QA Guidelines](/docs/candidate-intelligence/PROFILE_QA_GUIDELINES) — how a document built from this template should be checked once completed
+
+## Key Takeaways
+
+This template is the blank, fillable implementation of Profile Schema — every field is a placeholder instruction to be replaced with a properly coded value in a future sprint, never with invented or freeform candidate data. Optional fields should be left blank rather than guessed at when information isn't yet known.
+
+## Tags
+
+`candidate-intelligence` · `template` · `framework`

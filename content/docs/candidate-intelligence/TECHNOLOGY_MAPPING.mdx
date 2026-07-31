@@ -1,0 +1,70 @@
+---
+title: "Technology Mapping"
+description: "How a candidate's technical background is recorded in a profile as a short, non-evaluative summary — never a technical assessment, and never a substitute for internal SME input."
+slug: "TECHNOLOGY_MAPPING"
+type: "framework"
+category: "Candidate Intelligence Framework"
+audience: "Documentation Engineers, Admissions Advisors"
+funnel_stage: "Cross-Stage"
+countries: ["US", "Canada", "UK"]
+version: "1.0"
+last_updated: "2026-07-31"
+owner: "Documentation Architect"
+status: "living-example"
+tags: ["candidate-intelligence", "technology-mapping", "framework"]
+related: ["ROLE_CLASSIFICATION", "PROFILE_SCHEMA", "software-engineering-playbook"]
+---
+
+# Technology Mapping
+
+> This article defines how technical background is recorded in a profile — it is not a technical evaluation framework and does not qualify an advisor to assess technical competence. It contains no real or illustrative-but-realistic candidate data and no invented technical benchmarks.
+
+## Purpose
+
+Several Industry Playbooks — Software Engineering, Data & AI, Cybersecurity, Cloud & DevOps, QA & Testing — describe candidates who evaluate a service partly through a technical lens, and whose own technical background shapes how a conversation should go. This article defines how a profile records that background as context for the advisor, without attempting to formally assess or rank it.
+
+## Scope
+
+This taxonomy covers how `technology_summary` is recorded — a short, descriptive field, not a skills assessment. Any genuine technical evaluation question belongs to internal technical SMEs, consistent with the standing instruction throughout Industry Playbooks that advisors should not guess at technical specifics.
+
+## Standard Structure
+
+`technology_summary` is a short, factual, non-evaluative sentence or two describing what the candidate has said about their own technical background — tools, platforms, or areas of focus they've mentioned — organized loosely around the technical categories already referenced in the relevant Industry Playbook (for example, the Software Engineering Playbook's general references to languages and frameworks, or the Cloud & DevOps Playbook's references to cloud platforms).
+
+## Required Fields
+
+`technology_summary` is optional in [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) and, when populated, should stay within a small number of factual categories: primary technical area (as stated by the candidate), platforms or tools mentioned, and years of experience if the candidate has stated it directly. No field in this taxonomy includes a technical competence rating, a skill level assessment, or any judgment about how strong or marketable a candidate's technical background is.
+
+## Relationships with Other Modules
+
+This field exists to give an advisor quick context before a call, consistent with [Meeting Preparation](/docs/sales-operations/meeting-preparation) — it is not a replacement for the Industry Playbook itself, which should still be reviewed for the relevant role category. Any question that requires genuine technical evaluation should be routed to internal technical SMEs, exactly as instructed throughout the Industry Playbooks module.
+
+## Examples (Illustrative Only)
+
+**Illustrative Only** — showing the tone and scope of a properly written summary, without describing a real candidate:
+
+`technology_summary: "Candidate has stated several years of experience with backend development and has mentioned working with cloud infrastructure; specific technical depth not assessed."` This is a placeholder demonstrating format and tone only — no real candidate, tool, or experience level is being described.
+
+## Author Guidelines
+
+Record only what the candidate has actually stated about their own background — never infer, estimate, or embellish based on their stated role category alone. Keep the summary short and factual, and explicitly avoid any language that reads as a competence judgment ("strong," "weak," "junior," "senior") unless the candidate used that language themselves to describe their own experience.
+
+## Reviewer Checklist
+
+- [ ] Is `technology_summary` factual and based only on what the candidate directly stated?
+- [ ] Does the summary avoid any competence rating, skill assessment, or invented technical benchmark?
+- [ ] Does the profile correctly defer any genuine technical evaluation question to internal SMEs rather than attempting to answer it within this field?
+
+## Related Articles
+
+- [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION) — the broader role category `technology_summary` provides context within
+- [Profile Schema](/docs/candidate-intelligence/PROFILE_SCHEMA) — where `technology_summary` is defined as an optional field
+- [Software Engineering Playbook](/docs/industry-playbooks/software-engineering-playbook) — an example of the technical evaluation context this field supports, without replacing
+
+## Key Takeaways
+
+`technology_summary` is a short, factual record of what a candidate has stated about their own technical background — never a competence assessment, skill rating, or substitute for genuine input from internal technical SMEs. Its purpose is quick advisor context before a call, not technical evaluation.
+
+## Tags
+
+`candidate-intelligence` · `technology-mapping` · `framework`
