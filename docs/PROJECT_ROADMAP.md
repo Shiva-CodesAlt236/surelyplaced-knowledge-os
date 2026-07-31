@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-07-31 (Sprint 17)
+**Last updated:** 2026-07-31 (Sprint 18)
 
 ## Project Overview
 
@@ -35,18 +35,18 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 (Counted directly from the repository at the time of this update — see Section "Repository Metrics" for the same figures presented as a dashboard.)
 
-- Total `.mdx` articles: 170
-- Total `meta.json` files: 17
+- Total `.mdx` articles: 181
+- Total `meta.json` files: 18
 - Top-level modules under `content/docs/`: 11
-- Role Collections completed under `candidate-intelligence/`: 5 (Reference Profile + 4 role collections)
+- Role Collections completed under `candidate-intelligence/`: 6 (Reference Profile + 5 role collections)
 
 ## Current Sprint
 
-Sprint 17 — Role Registry (`docs/ROLE_REGISTRY.md`) added.
+Sprint 18 — QA Testing Role Collection integrated.
 
 ## Latest Git Commit
 
-`80774ea` — "docs: add role registry"
+`6bf6876` — "feat(sprint-17): integrate QA Testing role collection"
 
 ## Repository Version
 
@@ -102,12 +102,12 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Metric | Value |
 |---|---|
 | Total Modules (top-level `content/docs/` folders) | 11 |
-| Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 5 |
-| Total Articles (`.mdx` files) | 170 |
-| Total `meta.json` files | 17 |
+| Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 6 |
+| Total Articles (`.mdx` files) | 181 |
+| Total `meta.json` files | 18 |
 | Repository Status | Active — sprint-by-sprint delivery |
-| Latest Sprint | Sprint 17 — Role Registry |
-| Completion % | 44% of classified role categories have a Role Collection (4 of 9 non-pending `ROLE-*` codes in [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION): Software Engineering, Data & AI, Cybersecurity, Cloud & DevOps completed; QA & Testing, Healthcare, Supply Chain, Business Analyst, Project Manager remaining) |
+| Latest Sprint | Sprint 18 — QA Testing Role Collection |
+| Completion % | 56% of classified role categories have a Role Collection (5 of 9 non-pending `ROLE-*` codes in [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION): Software Engineering, Data & AI, Cybersecurity, Cloud & DevOps, QA Testing completed; Healthcare, Supply Chain, Business Analyst, Project Manager remaining) |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---

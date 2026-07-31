@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference
 **Owner:** Documentation Architect (content fields) / Antigravity (integration fields — see Rules)
-**Last updated:** 2026-07-31 (Sprint 17 — integrated by Antigravity)
+**Last updated:** 2026-07-31 (Sprint 18 — integrated by Antigravity)
 
 # Purpose
 
@@ -52,7 +52,7 @@ product-management
 | Data & AI | Completed | Sprint 14 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Data and AI Playbook, Software Engineering Collection | 100% | Documentation Architect | `cede3e6` |
 | Cybersecurity | Completed | Sprint 15 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Cybersecurity Playbook, Software Engineering Collection, Data & AI Collection | 100% | Documentation Architect | `bf432e3` |
 | Cloud & DevOps | Completed | Sprint 16 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Cloud & DevOps Playbook, Software Engineering Collection, Data & AI Collection, Cybersecurity Collection | 100% | Documentation Architect | `03ae7e7` |
-| QA Testing | Pending | Not yet scheduled | 1 | Candidate Intelligence Framework, Reference Candidate Profile, QA Testing Playbook | 0% | Unassigned | To be populated by Antigravity |
+| QA Testing | Completed | Sprint 18 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, QA Testing Playbook | 100% | Documentation Architect | `6bf6876` |
 | Business Analysis | Pending | Not yet scheduled | 2 | Candidate Intelligence Framework, Reference Candidate Profile, Business Analyst Playbook | 0% | Unassigned | To be populated by Antigravity |
 | Project Management | Pending | Not yet scheduled | 3 | Candidate Intelligence Framework, Reference Candidate Profile, Project Manager Playbook | 0% | Unassigned | To be populated by Antigravity |
 | Supply Chain | Pending | Not yet scheduled | 4 | Candidate Intelligence Framework, Reference Candidate Profile, Supply Chain Playbook | 0% | Unassigned | To be populated by Antigravity |
