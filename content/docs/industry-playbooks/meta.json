@@ -1,0 +1,17 @@
+{
+  "title": "Industry Playbooks",
+  "pages": [
+    "industry-discovery-framework",
+    "software-engineering-playbook",
+    "data-and-ai-playbook",
+    "cybersecurity-playbook",
+    "cloud-devops-playbook",
+    "qa-testing-playbook",
+    "healthcare-playbook",
+    "supply-chain-playbook",
+    "business-analyst-playbook",
+    "project-manager-playbook",
+    "industry-red-flags",
+    "industry-playbook-checklist"
+  ]
+}
