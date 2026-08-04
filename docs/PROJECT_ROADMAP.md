@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Recruiter Intelligence Module Integration)
+**Last updated:** 2026-08-04 (Hiring Intelligence Module Integration)
 
 ## Project Overview
 
@@ -35,18 +35,18 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 (Counted directly from the repository at the time of this update — see Section "Repository Metrics" for the same figures presented as a dashboard.)
 
-- Total `.mdx` articles: 334
-- Total `meta.json` files: 30
-- Top-level modules under `content/docs/`: 14
+- Total `.mdx` articles: 344
+- Total `meta.json` files: 31
+- Top-level modules under `content/docs/`: 15
 - Role Collections completed under `candidate-intelligence/`: 14 (Reference Profile + 13 role collections)
 
 ## Current Sprint
 
-Recruiter Intelligence Knowledge Expansion Module integrated.
+Hiring Intelligence Knowledge Expansion Module integrated.
 
 ## Latest Git Commit
 
-`4d80d1a` — "feat(module): integrate recruiter intelligence module"
+`6c8bc75` — "feat(module): integrate hiring intelligence module"
 
 ## Repository Version
 
@@ -77,6 +77,7 @@ Recruiter Intelligence Knowledge Expansion Module integrated.
 - [x] Resume Intelligence Module
 - [x] LinkedIn Intelligence Module
 - [x] Recruiter Intelligence Module
+- [x] Hiring Intelligence Module
 - [x] AI Context Pack Standard
 - [x] Engineering Infrastructure Standards
 
@@ -107,13 +108,13 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 
 | Metric | Value |
 |---|---|
-| Total Modules (top-level `content/docs/` folders) | 14 |
+| Total Modules (top-level `content/docs/` folders) | 15 |
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
-| Total Articles (`.mdx` files) | 334 |
-| Total `meta.json` files | 30 |
+| Total Articles (`.mdx` files) | 344 |
+| Total `meta.json` files | 31 |
 | Repository Status | Active — sprint-by-sprint delivery |
-| Latest Module | Recruiter Intelligence Knowledge Expansion Module |
-| Completion Status | Active expansion — 14 Sales Academy modules + 14 Candidate Intelligence collections completed + 12 Engineering Standards |
+| Latest Module | Hiring Intelligence Knowledge Expansion Module |
+| Completion Status | Active expansion — 15 Sales Academy modules + 14 Candidate Intelligence collections completed + 12 Engineering Standards |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
