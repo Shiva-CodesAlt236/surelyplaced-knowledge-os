@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Resume Intelligence Module Integration)
+**Last updated:** 2026-08-04 (LinkedIn Intelligence Module Integration)
 
 ## Project Overview
 
@@ -35,18 +35,18 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 (Counted directly from the repository at the time of this update — see Section "Repository Metrics" for the same figures presented as a dashboard.)
 
-- Total `.mdx` articles: 314
-- Total `meta.json` files: 28
-- Top-level modules under `content/docs/`: 12
+- Total `.mdx` articles: 324
+- Total `meta.json` files: 29
+- Top-level modules under `content/docs/`: 13
 - Role Collections completed under `candidate-intelligence/`: 14 (Reference Profile + 13 role collections)
 
 ## Current Sprint
 
-Resume Intelligence Knowledge Expansion Module integrated.
+LinkedIn Intelligence Knowledge Expansion Module integrated.
 
 ## Latest Git Commit
 
-`f78e610` — "feat(module): integrate resume intelligence module"
+`ff704b3` — "feat(module): integrate linkedin intelligence module"
 
 ## Repository Version
 
@@ -75,6 +75,7 @@ Resume Intelligence Knowledge Expansion Module integrated.
 - [x] Documentation Infrastructure
 - [x] Interview Intelligence Module
 - [x] Resume Intelligence Module
+- [x] LinkedIn Intelligence Module
 - [x] AI Context Pack Standard
 - [x] Engineering Infrastructure Standards
 
@@ -105,13 +106,13 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 
 | Metric | Value |
 |---|---|
-| Total Modules (top-level `content/docs/` folders) | 12 |
+| Total Modules (top-level `content/docs/` folders) | 13 |
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
-| Total Articles (`.mdx` files) | 314 |
-| Total `meta.json` files | 28 |
+| Total Articles (`.mdx` files) | 324 |
+| Total `meta.json` files | 29 |
 | Repository Status | Active — sprint-by-sprint delivery |
-| Latest Module | Resume Intelligence Knowledge Expansion Module |
-| Completion Status | Active expansion — 12 Sales Academy modules + 14 Candidate Intelligence collections completed + 12 Engineering Standards |
+| Latest Module | LinkedIn Intelligence Knowledge Expansion Module |
+| Completion Status | Active expansion — 13 Sales Academy modules + 14 Candidate Intelligence collections completed + 12 Engineering Standards |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
