@@ -1,0 +1,97 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+@source "../node_modules/fumadocs-ui/dist/**/*.js";
+
+/*
+ * Small set of self-contained enter/exit animation utilities used by
+ * components/ui/dialog.tsx, sheet.tsx, and dropdown-menu.tsx, per
+ * docs/DESIGN_SYSTEM_SPEC.md's Dialogs section. Defined directly with
+ * Tailwind v4's `@utility` directive rather than pulling in the
+ * `tailwindcss-animate` plugin, so the shell's dependency footprint
+ * stays exactly what docs/FRONTEND_BUILD_GUIDE.md's tech stack names.
+ */
+@utility animate-in {
+  animation-duration: 150ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+@utility animate-out {
+  animation-duration: 150ms;
+  animation-timing-function: ease-in;
+  animation-fill-mode: both;
+}
+
+@utility fade-in-0 {
+  animation-name: spk-fade-in;
+}
+
+@utility fade-out-0 {
+  animation-name: spk-fade-out;
+}
+
+@utility zoom-in-95 {
+  animation-name: spk-zoom-in;
+}
+
+@utility zoom-out-95 {
+  animation-name: spk-zoom-out;
+}
+
+@utility slide-in-from-left {
+  animation-name: spk-slide-in-left;
+}
+
+@utility slide-in-from-right {
+  animation-name: spk-slide-in-right;
+}
+
+@utility slide-out-to-left {
+  animation-name: spk-slide-out-left;
+}
+
+@utility slide-out-to-right {
+  animation-name: spk-slide-out-right;
+}
+
+@keyframes spk-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spk-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes spk-zoom-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spk-zoom-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes spk-slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes spk-slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes spk-slide-out-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes spk-slide-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
