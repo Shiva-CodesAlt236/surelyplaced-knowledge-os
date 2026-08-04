@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Batch 1 — Sprints 20–22)
+**Last updated:** 2026-08-04 (Batch 2 — Sprints 23–26)
 
 ## Project Overview
 
@@ -35,18 +35,18 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 (Counted directly from the repository at the time of this update — see Section "Repository Metrics" for the same figures presented as a dashboard.)
 
-- Total `.mdx` articles: 237
-- Total `meta.json` files: 22
+- Total `.mdx` articles: 293
+- Total `meta.json` files: 26
 - Top-level modules under `content/docs/`: 11
-- Role Collections completed under `candidate-intelligence/`: 10 (Reference Profile + 9 role collections)
+- Role Collections completed under `candidate-intelligence/`: 14 (Reference Profile + 13 role collections)
 
 ## Current Sprint
 
-Batch 1 (Sprints 20–22) — Project Management, Supply Chain, Healthcare Role Collections integrated.
+Batch 2 (Sprints 23–26) — Salesforce, SAP, ServiceNow, Oracle Role Collections integrated.
 
 ## Latest Git Commit
 
-`efbf6b0` — "feat(batch-1): integrate role collections sprint 19-22"
+`70eef3f` — "feat(batch-2): integrate platform role collections sprint 23-26"
 
 ## Repository Version
 
@@ -102,12 +102,12 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Metric | Value |
 |---|---|
 | Total Modules (top-level `content/docs/` folders) | 11 |
-| Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 10 |
-| Total Articles (`.mdx` files) | 237 |
-| Total `meta.json` files | 22 |
+| Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
+| Total Articles (`.mdx` files) | 293 |
+| Total `meta.json` files | 26 |
 | Repository Status | Active — sprint-by-sprint delivery |
-| Latest Sprint | Batch 1 (Sprints 20–22) — Project Management, Supply Chain, Healthcare |
-| Completion % | 100% of originally classified role categories have a Role Collection (9 of 9 non-pending `ROLE-*` codes in [Role Classification](/docs/candidate-intelligence/ROLE_CLASSIFICATION): Software Engineering, Data & AI, Cybersecurity, Cloud & DevOps, QA Testing, Business Analysis, Project Management, Supply Chain, Healthcare all completed) |
+| Latest Sprint | Batch 2 (Sprints 23–26) — Salesforce, SAP, ServiceNow, Oracle |
+| Completion % | Active expansion — 13 role collections completed beyond the original 9 classified categories; Network Engineering, Embedded Systems, Robotics, Game Development, UI/UX, Product Management, Linux Administration, Database Administration, ERP, CRM, DevSecOps pending |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---

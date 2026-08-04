@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference
 **Owner:** Documentation Architect (content fields) / Antigravity (integration fields — see Rules)
-**Last updated:** 2026-08-04 (Batch 1 — integrated by Antigravity)
+**Last updated:** 2026-08-04 (Batch 2 — integrated by Antigravity)
 
 # Purpose
 
@@ -57,10 +57,10 @@ product-management
 | Project Management | Completed | Sprint 20 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Project Manager Playbook | 100% | Documentation Architect | `efbf6b0` |
 | Supply Chain | Completed | Sprint 21 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Supply Chain Playbook | 100% | Documentation Architect | `efbf6b0` |
 | Healthcare | Completed | Sprint 22 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Healthcare Playbook | 100% | Documentation Architect | `efbf6b0` |
-| Salesforce | Pending | Not yet scheduled | 6 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
-| SAP | Pending | Not yet scheduled | 7 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
-| ServiceNow | Pending | Not yet scheduled | 8 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
-| Network Engineering | Pending | Not yet scheduled | 9 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
+| Salesforce | Completed | Sprint 23 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 100% | Documentation Architect | `70eef3f` |
+| SAP | Completed | Sprint 24 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 100% | Documentation Architect | `70eef3f` |
+| ServiceNow | Completed | Sprint 25 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 100% | Documentation Architect | `70eef3f` |
+| Oracle | Completed | Sprint 26 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 100% | Documentation Architect | `70eef3f` |
 | Embedded Systems | Pending | Not yet scheduled | 10 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
 | Robotics | Pending | Not yet scheduled | 11 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
 | Game Development | Pending | Not yet scheduled | 12 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
