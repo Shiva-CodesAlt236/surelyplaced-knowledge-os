@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Learning Platform Architecture Integration)
+**Last updated:** 2026-08-04 (Milestone 3A Product Experience Integration)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Learning Platform Architecture engineering standards (`docs/CAREER_ADVISOR_ACADEMY.md`, `LEARNING_PATHS.md`, `SEARCH_EXPERIENCE.md`, etc.) integrated.
+Milestone 3A Product Experience specifications (`docs/ACADEMY_PRODUCT_VISION.md`, `USER_JOURNEYS.md`, `INFORMATION_ARCHITECTURE.md`, `SCREEN_INVENTORY.md`, `FEATURE_SPECIFICATIONS.md`, `DASHBOARD_EXPERIENCE.md`, `MODULE_EXPERIENCE.md`, `SEARCH_PRODUCT.md`, `AI_EXPERIENCE.md`, `IMPLEMENTATION_BACKLOG.md`) integrated.
 
 ## Latest Git Commit
 
-`f7ed0ed` — "docs: add learning platform architecture standards"
+`fb5b27b` — "docs: add Milestone 3A product experience specifications"
 
 ## Repository Version
 
@@ -81,6 +81,7 @@ Learning Platform Architecture engineering standards (`docs/CAREER_ADVISOR_ACADE
 - [x] AI Context Pack Standard
 - [x] Engineering Infrastructure Standards
 - [x] Learning Platform Architecture Standards
+- [x] Milestone 3A Product Experience Specifications
 
 ---
 
@@ -114,8 +115,8 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Total Articles (`.mdx` files) | 344 |
 | Total `meta.json` files | 31 |
 | Repository Status | Active — sprint-by-sprint delivery |
-| Latest Document | Learning Platform Architecture (`docs/CAREER_ADVISOR_ACADEMY.md`, `LEARNING_PATHS.md`, `UI_NAVIGATION_BLUEPRINT.md`, etc.) |
-| Completion Status | Active expansion — 15 Sales Academy modules + 14 Candidate Intelligence collections completed + 21 Engineering & Architecture Standards |
+| Latest Document | Milestone 3A Product Experience (`docs/ACADEMY_PRODUCT_VISION.md`, `USER_JOURNEYS.md`, `IMPLEMENTATION_BACKLOG.md`, etc.) |
+| Completion Status | Active expansion — 15 Sales Academy modules + 14 Candidate Intelligence collections completed + 31 Engineering & Product Specifications |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
