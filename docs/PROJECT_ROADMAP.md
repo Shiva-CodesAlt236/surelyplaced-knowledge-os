@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Milestone 3A Product Experience Integration)
+**Last updated:** 2026-08-04 (Milestone 3B Architecture & Specifications Integration)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Milestone 3A Product Experience specifications (`docs/ACADEMY_PRODUCT_VISION.md`, `USER_JOURNEYS.md`, `INFORMATION_ARCHITECTURE.md`, `SCREEN_INVENTORY.md`, `FEATURE_SPECIFICATIONS.md`, `DASHBOARD_EXPERIENCE.md`, `MODULE_EXPERIENCE.md`, `SEARCH_PRODUCT.md`, `AI_EXPERIENCE.md`, `IMPLEMENTATION_BACKLOG.md`) integrated.
+Milestone 3B Architecture and Specification documents (`docs/MODULE_METADATA_STANDARD.md`, `LESSON_STRUCTURE_STANDARD.md`, `CONTENT_ENRICHMENT_GUIDE.md`, `SEARCH_TAXONOMY.md`, `KNOWLEDGE_GRAPH.md`, `LEARNING_ANALYTICS.md`, `BOOKMARK_SYSTEM.md`, `NOTES_SYSTEM.md`, `AUTHORING_CHECKLIST.md`, `RELEASE_STRATEGY.md`) integrated.
 
 ## Latest Git Commit
 
-`fb5b27b` — "docs: add Milestone 3A product experience specifications"
+`e2836c3` — "docs: add Milestone 3B architecture and specification documents"
 
 ## Repository Version
 
@@ -82,6 +82,7 @@ Milestone 3A Product Experience specifications (`docs/ACADEMY_PRODUCT_VISION.md`
 - [x] Engineering Infrastructure Standards
 - [x] Learning Platform Architecture Standards
 - [x] Milestone 3A Product Experience Specifications
+- [x] Milestone 3B Architecture & Specification Standards
 
 ---
 
@@ -115,8 +116,8 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Total Articles (`.mdx` files) | 344 |
 | Total `meta.json` files | 31 |
 | Repository Status | Active — sprint-by-sprint delivery |
-| Latest Document | Milestone 3A Product Experience (`docs/ACADEMY_PRODUCT_VISION.md`, `USER_JOURNEYS.md`, `IMPLEMENTATION_BACKLOG.md`, etc.) |
-| Completion Status | Active expansion — 15 Sales Academy modules + 14 Candidate Intelligence collections completed + 31 Engineering & Product Specifications |
+| Latest Document | Milestone 3B Architecture (`docs/MODULE_METADATA_STANDARD.md`, `SEARCH_TAXONOMY.md`, `RELEASE_STRATEGY.md`, etc.) |
+| Completion Status | Active expansion — 15 Sales Academy modules + 14 Candidate Intelligence collections completed + 41 Engineering & Product Specifications |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
