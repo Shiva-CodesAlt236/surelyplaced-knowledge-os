@@ -20,6 +20,10 @@
     "business-analysis",
     "project-management",
     "supply-chain",
-    "healthcare"
+    "healthcare",
+    "salesforce",
+    "sap",
+    "servicenow",
+    "oracle"
   ]
 }
