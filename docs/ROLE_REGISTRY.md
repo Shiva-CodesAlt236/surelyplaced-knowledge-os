@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference
 **Owner:** Documentation Architect (content fields) / Antigravity (integration fields — see Rules)
-**Last updated:** 2026-07-31 (Sprint 19 — integrated by Antigravity)
+**Last updated:** 2026-08-04 (Batch 1 — integrated by Antigravity)
 
 # Purpose
 
@@ -54,9 +54,9 @@ product-management
 | Cloud & DevOps | Completed | Sprint 16 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Cloud & DevOps Playbook, Software Engineering Collection, Data & AI Collection, Cybersecurity Collection | 100% | Documentation Architect | `03ae7e7` |
 | QA Testing | Completed | Sprint 18 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, QA Testing Playbook | 100% | Documentation Architect | `6bf6876` |
 | Business Analysis | Completed | Sprint 19 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Business Analyst Playbook | 100% | Documentation Architect | `3802f56` |
-| Project Management | Pending | Not yet scheduled | 3 | Candidate Intelligence Framework, Reference Candidate Profile, Project Manager Playbook | 0% | Unassigned | To be populated by Antigravity |
-| Supply Chain | Pending | Not yet scheduled | 4 | Candidate Intelligence Framework, Reference Candidate Profile, Supply Chain Playbook | 0% | Unassigned | To be populated by Antigravity |
-| Healthcare | Pending | Not yet scheduled | 5 | Candidate Intelligence Framework, Reference Candidate Profile, Healthcare Playbook | 0% | Unassigned | To be populated by Antigravity |
+| Project Management | Completed | Sprint 20 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Project Manager Playbook | 100% | Documentation Architect | `efbf6b0` |
+| Supply Chain | Completed | Sprint 21 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Supply Chain Playbook | 100% | Documentation Architect | `efbf6b0` |
+| Healthcare | Completed | Sprint 22 | Completed | Candidate Intelligence Framework, Reference Candidate Profile, Healthcare Playbook | 100% | Documentation Architect | `efbf6b0` |
 | Salesforce | Pending | Not yet scheduled | 6 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
 | SAP | Pending | Not yet scheduled | 7 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
 | ServiceNow | Pending | Not yet scheduled | 8 | Candidate Intelligence Framework, Reference Candidate Profile, Industry Playbook not yet scoped | 0% | Unassigned | To be populated by Antigravity |
