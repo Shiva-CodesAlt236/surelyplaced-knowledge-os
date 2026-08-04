@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Batch 2 — Sprints 23–26)
+**Last updated:** 2026-08-04 (Interview Intelligence Module)
 
 ## Project Overview
 
@@ -35,18 +35,18 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 (Counted directly from the repository at the time of this update — see Section "Repository Metrics" for the same figures presented as a dashboard.)
 
-- Total `.mdx` articles: 293
-- Total `meta.json` files: 26
+- Total `.mdx` articles: 304
+- Total `meta.json` files: 27
 - Top-level modules under `content/docs/`: 11
 - Role Collections completed under `candidate-intelligence/`: 14 (Reference Profile + 13 role collections)
 
 ## Current Sprint
 
-Batch 2 (Sprints 23–26) — Salesforce, SAP, ServiceNow, Oracle Role Collections integrated.
+Interview Intelligence Knowledge Expansion Module integrated.
 
 ## Latest Git Commit
 
-`70eef3f` — "feat(batch-2): integrate platform role collections sprint 23-26"
+`9575acc` — "feat: integrate interview intelligence module"
 
 ## Repository Version
 
@@ -73,6 +73,7 @@ Batch 2 (Sprints 23–26) — Salesforce, SAP, ServiceNow, Oracle Role Collectio
 - [x] Cybersecurity Collection
 - [x] Cloud & DevOps Collection
 - [x] Documentation Infrastructure
+- [x] Interview Intelligence Module
 
 ---
 
@@ -103,11 +104,11 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 |---|---|
 | Total Modules (top-level `content/docs/` folders) | 11 |
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
-| Total Articles (`.mdx` files) | 293 |
-| Total `meta.json` files | 26 |
+| Total Articles (`.mdx` files) | 304 |
+| Total `meta.json` files | 27 |
 | Repository Status | Active — sprint-by-sprint delivery |
-| Latest Sprint | Batch 2 (Sprints 23–26) — Salesforce, SAP, ServiceNow, Oracle |
-| Completion % | Active expansion — 13 role collections completed beyond the original 9 classified categories; Network Engineering, Embedded Systems, Robotics, Game Development, UI/UX, Product Management, Linux Administration, Database Administration, ERP, CRM, DevSecOps pending |
+| Latest Module | Interview Intelligence Knowledge Expansion Module |
+| Completion % | Active expansion — 11 Sales Academy modules + 14 Candidate Intelligence collections completed |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
