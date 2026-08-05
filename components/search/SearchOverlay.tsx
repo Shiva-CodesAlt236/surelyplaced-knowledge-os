@@ -17,62 +17,63 @@ export interface SearchOverlayProps {
   onOpenChange: (open: boolean) => void
 }
 
-interface SearchResult {
+interface ApiSearchResult {
   id: string
   title: string
-  href: string
-  snippet: string
-  category: string
+  url: string
+  content?: string
 }
-
-const mockResults: SearchResult[] = [
-  {
-    id: "1",
-    title: "AWS Cloud & DevOps Engineering Profile",
-    href: "/docs/candidate-intelligence/cloud-devops",
-    snippet: "Deep dive into AWS Cloud Architects, DevOps Engineers, Kubernetes operators, and Terraform infrastructure candidates.",
-    category: "Candidate Roles",
-  },
-  {
-    id: "2",
-    title: "Asking for the Commitment & Closing Techniques",
-    href: "/docs/closing/asking-for-the-commitment",
-    snippet: "Learn closing frameworks, trial closes, decision-maker alignment, and contract execution scripts.",
-    category: "Sales Academy",
-  },
-  {
-    id: "3",
-    title: "Technical Recruiter Screen Scripts",
-    href: "/docs/recruiter-intelligence/screener-call-script",
-    snippet: "Standardized screener questions, candidate qualification benchmarks, and compensation expectation probes.",
-    category: "Recruiter Intel",
-  },
-  {
-    id: "4",
-    title: "LinkedIn Executive Brand Audit Framework",
-    href: "/docs/linkedin-intelligence/profile-audit-framework",
-    snippet: "Step-by-step executive profile optimization, headline formulas, and experience section storytelling.",
-    category: "LinkedIn Intel",
-  },
-]
 
 export function SearchOverlay({ open, onOpenChange }: SearchOverlayProps) {
   const [query, setQuery] = useState("")
   const [facet, setFacet] = useState<SearchFacet>("all")
+  const [results, setResults] = useState<ApiSearchResult[]>([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (query.trim()) {
-      setLoading(true)
-      const timer = setTimeout(() => setLoading(false), 200)
-      return () => clearTimeout(timer)
+    if (!query.trim()) {
+      setResults([])
+      setLoading(false)
+      return
     }
-  }, [query, facet])
 
-  const filteredResults = mockResults.filter((item) => {
-    if (!query) return true
-    return item.title.toLowerCase().includes(query.toLowerCase()) ||
-           item.snippet.toLowerCase().includes(query.toLowerCase())
+    const controller = new AbortController()
+    setLoading(true)
+
+    fetch(`/api/search?query=${encodeURIComponent(query)}`, {
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setResults(data)
+        } else if (data && Array.isArray(data.results)) {
+          setResults(data.results)
+        } else {
+          setResults([])
+        }
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          setResults([])
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+
+    return () => controller.abort()
+  }, [query])
+
+  const filteredResults = results.filter((item) => {
+    if (facet === "all") return true
+    if (facet === "modules") return !item.url.includes("candidate-intelligence")
+    if (facet === "roles") return item.url.includes("candidate-intelligence")
+    if (facet === "interview") return item.url.includes("interview-intelligence")
+    if (facet === "resume") return item.url.includes("resume-intelligence")
+    if (facet === "linkedin") return item.url.includes("linkedin-intelligence")
+    if (facet === "recruiter") return item.url.includes("recruiter-intelligence")
+    return true
   })
 
   return (
@@ -99,16 +100,20 @@ export function SearchOverlay({ open, onOpenChange }: SearchOverlayProps) {
           {loading ? (
             <div className="flex items-center justify-center py-12 text-muted-foreground text-sm gap-2">
               <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              Searching Knowledge OS...
+              Searching Orama Index...
+            </div>
+          ) : query.trim() === "" ? (
+            <div className="text-center py-12 text-muted-foreground text-xs">
+              Type a search query to query the Knowledge OS Orama index.
             </div>
           ) : filteredResults.length > 0 ? (
-            filteredResults.map((result) => (
+            filteredResults.map((result, idx) => (
               <SearchResultItem
-                key={result.id}
+                key={result.id || idx}
                 title={result.title}
-                href={result.href}
-                snippet={result.snippet}
-                category={result.category}
+                href={result.url}
+                snippet={result.content}
+                category={result.url.includes("candidate-intelligence") ? "Candidate Role" : "Documentation"}
                 onClick={() => onOpenChange(false)}
               />
             ))

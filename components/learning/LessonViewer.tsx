@@ -10,10 +10,22 @@ export interface LessonViewerProps {
   moduleName?: string
   readingTimeMinutes?: number
   difficulty?: "Foundational" | "Intermediate" | "Advanced" | "Expert"
-  articleSlug?: string
+  /** Route path of the current article, used as the Bookmark/Progress/Notes store key. */
+  articleSlug: string
+  /** Passed through to ModuleHeader — `false` when the host page (e.g. fumadocs' DocsTitle) already renders the title. */
+  showTitle?: boolean
   children: React.ReactNode
 }
 
+/**
+ * Extends fumadocs' own `DocsPage`/`DocsBody` (app/docs/[[...slug]]/page.tsx)
+ * with the Academy-specific chrome fumadocs doesn't provide — bookmark
+ * and completion controls, and a personal notes panel — rather than
+ * duplicating fumadocs' own MDX rendering or typography. `children` is
+ * expected to already be `DocsBody`'s rendered output, so this
+ * component does not wrap it in a second `prose` layer; fumadocs-ui's
+ * own CSS already styles that content (Milestone 4C, Priority 7).
+ */
 export function LessonViewer({
   title,
   description,
@@ -21,10 +33,11 @@ export function LessonViewer({
   readingTimeMinutes,
   difficulty,
   articleSlug,
+  showTitle = true,
   children,
 }: LessonViewerProps) {
   return (
-    <article className="max-w-4xl mx-auto py-6 px-4 sm:px-6">
+    <>
       <ModuleHeader
         title={title}
         description={description}
@@ -32,15 +45,14 @@ export function LessonViewer({
         readingTimeMinutes={readingTimeMinutes}
         difficulty={difficulty}
         articleSlug={articleSlug}
+        showTitle={showTitle}
       />
 
-      <div className="prose prose-slate dark:prose-invert max-w-none mb-12">
-        {children}
-      </div>
+      {children}
 
       <div className="mt-8 pt-6 border-t border-border">
         <NotesPanel articleSlug={articleSlug} />
       </div>
-    </article>
+    </>
   )
 }

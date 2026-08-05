@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { HelpCircle, CheckCircle2, XCircle, RotateCcw } from "lucide-react"
+import { useAssessmentsStore } from "@/lib/stores/useAssessmentsStore"
 import { cn } from "@/lib/utils"
 
 export interface Option {
@@ -20,6 +21,7 @@ export interface KnowledgeCheckCardProps {
 }
 
 export function KnowledgeCheckCard({
+  id = "kc-budget-objection",
   question = "When dealing with a prospect raising budget objections, what is the primary recommended approach?",
   options = [
     { id: "a", text: "Immediately grant a 15% discount to keep the deal moving.", isCorrect: false },
@@ -31,9 +33,15 @@ export function KnowledgeCheckCard({
 }: KnowledgeCheckCardProps) {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
+  const recordResult = useAssessmentsStore((s) => s.recordResult)
 
   const selectedOption = options.find((o) => o.id === selectedOptionId)
   const isCorrect = selectedOption?.isCorrect ?? false
+
+  const handleSubmit = () => {
+    setSubmitted(true)
+    recordResult(id, isCorrect ? 100 : 0, isCorrect)
+  }
 
   const handleReset = () => {
     setSelectedOptionId(null)
@@ -115,7 +123,7 @@ export function KnowledgeCheckCard({
         ) : (
           <Button
             size="sm"
-            onClick={() => setSubmitted(true)}
+            onClick={handleSubmit}
             disabled={!selectedOptionId}
             className="ml-auto text-xs"
           >

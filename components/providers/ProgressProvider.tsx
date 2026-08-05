@@ -26,6 +26,13 @@ interface ProgressState {
   articleStatus: Record<string, CompletionStatus>;
   markArticleInProgress: (articleId: string) => void;
   markArticleComplete: (articleId: string) => void;
+  /**
+   * Reverts a completed article back to in-progress. Added in
+   * Milestone 4C so components/learning/MarkCompleteControl.tsx can
+   * let a learner undo an accidental "Mark as Complete" click — the
+   * original Milestone 4A store only ever moved status forward.
+   */
+  markArticleIncomplete: (articleId: string) => void;
   getArticleStatus: (articleId: string) => CompletionStatus;
   getModuleCompletion: (articleIds: string[]) => { completed: number; total: number };
 }
@@ -44,6 +51,11 @@ export const useProgressStore = create<ProgressState>()(
       markArticleComplete: (articleId) =>
         set((state) => ({
           articleStatus: { ...state.articleStatus, [articleId]: 'complete' },
+        })),
+
+      markArticleIncomplete: (articleId) =>
+        set((state) => ({
+          articleStatus: { ...state.articleStatus, [articleId]: 'in-progress' },
         })),
 
       getArticleStatus: (articleId) => get().articleStatus[articleId] ?? 'not-started',

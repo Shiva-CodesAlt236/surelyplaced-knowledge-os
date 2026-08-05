@@ -3,21 +3,30 @@
 import React from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { MetricEmptyState } from "@/components/dashboard/MetricEmptyState"
+import { useAssessmentsStore } from "@/lib/stores/useAssessmentsStore"
 import { Award, CheckCircle, Target } from "lucide-react"
 
-export interface KnowledgeCheckSummaryCardProps {
-  passedChecks?: number
-  totalChecks?: number
-  averageScore?: number
-  streakDays?: number
-}
+export function KnowledgeCheckSummaryCard() {
+  const { results, streakDays } = useAssessmentsStore()
+  const entries = Object.values(results)
 
-export function KnowledgeCheckSummaryCard({
-  passedChecks = 14,
-  totalChecks = 16,
-  averageScore = 92,
-  streakDays = 5,
-}: KnowledgeCheckSummaryCardProps) {
+  if (entries.length === 0) {
+    return (
+      <MetricEmptyState
+        icon={Award}
+        title="No Assessments Completed"
+        description="Complete Knowledge Checks or Quizzes inside any module to track your assessment scores and build streaks."
+      />
+    )
+  }
+
+  const passedCount = entries.filter((r) => r.passed).length
+  const totalCount = entries.length
+  const avgScore = Math.round(
+    entries.reduce((acc, r) => acc + r.score, 0) / (totalCount || 1)
+  )
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -39,7 +48,7 @@ export function KnowledgeCheckSummaryCard({
               Passed Checks
             </span>
             <span className="text-2xl font-bold text-foreground mt-1">
-              {passedChecks} / {totalChecks}
+              {passedCount} / {totalCount}
             </span>
           </div>
           <div className="flex flex-col p-3 rounded-lg bg-secondary/50 border border-border">
@@ -48,7 +57,7 @@ export function KnowledgeCheckSummaryCard({
               Avg Score
             </span>
             <span className="text-2xl font-bold text-foreground mt-1">
-              {averageScore}%
+              {avgScore}%
             </span>
           </div>
         </div>

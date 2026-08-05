@@ -5,6 +5,55 @@
 @source "../node_modules/fumadocs-ui/dist/**/*.js";
 
 /*
+ * Design-token bridge (Milestone 4C, Priority 1).
+ *
+ * Milestone 4A's components (button.tsx, dialog.tsx, sheet.tsx,
+ * dropdown-menu.tsx, and every components/layout/* file) reference
+ * fumadocs-ui's `--fd-*` custom properties directly, per
+ * docs/DESIGN_SYSTEM_SPEC.md's decision to reuse the existing
+ * fumadocs neutral preset rather than invent a new brand palette.
+ * Milestone 4B's components (components/ui/{badge,card,input,progress}.tsx
+ * and everything built on them) instead used the un-prefixed
+ * shadcn/ui convention (`bg-primary`, `text-card-foreground`,
+ * `border-input`, etc.) without ever defining those variables, so
+ * every 4B component rendered against undefined colors.
+ *
+ * Rather than rewriting 4B's components to use `fd-*` classes (a
+ * much larger diff across every new component) or inventing a
+ * second, disconnected color palette, this bridges the shadcn
+ * vocabulary onto the *same* `--fd-*` runtime values fumadocs
+ * already resolves for light/dark mode. Every `--color-*` entry
+ * below simply aliases an existing `--fd-*` variable, so both
+ * vocabularies always render identically and stay in sync with
+ * ThemeProvider's `.dark` class toggling — no new colors are
+ * introduced except `--color-destructive`, which reuses Tailwind's
+ * own built-in `red-600`/`white` (the same values button.tsx's
+ * `destructive` variant already hardcodes), not an invented brand
+ * color.
+ */
+@theme inline {
+  --color-background: var(--fd-background);
+  --color-foreground: var(--fd-foreground);
+  --color-card: var(--fd-popover);
+  --color-card-foreground: var(--fd-popover-foreground);
+  --color-popover: var(--fd-popover);
+  --color-popover-foreground: var(--fd-popover-foreground);
+  --color-primary: var(--fd-primary);
+  --color-primary-foreground: var(--fd-primary-foreground);
+  --color-secondary: var(--fd-secondary);
+  --color-secondary-foreground: var(--fd-secondary-foreground);
+  --color-muted: var(--fd-secondary);
+  --color-muted-foreground: var(--fd-muted-foreground);
+  --color-accent: var(--fd-accent);
+  --color-accent-foreground: var(--fd-accent-foreground);
+  --color-destructive: var(--color-red-600);
+  --color-destructive-foreground: var(--color-white);
+  --color-border: var(--fd-border);
+  --color-input: var(--fd-border);
+  --color-ring: var(--fd-ring);
+}
+
+/*
  * Small set of self-contained enter/exit animation utilities used by
  * components/ui/dialog.tsx, sheet.tsx, and dropdown-menu.tsx, per
  * docs/DESIGN_SYSTEM_SPEC.md's Dialogs section. Defined directly with

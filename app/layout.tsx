@@ -7,6 +7,9 @@ import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { SearchProvider } from '@/components/providers/SearchProvider';
 import { ProgressProvider } from '@/components/providers/ProgressProvider';
 import { AIProvider } from '@/components/providers/AIProvider';
+import { BookmarkProvider } from '@/components/providers/BookmarkProvider';
+import { NotesProvider } from '@/components/providers/NotesProvider';
+import { AssessmentProvider } from '@/components/providers/AssessmentProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -39,9 +42,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <RootProvider>
           <ThemeProvider>
             <ProgressProvider>
-              <SearchProvider>
-                <AIProvider>{children}</AIProvider>
-              </SearchProvider>
+              <BookmarkProvider>
+                <NotesProvider>
+                  <AssessmentProvider>
+                    <SearchProvider>
+                      <AIProvider>{children}</AIProvider>
+                    </SearchProvider>
+                  </AssessmentProvider>
+                </NotesProvider>
+              </BookmarkProvider>
             </ProgressProvider>
           </ThemeProvider>
         </RootProvider>

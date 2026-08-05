@@ -1,27 +1,24 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, Circle } from "lucide-react"
+import { useProgressStore } from "@/lib/stores/useProgressStore"
 import { cn } from "@/lib/utils"
 
 export interface MarkCompleteControlProps {
-  initialCompleted?: boolean
-  articleSlug?: string
-  onToggleComplete?: (completed: boolean) => void
+  articleSlug: string
 }
 
-export function MarkCompleteControl({
-  initialCompleted = false,
-  onToggleComplete,
-}: MarkCompleteControlProps) {
-  const [completed, setCompleted] = useState(initialCompleted)
+export function MarkCompleteControl({ articleSlug }: MarkCompleteControlProps) {
+  const { markComplete, markIncomplete, isCompleted } = useProgressStore()
+  const completed = isCompleted(articleSlug)
 
   const handleToggle = () => {
-    const nextState = !completed
-    setCompleted(nextState)
-    if (onToggleComplete) {
-      onToggleComplete(nextState)
+    if (completed) {
+      markIncomplete(articleSlug)
+    } else {
+      markComplete(articleSlug)
     }
   }
 

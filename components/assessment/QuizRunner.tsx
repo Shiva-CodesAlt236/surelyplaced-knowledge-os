@@ -5,7 +5,8 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { Trophy, CheckCircle2, RotateCcw, ArrowRight } from "lucide-react"
+import { Trophy, RotateCcw, ArrowRight } from "lucide-react"
+import { useAssessmentsStore } from "@/lib/stores/useAssessmentsStore"
 
 export interface QuizQuestion {
   id: string
@@ -15,6 +16,7 @@ export interface QuizQuestion {
 }
 
 export interface QuizRunnerProps {
+  quizId?: string
   quizTitle?: string
   moduleName?: string
   questions?: QuizQuestion[]
@@ -46,6 +48,7 @@ const defaultQuestions: QuizQuestion[] = [
 ]
 
 export function QuizRunner({
+  quizId = "quiz-default",
   quizTitle = "Module Competency Quiz",
   moduleName = "Candidate Intelligence Assessment",
   questions = defaultQuestions,
@@ -55,6 +58,7 @@ export function QuizRunner({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({})
   const [finished, setFinished] = useState(false)
+  const recordResult = useAssessmentsStore((s) => s.recordResult)
 
   const currentQuestion = questions[currentIndex]
   const totalQuestions = questions.length
@@ -70,9 +74,12 @@ export function QuizRunner({
     if (currentIndex < totalQuestions - 1) {
       setCurrentIndex((prev) => prev + 1)
     } else {
+      const finalScore = calculateScore()
+      const passed = finalScore >= passScorePercentage
+      recordResult(quizId, finalScore, passed)
       setFinished(true)
       if (onFinish) {
-        onFinish(calculateScore())
+        onFinish(finalScore)
       }
     }
   }

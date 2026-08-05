@@ -40,7 +40,7 @@ export function QuickActionsCard({
         </button>
 
         <Link
-          href="/docs/candidate-intelligence/cloud-devops"
+          href="/docs/candidate-intelligence/README"
           className="flex flex-col items-center justify-center p-3 rounded-lg border border-border bg-card hover:bg-accent transition-colors text-center group"
         >
           <Bookmark className="h-5 w-5 text-muted-foreground mb-1 group-hover:scale-110 transition-transform" />
@@ -48,11 +48,11 @@ export function QuickActionsCard({
         </Link>
 
         <Link
-          href="/docs/interview-intelligence/question-bank"
+          href="/docs/interview-intelligence/overview"
           className="flex flex-col items-center justify-center p-3 rounded-lg border border-border bg-card hover:bg-accent transition-colors text-center group"
         >
           <HelpCircle className="h-5 w-5 text-muted-foreground mb-1 group-hover:scale-110 transition-transform" />
-          <span className="text-xs font-semibold text-foreground">Question Bank</span>
+          <span className="text-xs font-semibold text-foreground">Interview Intelligence</span>
         </Link>
       </CardContent>
     </Card>

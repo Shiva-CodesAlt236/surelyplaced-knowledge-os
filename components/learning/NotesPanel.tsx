@@ -1,27 +1,32 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FileText, Save, Trash2, Lock } from "lucide-react"
+import { useNotesStore } from "@/lib/stores/useNotesStore"
 
 export interface NotesPanelProps {
-  articleSlug?: string
-  initialNote?: string
+  articleSlug: string
 }
 
-export function NotesPanel({
-  initialNote = "",
-}: NotesPanelProps) {
-  const [note, setNote] = useState(initialNote)
+export function NotesPanel({ articleSlug }: NotesPanelProps) {
+  const { getNote, saveNote, deleteNote } = useNotesStore()
+  const [note, setNote] = useState("")
   const [saved, setSaved] = useState(false)
 
+  useEffect(() => {
+    setNote(getNote(articleSlug))
+  }, [articleSlug, getNote])
+
   const handleSave = () => {
+    saveNote(articleSlug, note)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
 
   const handleClear = () => {
+    deleteNote(articleSlug)
     setNote("")
   }
 

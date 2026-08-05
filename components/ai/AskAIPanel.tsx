@@ -30,7 +30,7 @@ const initialMessages: Message[] = [
   {
     id: "1",
     sender: "ai",
-    text: "Hello! I am your SurelyPlaced Knowledge OS Assistant. Ask me anything about candidate role profiles, closing frameworks, objection scripts, or recruiter screens.",
+    text: "Hello! I am your SurelyPlaced Knowledge OS Copilot. Ask me questions about candidate role profiles, closing frameworks, objection scripts, or recruiter screens. All answers are strictly grounded in repository documentation.",
   },
 ]
 
@@ -40,7 +40,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   const [scope, setScope] = useState<AIContextScope>("all")
   const [loading, setLoading] = useState(false)
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim() || loading) return
 
     const userMsg: Message = {
@@ -53,35 +53,41 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     setInput("")
     setLoading(true)
 
-    setTimeout(() => {
+    try {
+      const res = await fetch(`/api/search?query=${encodeURIComponent(currentInput)}`)
+      const data = await res.json()
+      const searchResults: { title: string; url: string; content?: string }[] = Array.isArray(data)
+        ? data
+        : data?.results || []
+
+      // Filter search results based on selected scope
+      const scopedResults = searchResults.filter((item) => {
+        if (scope === "all") return true
+        if (scope === "sales-academy") return !item.url.includes("candidate-intelligence")
+        if (scope === "candidate-intelligence") return item.url.includes("candidate-intelligence")
+        if (scope === "recruiter-intelligence") return item.url.includes("recruiter-intelligence")
+        return true
+      })
+
       let aiMsg: Message
-      if (currentInput.toLowerCase().includes("aws") || currentInput.toLowerCase().includes("devops")) {
+
+      if (scopedResults.length > 0) {
+        const topDoc = scopedResults[0]
+        const citations: Citation[] = scopedResults.slice(0, 3).map((item, idx) => ({
+          id: `c-${idx}`,
+          title: item.title,
+          href: item.url,
+          category: item.url.includes("candidate-intelligence") ? "Candidate Role" : "Sales Academy",
+          snippet: item.content,
+        }))
+
         aiMsg = {
           id: (Date.now() + 1).toString(),
           sender: "ai",
-          text: "Based on the AWS Cloud & DevOps Engineering Profile, key competencies include Kubernetes cluster management, Terraform IaC, AWS IAM policy design, and CI/CD pipeline automation.",
-          citations: [
-            {
-              id: "c1",
-              title: "AWS Cloud & DevOps Engineering Profile",
-              href: "/docs/candidate-intelligence/cloud-devops",
-              category: "Candidate Roles",
-            },
-          ],
-        }
-      } else if (currentInput.toLowerCase().includes("pricing") || currentInput.toLowerCase().includes("discount")) {
-        aiMsg = {
-          id: (Date.now() + 1).toString(),
-          sender: "ai",
-          text: "Per the Closing & Negotiation Academy standard, never grant price concessions without securing a reciprocal commitment (e.g. multi-year term, upfront payment, or case study agreement).",
-          citations: [
-            {
-              id: "c2",
-              title: "Asking for the Commitment & Closing Techniques",
-              href: "/docs/closing/asking-for-the-commitment",
-              category: "Sales Academy",
-            },
-          ],
+          text: `Based on your query, the Knowledge OS documentation for "${topDoc.title}" provides the authoritative guidelines for this topic. ${
+            topDoc.content ? `Key excerpt: "${topDoc.content.slice(0, 180)}..."` : ""
+          }`,
+          citations,
         }
       } else {
         aiMsg = {
@@ -91,9 +97,21 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
           isRefusal: true,
         }
       }
+
       setMessages((prev) => [...prev, aiMsg])
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          sender: "ai",
+          text: "I am strictly grounded in SurelyPlaced Knowledge OS documentation. Unable to retrieve search index context at this moment.",
+          isRefusal: true,
+        },
+      ])
+    } finally {
       setLoading(false)
-    }, 600)
+    }
   }
 
   return (
@@ -166,7 +184,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
           {loading && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground p-2">
               <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              Retrieving grounded answer...
+              Retrieving grounded answer from Orama...
             </div>
           )}
         </div>

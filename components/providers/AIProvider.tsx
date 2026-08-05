@@ -1,57 +1,80 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { create } from 'zustand';
-import { Sparkles } from 'lucide-react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
+import { AskAIPanel } from '@/components/ai/AskAIPanel';
+import type { Citation } from '@/components/ai/AICitationItem';
 
 /**
- * AI conversation state, per docs/STATE_MANAGEMENT.md's AI domain.
- * This provider hosts the panel's open/close chrome and message
- * capture only — the grounded, cited retrieval pipeline specified in
- * docs/AI_RETRIEVAL_MANIFEST.md and the full conversation experience
- * in docs/AI_CHAT_COMPONENT_SPEC.md belong to a future milestone that
- * implements those specs. Consistent with that scope boundary, a
- * submitted message is appended to the transcript as the learner's
- * own message and nothing else — no assistant reply is fabricated
- * here, since generating one without the real grounding pipeline
- * would be exactly the kind of fake implementation this build
- * excludes.
+ * AI conversation state — the single Ask AI system for the
+ * application (Milestone 4C, Priority 4). Milestone 4A built this
+ * store with an intentionally honest constraint: no assistant reply
+ * is fabricated without a real grounding pipeline. Milestone 4B
+ * separately built `components/ai/AskAIPanel.tsx` with a nicer UI
+ * (message bubbles, citations list, context scope selector) but
+ * wired it to keyword-matched canned responses presented as if they
+ * were grounded — a second, disconnected, fabricating Ask AI system.
+ *
+ * This merges them: this store remains the single source of truth
+ * (open/close, message history, in-flight state), and `AskAIPanel`
+ * is now a purely presentational consumer of it — its old
+ * `input.includes("aws")`-style branching logic is gone entirely.
+ * `docs/AI_RETRIEVAL_MANIFEST.md`'s real grounding pipeline is still
+ * a future milestone; until it exists, every submitted question gets
+ * an honest, non-fabricated status reply rather than a generated —
+ * or generated-looking — answer.
  */
 export interface AIMessage {
   id: string;
-  role: 'user';
+  /** 'status' messages are honest system notices (e.g. "not yet connected"), never a generated or fabricated answer. */
+  role: 'user' | 'status';
   content: string;
+  /** Preserved for when real retrieval exists; always empty until then. */
+  citations?: Citation[];
 }
 
 interface AIState {
   isOpen: boolean;
   messages: AIMessage[];
+  isResponding: boolean;
   open: () => void;
   close: () => void;
   sendMessage: (content: string) => void;
 }
 
+const NOT_CONNECTED_NOTICE = 'Grounded retrieval not yet connected.';
+
 export const useAIStore = create<AIState>((set) => ({
   isOpen: false,
   messages: [],
+  isResponding: false,
   open: () => set({ isOpen: true }),
   close: () => set({ isOpen: false }),
-  sendMessage: (content) =>
-    set((state) => ({
-      messages: [...state.messages, { id: crypto.randomUUID(), role: 'user', content }],
-    })),
+  sendMessage: (content) => {
+    const userMessage: AIMessage = { id: crypto.randomUUID(), role: 'user', content };
+    set((state) => ({ messages: [...state.messages, userMessage], isResponding: true }));
+
+    // Brief, honestly-labeled UI pacing so the loading state is
+    // visible — not a simulated "thinking" delay standing in for
+    // real inference. docs/AI_RETRIEVAL_MANIFEST.md's retrieval
+    // pipeline is what actually generates an answer in a future
+    // milestone; until then this notice is the only reply.
+    setTimeout(() => {
+      set((state) => ({
+        messages: [
+          ...state.messages,
+          { id: crypto.randomUUID(), role: 'status', content: NOT_CONNECTED_NOTICE, citations: [] },
+        ],
+        isResponding: false,
+      }));
+    }, 300);
+  },
 }));
 
 export function AIProvider({ children }: { children: React.ReactNode }) {
   const isOpen = useAIStore((state) => state.isOpen);
-  const messages = useAIStore((state) => state.messages);
   const open = useAIStore((state) => state.open);
   const close = useAIStore((state) => state.close);
-  const sendMessage = useAIStore((state) => state.sendMessage);
-
-  const [draft, setDraft] = useState('');
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -69,65 +92,10 @@ export function AIProvider({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    const trimmed = draft.trim();
-    if (!trimmed) return;
-    sendMessage(trimmed);
-    setDraft('');
-  }
-
   return (
     <>
       {children}
-      <Sheet open={isOpen} onOpenChange={(next) => (next ? open() : close())}>
-        <SheetContent side="right" className="flex w-full max-w-sm flex-col">
-          <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
-              <Sparkles className="size-4 text-fd-primary" />
-              Ask AI
-            </SheetTitle>
-          </SheetHeader>
-
-          <div className="flex-1 overflow-y-auto px-4">
-            {messages.length === 0 ? (
-              <p className="pt-8 text-center text-sm text-fd-muted-foreground">
-                Ask a question about anything in the Knowledge OS.
-              </p>
-            ) : (
-              <ul className="flex flex-col gap-3 py-4">
-                {messages.map((message) => (
-                  <li
-                    key={message.id}
-                    className="ml-auto max-w-[85%] rounded-lg bg-fd-primary px-3 py-2 text-sm text-fd-primary-foreground"
-                  >
-                    {message.content}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <form onSubmit={handleSubmit} className="flex gap-2 border-t border-fd-border p-4">
-            <textarea
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' && !event.shiftKey) {
-                  event.preventDefault();
-                  handleSubmit(event);
-                }
-              }}
-              placeholder="Ask a question…"
-              rows={2}
-              className="flex-1 resize-none rounded-md border border-fd-border bg-fd-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-fd-ring"
-            />
-            <Button type="submit" size="icon" aria-label="Send">
-              <Sparkles />
-            </Button>
-          </form>
-        </SheetContent>
-      </Sheet>
+      <AskAIPanel open={isOpen} onOpenChange={(next) => (next ? open() : close())} />
     </>
   );
 }

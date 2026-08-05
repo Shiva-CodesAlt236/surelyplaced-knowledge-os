@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LucideIcon, FileQuestion } from "lucide-react"
@@ -11,6 +12,8 @@ export interface MetricEmptyStateProps {
   description: string
   actionLabel?: string
   onAction?: () => void
+  /** Real internal route to navigate to. Preferred over `onAction` for empty states that should link somewhere (e.g. "Browse modules"). */
+  actionHref?: string
 }
 
 export function MetricEmptyState({
@@ -19,6 +22,7 @@ export function MetricEmptyState({
   description,
   actionLabel,
   onAction,
+  actionHref,
 }: MetricEmptyStateProps) {
   return (
     <Card className="border-dashed">
@@ -30,7 +34,14 @@ export function MetricEmptyState({
         <p className="text-xs text-muted-foreground mt-1 max-w-xs">
           {description}
         </p>
-        {actionLabel && onAction && (
+        {actionLabel && actionHref && (
+          <Link href={actionHref} className="mt-4">
+            <Button variant="outline" size="sm" className="text-xs">
+              {actionLabel}
+            </Button>
+          </Link>
+        )}
+        {actionLabel && onAction && !actionHref && (
           <Button
             variant="outline"
             size="sm"
