@@ -22,6 +22,8 @@ import { PracticeBox } from '@/components/learning/PracticeBox';
 import { CallScorecard } from '@/components/learning/CallScorecard';
 import { EstimatedTime } from '@/components/learning/EstimatedTime';
 import { ModuleCompletion } from '@/components/learning/ModuleCompletion';
+import { ManagerTip } from '@/components/learning/ManagerTip';
+import { DecisionTree } from '@/components/learning/DecisionTree';
 
 /**
  * MDX-available interactive learning components.
@@ -39,6 +41,8 @@ const learningComponents = {
   CallScorecard,
   EstimatedTime,
   ModuleCompletion,
+  ManagerTip,
+  DecisionTree,
 };
 
 interface PageProps {
