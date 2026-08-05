@@ -1,15 +1,15 @@
 ---
 title: "Handling Price Objections"
-description: "A taxonomy of the distinct ways price objections show up, and how investment psychology applies to each one differently."
+description: "The four distinct shapes a price objection commonly takes, and how to respond to each one differently rather than with one generic answer."
 slug: "handling-price-objections"
 type: "article"
 category: "Pricing & Investment Psychology"
 audience: "Admissions Advisors"
 funnel_stage: "Cross-Stage"
 countries: ["US", "Canada", "UK"]
-version: "1.0"
-last_updated: "2026-07-31"
-owner: "Documentation Architect"
+version: "2.0"
+last_updated: "2026-08-05"
+owner: "Chief Sales Trainer"
 status: "living-example"
 tags: ["pricing", "objection", "value", "cross-stage"]
 related: ["price-objection", "investment-psychology", "roi-conversations"]
@@ -17,84 +17,196 @@ related: ["price-objection", "investment-psychology", "roi-conversations"]
 
 # Handling Price Objections
 
-> This is a sales playbook, not a pricing document. This article does not state or imply any specific price, discount, or financing term anywhere. See [Price Objection](/docs/objections/price-objection) for the core objection-handling framework this article builds on — this article goes a layer deeper into the specific shapes a price objection can take.
+"It's too expensive" can mean four genuinely different things. Responding to the wrong one wastes the conversation.
 
-## Purpose
+## Lesson Objective
 
-[Price Objection](/docs/objections/price-objection) covers the core framework for responding to cost-related pushback. This article goes further: price objections aren't one thing, and the specific shape an objection takes tells you something important about what's actually going on. This article breaks down the common variants and how investment psychology (see [Investment Psychology](/docs/pricing/investment-psychology)) applies differently to each.
+- Distinguish affordability, comparison, value-uncertainty, and proxy objections
+- Match each variant to a genuinely different response, not one rehearsed rebuttal
+- Recognize when cost is standing in for guilt or fear, not a real financial constraint
 
-## Learning Objectives
+<EstimatedTime readingMinutes={9} practiceMinutes={12} />
 
-- Distinguish between at least four distinct shapes a price objection commonly takes
-- Match each variant to the psychological pattern most likely driving it
-- Respond to each variant with a genuinely different approach, rather than one generic price response
-- Recognize when a price objection is actually a proxy for a different, unstated concern
-- Avoid treating a comparison to a cheaper alternative as automatically resolvable through argument
+<ConversationTimeline currentStage="Objections" />
 
-## Candidate Mindset
+## Full Conversation Viewer
 
-A candidate saying "it's too expensive" could mean any of several different things, and the words alone rarely distinguish between them. Sometimes it's a straightforward affordability constraint. Sometimes it's a comparison against a cheaper, and possibly quite different, alternative. Sometimes it's genuine uncertainty about whether the value justifies the cost. And sometimes, as covered in [Investment Psychology](/docs/pricing/investment-psychology), it's guilt or fear expressing itself through the most socially acceptable channel — the number.
+Rahul's objection sounds simple at first. Figuring out which of the four variants it actually is changes everything about the right response.
 
-## Advisor Mindset
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  callDuration="8:50"
+  visaStatus="F1 OPT"
+  leadSource="Referral"
+  difficulty="Advanced"
+  expectedOutcome="The specific variant of the objection gets diagnosed before Aayush responds to it"
+  messages={[
+    { sender: "candidate", text: "Honestly, this feels like too much.", mood: "hesitant" },
+  ]}
+/>
 
-The instinct to respond to "it's too expensive" with a single, rehearsed rebuttal is strong, but it treats a genuinely varied set of underlying concerns as if they were one thing. An advisor's real skill here is diagnostic, not persuasive — figuring out which variant is actually in play before responding, rather than responding to the words alone.
+<DecisionPoint
+  context={`"Too much" alone doesn't say whether this is about affordability, a comparison to something cheaper, doubt about value, or something emotional underneath the number.`}
+  prompt="What should Aayush say next?"
+  bestAnswer="When you say too much, is that about the number itself, or about where things stand for you financially right now — or is it more that you're not sure yet whether it's worth it?"
+/>
 
-## When To Use
+<DecisionTree
+  situation="Rahul says 'this feels like too much' — which variant is actually in play, and how should Aayush respond?"
+  branches={[
+    { label: "Genuine affordability constraint", outcome: "Deserves the most direct honesty — respect it as real, don't reframe it as a mindset problem to talk through.", quality: "best" },
+    { label: "Comparison to a cheaper alternative", outcome: "Deserves a conversation about what's actually included in the comparison, not a defensive reaction or disparagement of the alternative.", quality: "acceptable" },
+    { label: "Value-uncertainty — not sure it's worth it yet", outcome: "Deserves a return to the specific value already discussed, reconnected to Rahul's own goals — not a repeated, louder pitch.", quality: "acceptable" },
+    { label: "Proxy for guilt or fear", outcome: "Deserves the Investment Psychology approach — acknowledging the emotional layer directly rather than continuing to argue about the number.", quality: "best" },
+  ]}
+  note="All four are legitimate. The mistake isn't picking the 'wrong' branch — it's not asking which branch you're actually in before responding."
+/>
 
-- Any time a candidate raises a cost objection, as a way of identifying which specific variant is actually present
-- When a rehearsed price response doesn't seem to be landing, which often means the wrong variant was assumed
-- When training a newer advisor to move past a single, generic price rebuttal
+<ManagerTip from="Aayush" priority="important">
+The instinct to reach for one rehearsed price rebuttal is strong. Resist it — diagnose which variant is actually present before responding to any of them.
+</ManagerTip>
 
-## Recommended Conversation Framework
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "Honestly, I think it's more that I'm not fully sure it's worth it yet. I haven't seen enough to know." },
+    { sender: "rep", text: "That's fair, and worth taking seriously rather than brushing past. Let's go back to what you told me you actually need out of this, and I'll connect it specifically rather than just repeating the pitch.", annotation: "Value-uncertainty gets a value-uncertainty response, not a generic one" },
+  ]}
+/>
 
-**The affordability objection** ("I genuinely can't afford this right now") deserves the most direct honesty. If this is real, it's real — respect it, and don't try to reframe genuine financial constraint as a mindset problem to be talked through.
+## Coaching Notes
 
-**The comparison objection** ("X is cheaper") deserves a conversation about what's actually being compared, not a defensive reaction. Ask what the candidate understands about what the cheaper alternative includes, and let genuine differences speak for themselves rather than disparaging the other option.
+<CoachingNotes title="Coaching Notes">
+Your real skill here is diagnostic, not persuasive. Figuring out which variant is in play matters more than any rebuttal you could give.
+</CoachingNotes>
 
-**The value-uncertainty objection** ("I'm not sure this is worth it") deserves a return to the specific value already discussed, reconnected to the candidate's own goals — see [ROI Conversations](/docs/pricing/roi-conversations) for how to do this without ever citing a specific figure.
-
-**The proxy objection** (cost is standing in for guilt, fear, or a deeper unresolved doubt) deserves the approach laid out in [Investment Psychology](/docs/pricing/investment-psychology) — acknowledging the emotional layer directly rather than continuing to argue about the number.
-
-## Discovery Questions
-
-1. "When you say it feels like too much, is that about the number itself, or about where things stand for you financially right now?"
-2. "You mentioned another option — what do you know about what that actually includes?"
-3. "Is it more that the cost feels high, or that you're not yet sure it's worth it — those are different things, and I want to respond to the right one."
-4. "Is there something underneath this that feels bigger than the number itself?"
-
-## Buying Signals
-
-- The candidate engages specifically with the distinction being asked about, rather than repeating the same vague objection
-- Once the correct variant is identified and addressed, the candidate's tone shifts toward genuine consideration rather than continued deflection
-- The candidate volunteers more detail once they sense the advisor is trying to understand the real concern, not just overcome an objection
-
-## Risk Signals
-
-- The candidate's objection doesn't resolve no matter which variant is addressed, suggesting the real concern hasn't surfaced yet
-- The affordability objection seems to reflect genuine financial strain rather than ordinary hesitation — see [Pricing Red Flags](/docs/pricing/pricing-red-flags)
-- The candidate becomes more guarded, not less, as the conversation continues, which may signal the approach itself needs to change
+<CoachingNotes title="Why This Worked">
+Rahul's objection turned out to be value-uncertainty, not affordability or comparison. Responding with reassurance about affordability, which would have been the reflexive move, would have completely missed it.
+</CoachingNotes>
 
 ## Common Mistakes
 
-- Responding to every price objection with the same rehearsed answer regardless of which variant is actually present
-- Treating a genuine affordability constraint as something to be reasoned past
-- Disparaging a cheaper alternative instead of having an honest, specific comparison
-- Missing a proxy objection and continuing to argue about the number when the real issue is emotional
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Responding to every price objection with the same rehearsed answer", description: "Treats four genuinely different concerns as if they were one thing.", correction: "Diagnose the variant first, every time." },
+    { title: "Treating a genuine affordability constraint as a mindset problem", description: "If it's real, it's real — reasoning past it doesn't help.", correction: "Respect a genuine affordability limit directly." },
+    { title: "Disparaging a cheaper alternative in a comparison objection", description: "Turns an honest comparison into a defensive argument.", correction: "Ask what the candidate understands the alternative includes, let real differences speak for themselves." },
+    { title: "Missing a proxy objection and arguing about the number", description: "When the real issue is guilt or fear, arguing about price doesn't resolve anything.", correction: "Recognize the emotional layer and respond to that instead." },
+  ]}
+/>
 
-## Ethical Guidelines
+## Roleplay
 
-Diagnosing the type of objection is meant to produce a more honest, relevant response — never a more effective way to pressure a reluctant candidate. If the honest answer, once the real concern is understood, is that this isn't the right time or fit, that's a legitimate outcome, not a failure to find the right rebuttal.
+### Easy
 
-## Related Articles
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  visaStatus="US Citizen"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "I found another program that's cheaper. Why should I pick this one?" },
+  ]}
+/>
 
-- [Price Objection](/docs/objections/price-objection) — the core framework this article extends into specific variants
-- [Investment Psychology](/docs/pricing/investment-psychology) — the psychological foundation behind the proxy objection variant
-- [ROI Conversations](/docs/pricing/roi-conversations) — the recommended approach for the value-uncertainty variant
+<RoleplayCard
+  scenario="Comparison objection against a cheaper alternative"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — straightforward comparison to a cheaper alternative"
+  objective="Understand the comparison before responding, without disparaging the other option"
+  successCriteria="Advisor asks what she understands the cheaper option includes rather than getting defensive"
+  hints={["Don't criticize the other program", "Ask what she knows about what it actually includes"]}
+  recommendedAnswer="Fair thing to bring up — what do you know about what that includes? I want to make sure we're actually comparing the same thing."
+/>
 
-## Key Takeaways
+### Medium
 
-"It's too expensive" can mean genuine affordability strain, an unfair comparison, real uncertainty about value, or an emotional concern wearing a financial costume — and each deserves a different, honest response. Diagnose which one is actually present before responding, and never use that diagnosis to pressure rather than understand.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Priya"
+  appearance="phone"
+  visaStatus="H1B"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "I'm just not sure it's worth what you're asking, honestly." },
+  ]}
+/>
 
-## Tags
+<RoleplayCard
+  scenario="Value-uncertainty objection, no affordability or comparison mentioned"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Priya — genuine uncertainty about value, not affordability"
+  objective="Reconnect to her specific goals rather than repeating the pitch"
+  successCriteria="Advisor returns to Priya's own stated goals rather than a generic value pitch"
+  hints={["Don't repeat the same pitch louder", "Reconnect to what she's already told you she wants"]}
+  recommendedAnswer="That's worth taking seriously. Let's go back to what you told me you're actually trying to solve for — does what we've covered connect to that, or is something still missing?"
+/>
 
-`pricing` · `objection` · `value` · `cross-stage`
+### Difficult
+
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  visaStatus="Laid Off — no visa complexity"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "It's just... a lot of money right now, you know?" },
+  ]}
+/>
+
+<RoleplayCard
+  scenario="Objection that sounds like affordability but is actually a proxy for guilt about spending after a layoff"
+  difficulty="Expert"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Akash — words sound like affordability, but the real driver is guilt, consistent with his layoff-related loss aversion"
+  objective="Recognize this might be a proxy objection and check gently rather than assuming pure affordability"
+  context="Akash has already named guilt about spending on himself in a related conversation. This objection could be affordability, or could be that same guilt wearing a price costume."
+  successCriteria="Advisor checks which one this actually is instead of assuming affordability by default"
+  hints={["Don't assume this is purely about affordability", "Ask gently which one it actually is"]}
+  recommendedAnswer="That's fair to say either way — can I ask, is it that the number itself is genuinely out of reach right now, or does it feel more like a hard thing to justify spending on yourself at all after everything?"
+  managerTip="Akash's guilt has shown up before in how he talks about spending on himself. A price objection from him deserves a check for that pattern, not an automatic affordability response."
+/>
+
+## Practice Exercise
+
+<PracticeBox
+  prompt="Candidate says 'this feels like too much.' Write your diagnostic question."
+  recommendedAnswer="Is that about the number itself, about how it compares to something else, or more that you're not sure yet it's worth it?"
+/>
+
+<PracticeBox
+  prompt="Candidate names a specific cheaper alternative. Write your response without disparaging it."
+  recommendedAnswer="What do you know about what that includes? I want to make sure we're comparing the same thing fairly."
+/>
+
+<PracticeBox
+  prompt="Candidate's objection sounds financial but might be guilt. Write your gentle check."
+  recommendedAnswer="Is the number genuinely out of reach, or does it feel more like a hard thing to justify spending on yourself right now?"
+/>
+
+## Quick Reference Cheat Sheet
+
+<QuickReferencePanel
+  title="Handling Price Objections — Four Variants"
+  items={[
+    { label: "Affordability", value: "Real — respect it, don't reason past it" },
+    { label: "Comparison", value: "Understand what's included, never disparage the alternative" },
+    { label: "Value-uncertainty", value: "Reconnect to the candidate's own stated goals" },
+    { label: "Proxy (guilt/fear)", value: "Acknowledge the emotion, not the number" },
+    { label: "Always", value: "Diagnose the variant before responding to any of them" },
+  ]}
+/>
+
+## Module Completion
+
+<ModuleCompletion />
