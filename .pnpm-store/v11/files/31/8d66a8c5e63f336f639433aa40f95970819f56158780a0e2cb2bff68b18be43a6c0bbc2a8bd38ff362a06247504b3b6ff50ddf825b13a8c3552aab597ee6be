@@ -1,2 +1,0 @@
-import { n as isMarkdownPreferred, r as rewritePath, t as getNegotiator } from "../negotiation-Bdf_-s58.js";
-export { getNegotiator, isMarkdownPreferred, rewritePath };

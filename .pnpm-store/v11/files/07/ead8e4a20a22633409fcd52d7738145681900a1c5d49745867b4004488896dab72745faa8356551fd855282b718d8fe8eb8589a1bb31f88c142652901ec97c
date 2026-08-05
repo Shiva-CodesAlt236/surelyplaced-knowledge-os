@@ -1,2 +1,0 @@
-import { a as MetaMethods, i as InternalTypeConfig, n as DocMethods, r as FileInfo, t as DocData } from "../types-DWoea9Sq.js";
-export { DocData, DocMethods, FileInfo, InternalTypeConfig, MetaMethods };

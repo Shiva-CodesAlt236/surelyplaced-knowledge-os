@@ -1,2 +1,0 @@
-import { a as sync, i as setIndexSettings, n as DocumentRecord, o as updateDocuments, r as SyncOptions, t as BaseIndex } from "../algolia-C0E5qQhM.js";
-export { BaseIndex, DocumentRecord, SyncOptions, setIndexSettings, sync, updateDocuments };

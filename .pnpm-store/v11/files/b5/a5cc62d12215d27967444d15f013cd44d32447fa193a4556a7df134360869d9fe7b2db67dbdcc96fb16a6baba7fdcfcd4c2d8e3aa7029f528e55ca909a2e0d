@@ -1,2 +1,0 @@
-import { g as dynamicLoader, h as DynamicLoaderConfig, m as DynamicLoader } from "../index-sdv2T3z92.js";
-export { DynamicLoader, DynamicLoaderConfig, dynamicLoader };
