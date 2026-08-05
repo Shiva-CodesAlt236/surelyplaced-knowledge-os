@@ -10,6 +10,37 @@ import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { Metadata } from 'next';
 import { LessonViewer } from '@/components/learning/LessonViewer';
 
+/* ── Interactive Learning Widgets (Milestone 5) ────────────────── */
+import { ConversationViewer } from '@/components/learning/ConversationViewer';
+import { RoleplayCard } from '@/components/learning/RoleplayCard';
+import { DecisionPoint } from '@/components/learning/DecisionPoint';
+import { CoachingNotes } from '@/components/learning/CoachingNotes';
+import { ConversationTimeline } from '@/components/learning/ConversationTimeline';
+import { QuickReferencePanel } from '@/components/learning/QuickReferencePanel';
+import { MistakesPanel } from '@/components/learning/MistakesPanel';
+import { PracticeBox } from '@/components/learning/PracticeBox';
+import { CallScorecard } from '@/components/learning/CallScorecard';
+import { EstimatedTime } from '@/components/learning/EstimatedTime';
+import { ModuleCompletion } from '@/components/learning/ModuleCompletion';
+
+/**
+ * MDX-available interactive learning components.
+ * Content authors (Claude) use these tag names directly inside .mdx files.
+ */
+const learningComponents = {
+  ConversationViewer,
+  RoleplayCard,
+  DecisionPoint,
+  CoachingNotes,
+  ConversationTimeline,
+  QuickReferencePanel,
+  MistakesPanel,
+  PracticeBox,
+  CallScorecard,
+  EstimatedTime,
+  ModuleCompletion,
+};
+
 interface PageProps {
   params: Promise<{ slug?: string[] }>;
 }
@@ -35,17 +66,6 @@ export default async function Page(props: PageProps) {
     <DocsPage toc={page.data.toc}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
-      {/*
-        Extends fumadocs' own DocsPage with the Academy-specific
-        chrome it doesn't provide — bookmark/completion controls and
-        a personal notes panel — rather than duplicating it
-        (Milestone 4C, Priority 7). `showTitle={false}` because
-        DocsTitle/DocsDescription above already render the title;
-        readingTimeMinutes/difficulty are intentionally omitted since
-        this codebase doesn't compute real values for either, and a
-        fixed placeholder shown identically on every one of the 341
-        articles would itself be fabricated per-article metadata.
-      */}
       <LessonViewer
         title={page.data.title}
         articleSlug={articleSlug}
@@ -53,7 +73,7 @@ export default async function Page(props: PageProps) {
         showTitle={false}
       >
         <DocsBody>
-          <MDX components={{ ...defaultMdxComponents }} />
+          <MDX components={{ ...defaultMdxComponents, ...learningComponents }} />
         </DocsBody>
       </LessonViewer>
     </DocsPage>
