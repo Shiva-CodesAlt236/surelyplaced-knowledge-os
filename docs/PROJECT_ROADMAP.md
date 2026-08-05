@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-05 (Closing Calls Lessons Engineering Validation Complete)
+**Last updated:** 2026-08-05 (Objection Handling Lessons Engineering Validation Complete)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Engineering Validation Complete for Closing Calls Modules — Verified MDX compilation, TypeScript types, 348 SSG page generation, widget reuse & props, mobile responsiveness, accessibility, theme compatibility, and zero lint errors across `content/docs/closing/`. All educational content preserved untouched per engineering boundaries.
+Engineering Validation Complete for Objection Handling Modules — Verified MDX compilation, TypeScript types, 348 SSG page generation, widget reuse & props, mobile responsiveness, accessibility, theme compatibility, and zero lint errors across 9 articles in `content/docs/objections/`. All educational content preserved untouched per engineering boundaries.
 
 ## Latest Git Commit
 
-`ba38793` — "feat(closing): integrate updated closing calls MDX lessons"
+`618ad26` — "feat(objections): integrate updated objection handling MDX lessons"
 
 ## Repository Version
 
@@ -94,6 +94,7 @@ Engineering Validation Complete for Closing Calls Modules — Verified MDX compi
 - [x] Learning Experience & UI/UX Enhancements (Phone/WhatsApp modes, Typing, Mood/Visa/Lead badges, DecisionTree, ManagerTip)
 - [x] Discussion Call Modules Engineering Validation (`content/docs/discussion/*`)
 - [x] Closing Calls Modules Engineering Validation (`content/docs/closing/*`)
+- [x] Objection Handling Modules Engineering Validation (`content/docs/objections/*`)
 
 ---
 
@@ -126,8 +127,8 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
 | Total Articles (`.mdx` files) | 344 |
 | Total `meta.json` files | 31 |
-| Repository Status | Active — Closing Calls Lessons Engineering Validation Complete |
-| Latest Milestone | Closing Calls Lessons Engineering Validation (`content/docs/closing/*`) |
+| Repository Status | Active — Objection Handling Lessons Engineering Validation Complete |
+| Latest Milestone | Objection Handling Lessons Engineering Validation (`content/docs/objections/*`) |
 | Completion Status | Production Ready — 15 Sales Academy modules + 14 Candidate Intelligence collections + 62 Engineering & Release Docs + Stabilized Codebase |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
