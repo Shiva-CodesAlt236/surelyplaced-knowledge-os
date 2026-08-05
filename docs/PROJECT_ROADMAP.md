@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Milestone 4E Production Stabilization Complete — Final Release Ready)
+**Last updated:** 2026-08-05 (Milestone 5 Interactive Learning Widgets Implementation)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Milestone 4E Production Stabilization completed (`FINAL_RELEASE_REPORT.md`, Zustand store consolidation, redundant providers removed, dead components pruned, Orama search verified, 348 SSG pages compiled cleanly). Production codebase fully stabilized.
+Milestone 5 Interactive Learning Widgets implemented — 11 MDX-embeddable client components (`ConversationViewer`, `RoleplayCard`, `DecisionPoint`, `CoachingNotes`, `ConversationTimeline`, `QuickReferencePanel`, `MistakesPanel`, `PracticeBox`, `CallScorecard`, `EstimatedTime`, `ModuleCompletion`) registered in the Fumadocs MDX component map. Sales training platform UI evolution complete.
 
 ## Latest Git Commit
 
-`e28a4e4` — "feat(release): milestone 4e production stabilization"
+`33970a4` — "feat(learning): implement interactive sales training widgets for MDX embedding"
 
 ## Repository Version
 
@@ -90,6 +90,7 @@ Milestone 4E Production Stabilization completed (`FINAL_RELEASE_REPORT.md`, Zust
 - [x] Milestone 4C Real Stores, Orama Search & Grounded AI (Implementation Complete)
 - [x] Milestone 4D Production Readiness Validation & Deployment Preparation (RELEASE READY)
 - [x] Milestone 4E Production Stabilization Implementation (FINAL RELEASE READY)
+- [x] Milestone 5 Interactive Learning Widgets (Sales Training Platform UI)
 
 ---
 
