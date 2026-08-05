@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-05 (Sales Constitution Module Lessons Engineering Validation Complete)
+**Last updated:** 2026-08-05 (Sales Academy UX/Product Redesign Sprint Complete)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Engineering Validation Complete for Sales Constitution Module — Verified MDX compilation, TypeScript types, 348 SSG page generation, widget reuse & props, mobile responsiveness, accessibility, theme compatibility, and zero lint errors across 10 articles in `content/docs/sales-constitution/`. All educational content preserved untouched per engineering boundaries.
+Sales Academy UX/Product Redesign Complete — Transformed landing & overview into a structured 8-step `LearningJourneyStepper`, upgraded `RoleplayCard` into an interactive 2-step simulation mode, enhanced `DecisionPoint` and `PracticeBox` with reflection-first and self-rating feedback, expanded `ConversationViewer` with Cold Call, LinkedIn, Inbound/Outbound visual modes, and integrated Next/Prev lesson navigation in `LessonViewer`. Zero breaking changes across 349 SSG pages.
 
 ## Latest Git Commit
 
-`7368ff9` — "feat(sales-constitution): integrate updated sales constitution module MDX lessons"
+`5df64e3` — "feat(ux): implement Sales Academy UX/Product redesign, Roleplay simulation mode, and Learning Journey Stepper"
 
 ## Repository Version
 
@@ -98,6 +98,7 @@ Engineering Validation Complete for Sales Constitution Module — Verified MDX c
 - [x] Pricing Module Engineering Validation (`content/docs/pricing/*`)
 - [x] Sales Coaching Module Engineering Validation (`content/docs/sales-coaching/*`)
 - [x] Sales Constitution Module Engineering Validation (`content/docs/sales-constitution/*`)
+- [x] Sales Academy UX/Product Redesign Sprint (`LearningJourneyStepper`, Roleplay Simulation Mode, Lesson Navigation)
 
 ---
 
@@ -128,11 +129,11 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 |---|---|
 | Total Modules (top-level `content/docs/` folders) | 15 |
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
-| Total Articles (`.mdx` files) | 344 |
+| Total Articles (`.mdx` files) | 345 |
 | Total `meta.json` files | 31 |
-| Repository Status | Active — Sales Constitution Module Lessons Engineering Validation Complete |
-| Latest Milestone | Sales Constitution Module Lessons Engineering Validation (`content/docs/sales-constitution/*`) |
-| Completion Status | Production Ready — 15 Sales Academy modules + 14 Candidate Intelligence collections + 62 Engineering & Release Docs + Stabilized Codebase |
+| Repository Status | Active — Sales Academy UX/Product Redesign Complete |
+| Latest Milestone | Sales Academy UX/Product Redesign Sprint (`LearningJourneyStepper`, Roleplay Simulation Mode, Navigation Footer) |
+| Completion Status | Production Ready — 15 Sales Academy modules + 14 Candidate Intelligence collections + 62 Engineering & Release Docs + Upgraded LMS Codebase |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
