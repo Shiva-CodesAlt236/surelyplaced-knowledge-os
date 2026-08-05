@@ -1,209 +1,205 @@
 ---
 title: "Discovery Call Checklist"
-description: "A practical, running checklist for confirming a discovery call actually covered what it needed to before it ends."
+description: "A practical, running checklist for confirming an outbound discovery call actually covered what it needed to before it ends."
 slug: "discovery-call-checklist"
 type: "discovery"
 category: "Discovery Calls"
 audience: "Admissions Advisors"
 funnel_stage: "Discovery"
 countries: ["US", "Canada", "UK"]
-version: "2.0"
+version: "3.0"
 last_updated: "2026-08-05"
 owner: "Chief Sales Trainer"
 status: "living-example"
-tags: ["discovery", "checklist", "call-wrap-up", "quality"]
+tags: ["discovery", "checklist", "call-wrap-up", "outbound"]
 related: ["opening-the-discovery-call", "candidate-qualification", "understanding-candidate-goals"]
 ---
 
 # Discovery Call Checklist
 
-A discovery call is only as strong as the weakest thing you assumed instead of confirmed. This is how you close one out clean.
+A discovery call is only as strong as the weakest thing you assumed instead of confirmed. This is how you close one out clean — cold call, referral, or re-engagement alike.
 
 ## Lesson Objective
 
 - Run the checklist as a live diagnostic, not just an after-the-fact review
 - Close specific gaps with one targeted question, not a full re-interview
-- End every call with the candidate stating what happens next, in their own words
+- End every call with the candidate stating what happens next, in their own words — including which channel that follow-up will actually happen on
 
-## Estimated Time
+<EstimatedTime readingMinutes={6} practiceMinutes={8} />
 
-⏱ 5–7 minutes
-
-## Conversation Timeline
-
-| Time | Phase |
-|---|---|
-| 0:00–0:15 | Signal the transition to wrap-up |
-| 0:15–0:45 | Authorization re-check — decision point |
-| 0:45–1:10 | Goals confirmed in candidate's words |
-| 1:10–1:30 | Next steps stated back by candidate |
+<ConversationTimeline currentStage="Qualification" />
 
 ## Full Conversation Viewer
 
-**Sales Executive (Aayush):**
+Neha's call started as a WhatsApp follow-up. Wrapping it up cleanly means confirming not just what was said, but how and when they'll actually talk again.
 
-Before we wrap up — let me just check a couple of things. That okay?
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="whatsapp"
+  callDuration="2:10"
+  visaStatus="H4 EAD"
+  leadSource="WhatsApp Follow-up"
+  difficulty="Intermediate"
+  expectedOutcome="A discovery call wraps with every real gap named and a specific, channel-confirmed next step"
+  messages={[
+    { sender: "rep", text: "Before we wrap up — let me just check a couple of things. That okay?" },
+    { sender: "candidate", text: "Sure." },
+    { sender: "rep", text: "Is there anything about your work authorization that's still unclear to either of us? Earlier you mentioned you weren't fully sure how your H4 EAD ties to your husband's renewal timeline." },
+    { sender: "candidate", text: "Oh — right. No, I still need to check his exact renewal date. I don't know it off the top of my head." },
+  ]}
+/>
 
-**Candidate (Neha):**
+<DecisionPoint
+  context="This is a real, unresolved gap. Given the call itself started informally over WhatsApp, it would be easy to let this stay just as informal."
+  prompt="What should Aayush say next?"
+  bestAnswer="Good that we caught that again — I don't want us moving forward on an assumption there. I'll flag that as something to confirm before we go further."
+/>
 
-Sure.
+<ManagerTip from="Aayush" priority="important">
+An informal channel for the call doesn't earn an informal close. The gap still needs a name, an owner, and a specific way it actually gets resolved.
+</ManagerTip>
 
-**Sales Executive:**
-
-Is there anything about your work authorization that's still unclear to either of us?
-
-Earlier you mentioned you weren't fully sure how your H4 EAD ties to your husband's renewal timeline.
-
-**Candidate:**
-
-Oh — right. No, I still need to check his exact renewal date. I don't know it off the top of my head.
-
-## Decision Point
-
-⏸ **PAUSE. What should Aayush say next?**
-
-A. "No problem, we'll sort it out later."
-B. "Good that we caught that again — I don't want us moving forward on an assumption there. I'll flag that as something to confirm before we go further."
-C. "That's fine, it probably won't matter much anyway."
-
-## Correct Answer
-
-**B.**
-
-**Sales Executive:**
-
-Good that we caught that again — I don't want us moving forward on an assumption there.
-
-I'll flag that as something to confirm before we go further.
-
-Did I get a real sense of what you're actually looking for today? Or is there something I might have missed?
-
-**Candidate:**
-
-No, I think you got it — the stability thing, more than the specific title.
-
-**Sales Executive:**
-
-Good. Last thing — what's your understanding of what happens next?
-
-**Candidate:**
-
-I think... you'll follow up once I have my husband's renewal date confirmed?
-
-**Sales Executive:**
-
-Exactly right. Once that's clear, we'll pick this back up properly.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="whatsapp"
+  candidateMood="neutral"
+  messages={[
+    { sender: "rep", text: "Did I get a real sense of what you're actually looking for today? Or is there something I might have missed?" },
+    { sender: "candidate", text: "No, I think you got it — the stability thing, more than the specific title." },
+    { sender: "rep", text: "Good. Last thing — what's your understanding of what happens next, and how should I actually reach you?" },
+    { sender: "candidate", text: "I think... you'll message me on WhatsApp once I have his renewal date, and then we'll talk properly?" },
+    { sender: "rep", text: "Exactly right.", annotation: "Confirms both the content and the channel of the follow-up, not just the timing" },
+  ]}
+/>
 
 ## Coaching Notes
 
-- Don't let "I'll sort it out later" energy creep into your own tone — the gap still needs a name and an owner
-- Ask "what's your understanding of what happens next" and actually wait for the full answer
-- Keep this section brisk — it's a confirmation pass, not a new discovery round
+<CoachingNotes title="Coaching Notes">
+Don't let "I'll sort it out later" energy creep into your own tone, and don't let a casual channel make the close feel casual too — the gap still needs a name and an owner.
+</CoachingNotes>
 
-## Why This Worked
-
-- Reframes catching a gap as "good that we caught it" — teamwork, not a fault
-- Directly invites correction instead of reviewing your own notes silently
-- Makes the candidate say next steps back, not just nod along
+<CoachingNotes title="Why This Worked">
+Asking "how should I actually reach you" alongside "what happens next" confirmed the channel, not just the timing — important when the call itself started on WhatsApp rather than a scheduled call.
+</CoachingNotes>
 
 ## Common Mistakes
 
-❌ "We'll sort it out later" — leaves a real gap open with no owner
-❌ Downplaying an authorization gap as unlikely to matter
-❌ Ending the call without the candidate stating next steps themselves
-❌ Rushing the close because the call already ran long
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Letting an informal channel produce an informal close", description: "WhatsApp or a quick call still deserves a real, complete wrap-up.", correction: "Run the full checklist regardless of how the call started." },
+    { title: "Downplaying an authorization gap as unlikely to matter", description: "This category of gap can't be left to chance.", correction: "Name it, own it, and set a specific way to resolve it." },
+    { title: "Confirming timing but not channel for the follow-up", description: "Especially important for candidates first reached outbound, across different channels.", correction: "Confirm both what happens next and how you'll actually reach them." },
+    { title: "Ending the call without the candidate stating next steps themselves", description: "Advisor announcing it isn't the same as confirmed alignment.", correction: "Ask and wait for their own version." },
+  ]}
+/>
 
-## Better Alternative
+## Roleplay
 
-Weaker response: *"That's fine, it probably won't matter much anyway."*
+### Easy
 
-Why it's weaker: Authorization gaps are never "probably fine" — this is the one category of gap that can't be left to chance. Downplaying it here undoes the honesty this whole call was built on.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  candidateMood="positive"
+  messages={[
+    { sender: "candidate", text: "No, I think we covered everything." },
+  ]}
+/>
 
-## Easy Roleplay
+<RoleplayCard
+  scenario="Everything on the call went cleanly — straightforward confirmation pass"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — gave clear, confident answers throughout"
+  objective="Run the full checklist anyway, quickly but completely"
+  successCriteria="Advisor doesn't accept 'we covered everything' as a substitute for their own quick verification"
+  hints={["Her read isn't a substitute for your own check", "Run it quickly, but completely"]}
+  recommendedAnswer="Good to hear — let me just run through my own quick check too, so we're both sure."
+/>
 
-**Scenario:** Everything on the call went cleanly — straightforward confirmation pass.
+### Medium
 
-**Candidate:** Emily — gave clear, confident answers throughout, no ambiguity anywhere.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "I think you'll call me back next month sometime?" },
+  ]}
+/>
 
-**Conversation:**
+<RoleplayCard
+  scenario="Candidate's understanding of the follow-up timing is slightly off"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Rahul — engaged throughout, but misremembers the follow-up timing"
+  objective="Correct the misunderstanding precisely"
+  successCriteria="Advisor doesn't let a slightly-wrong answer slide just because the candidate is engaged"
+  hints={["Engagement isn't the same as accurate alignment", "Correct it precisely, not vaguely"]}
+  recommendedAnswer="Actually, let me be precise — I'll follow up in three days, once you've checked your STEM extension status. Not next month."
+/>
 
-**Sales Executive:** Before we wrap up, let me just confirm a couple of things — that work?
+### Difficult
 
-**Emily:** Of course.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  candidateMood="resistant"
+  messages={[
+    { sender: "candidate", text: "Honestly it's probably fine, can we just figure that out later? I really have to go." },
+  ]}
+/>
 
-**Sales Executive:** Is there anything about your background that's still unclear to either of us?
-
-**Emily:** No, I think we covered everything.
-
-**Decision Point:** Accept "we covered everything," or still run the full checklist?
-
-**Best Response:** Run the full checklist anyway — quickly, but completely.
-
-**Why:** "I think we covered everything" is the candidate's read, not a substitute for your own quick verification.
-
-## Medium Roleplay
-
-**Scenario:** Candidate's understanding of "what happens next" is slightly off.
-
-**Candidate:** Rahul — engaged throughout, but misremembers the follow-up timing.
-
-**Conversation:**
-
-**Sales Executive:** What's your understanding of what happens next?
-
-**Rahul:** I think you'll call me back next month sometime?
-
-**Decision Point:** Let the small misunderstanding slide since he's engaged, or correct it precisely?
-
-**Best Response:** "Actually, let me be precise — I'll follow up in three days, once you've checked your STEM extension status. Not next month."
-
-**Why:** A vague or wrong answer to "what happens next" means alignment isn't real yet, even with an engaged candidate.
-
-## Difficult Roleplay
-
-**Scenario:** Candidate is rushing to end the call and tries to wave off an unresolved gap.
-
-**Candidate:** Akash — call has run long, distracted, wants to hang up, downplays an open question.
-
-**Conversation:**
-
-**Sales Executive:** Before we finish — we still haven't confirmed your notice period. Can we spend two more minutes on that?
-
-**Akash:** Honestly it's probably fine, can we just figure that out later? I really have to go.
-
-**Decision Point:** Let it go to respect his time, or hold the line on resolving it now?
-
-**Best Response:** "I hear you, and I don't want to hold you — but this one I can't leave open, it affects your timeline. Can I text you two questions right now instead, so we close it without needing more call time?"
-
-**Why:** Running out of time is a reason to find a faster way to close the gap — not a reason to leave it open.
+<RoleplayCard
+  scenario="Candidate rushes to end the call and waves off an unresolved gap"
+  difficulty="Expert"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Akash — call has run long, distracted, wants to hang up"
+  objective="Find a faster way to close the gap rather than letting it stay open"
+  successCriteria="Advisor doesn't let the gap go and instead offers a genuinely faster resolution path"
+  hints={["Running out of time means finding a faster way, not skipping it", "Offer something concrete and quick, like a text follow-up"]}
+  recommendedAnswer="I hear you, and I don't want to hold you — but this one I can't leave open, it affects your timeline. Can I text you two questions right now instead, so we close it without needing more call time?"
+  managerTip="A rushed candidate still needs the gap closed. Find a faster channel to close it, not a reason to skip it."
+/>
 
 ## Practice Exercise
 
-1. Write your own version of the transition into wrap-up mode for a call that's run long.
-2. Candidate says: "Can we just sort the visa thing out later?" Write your response.
-3. Candidate gives a vague answer to "what happens next." Write the next 3 lines to get a precise one.
+<PracticeBox
+  prompt="Write your own version of the transition into wrap-up mode for a call that's run long."
+  recommendedAnswer="Before we finish up — a couple of quick things, that work? I'll keep it brief."
+/>
 
-## Manager Review Scorecard
+<PracticeBox
+  prompt="Candidate says 'can we just sort the visa thing out later?' Write your response."
+  recommendedAnswer="I hear you — but this one affects your timeline, so let's close it now, even quickly."
+/>
 
-| Criteria | What to Listen For | Score (1–5) |
-|---|---|---|
-| Wrap-up signaled clearly | Transition named, not abrupt | |
-| Authorization re-checked | No open gap left unnamed | |
-| Goals confirmed in candidate's words | Not just advisor's own summary | |
-| Next steps stated by candidate | Not just advisor announcing them | |
-| Time pressure handled | Gap closed fast, not skipped | |
+<PracticeBox
+  prompt="Candidate gives a vague answer to 'what happens next.' Write the next line to get a precise one, including the channel."
+  recommendedAnswer="Let's make that specific — I'll [exact action] on [exact channel], by [exact date]."
+/>
 
 ## Quick Reference Cheat Sheet
 
-- Signal the transition into wrap-up mode clearly
-- Always close authorization uncertainty before the call ends
-- Ask "is there anything I might have missed?" directly
-- Make the candidate state next steps back in their own words
-- Never say "we're basically out of time, so let's just wrap up"
-- Never say "I think we covered everything" without actually checking
-- A rushed candidate still needs the gap closed — find a faster way, not a skipped one
-- Schedule a specific follow-up for any real gap, never leave it vague
+<QuickReferencePanel
+  title="Discovery Call Checklist"
+  items={[
+    { label: "Informal channel?", value: "Still deserves a full, real close" },
+    { label: "Authorization gap", value: "Always closed before the call ends, never left vague" },
+    { label: "\"Anything I missed?\"", value: "Ask directly, every time" },
+    { label: "Next steps", value: "Candidate states it back — including the channel" },
+    { label: "Rushed candidate?", value: "Find a faster way to close the gap, not a reason to skip it" },
+  ]}
+/>
 
 ## Module Completion
 
-You've completed **Discovery Call Checklist** — the final lesson in the Discovery Calls module. Use the Mark as Complete control above to log this lesson.
+<ModuleCompletion />
+
+**Next module: Discussion.** Discovery told you who this candidate is and what they actually need. Discussion is where you introduce SurelyPlaced itself and start shaping a real recommendation around what you just learned.

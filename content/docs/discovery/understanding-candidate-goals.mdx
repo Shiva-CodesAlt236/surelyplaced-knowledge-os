@@ -1,212 +1,220 @@
 ---
 title: "Understanding Candidate Goals"
-description: "How to get past a candidate's rehearsed goal to the real need driving it."
+description: "How to get past a candidate's rehearsed goal to the real need driving it — even when the call itself is a re-engagement, months after they first went quiet."
 slug: "understanding-candidate-goals"
 type: "discovery"
 category: "Discovery Calls"
 audience: "Admissions Advisors"
 funnel_stage: "Discovery"
 countries: ["US", "Canada", "UK"]
-version: "2.0"
+version: "3.0"
 last_updated: "2026-08-05"
 owner: "Chief Sales Trainer"
 status: "living-example"
-tags: ["discovery", "goals", "motivation", "constraints"]
+tags: ["discovery", "goals", "motivation", "outbound"]
 related: ["candidate-qualification", "building-rapport", "discovery-call-checklist"]
 ---
 
 # Understanding Candidate Goals
 
-"I want to get into cloud" is not a goal. It's the first sentence of one. Find out what's underneath it before you build anything on top.
+"I want to get into cloud" is not a goal. It's the first sentence of one. Find out what's underneath it before you build anything on top — especially when the candidate's situation has changed since you last spoke.
 
 ## Lesson Objective
 
 - Tell the difference between a stated goal and the real need driving it
 - Force prioritization when a candidate names several goals at once
-- Surface constraints candidates don't volunteer unless asked directly
+- Notice when a re-engaged candidate's goal has actually shifted since the last conversation
 
-## Estimated Time
+<EstimatedTime readingMinutes={8} practiceMinutes={10} />
 
-⏱ 8–10 minutes
-
-## Conversation Timeline
-
-| Time | Phase |
-|---|---|
-| 0:00–0:20 | Stated goal, surface-level |
-| 0:20–0:50 | "Why that, specifically" — decision point |
-| 0:50–1:20 | Real motivation surfaces |
-| 1:20–1:45 | Reframe confirmed with candidate |
+<ConversationTimeline currentStage="Pain" />
 
 ## Full Conversation Viewer
 
-**Sales Executive (Aayush):**
+Akash went quiet on Aayush two months ago. He's back on the line now — laid off since then, and the goal he states first isn't quite the whole story.
 
-What's the goal, in your own words?
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  callDuration="7:20"
+  visaStatus="Laid Off — no visa complexity"
+  leadSource="Re-engagement"
+  difficulty="Advanced"
+  expectedOutcome="A re-engaged candidate's real, current motivation surfaces — different from what it might have been months ago"
+  messages={[
+    { sender: "rep", text: "Last time we spoke you were still employed — a lot's changed since then. What's the goal now, in your own words?" },
+    { sender: "candidate", text: "I want to move into cloud engineering. Seems like where the industry's heading." },
+  ]}
+/>
 
-**Candidate (Akash):**
+<DecisionPoint
+  context="This sounds like the same generic answer Aayush might have heard from anyone. Given what's actually changed for Akash since they last spoke, it's worth testing rather than accepting flat."
+  prompt="What should Aayush say next?"
+  bestAnswer="Okay — why that, specifically? What would it actually change for you if you got there?"
+/>
 
-I want to move into cloud engineering.
+<ManagerTip from="Aayush" priority="important">
+A goal stated the same way it might have been months ago deserves a fresh test, not automatic acceptance — especially when the candidate's actual circumstances have clearly changed.
+</ManagerTip>
 
-Seems like where the industry's heading.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "I guess...", pauseAfter: 1200 },
+    { sender: "candidate", text: "More job security? Cloud roles seem less likely to get cut." },
+  ]}
+/>
 
-**Sales Executive:**
+<DecisionPoint
+  context="Akash has named several possible things this move could solve. Given the layoff since they last spoke, this is the moment to find out what's actually driving it now."
+  prompt="What should Aayush say next?"
+  bestAnswer="That's useful. If you had to pick one thing this whole move needs to solve for you — is it the job security piece, or something else underneath that?"
+/>
 
-Okay — why that, specifically?
-
-What would it actually change for you if you got there?
-
-**Candidate:**
-
-I guess...
-
-More job security? Cloud roles seem less likely to get cut.
-
-## Decision Point
-
-⏸ **PAUSE. What should Aayush say next?**
-
-A. "Great, cloud is definitely in demand right now."
-B. "That's useful. If you had to pick one thing this whole move needs to solve for you — is it the job security piece, or something else underneath that?"
-C. "Okay, let's talk about which cloud certification track fits you."
-
-## Correct Answer
-
-**B.**
-
-**Sales Executive:**
-
-That's useful.
-
-If you had to pick one thing this whole move needs to solve for you —
-
-is it the job security piece, or is there something else underneath that?
-
-**Candidate:**
-
-Honestly, probably the security piece.
-
-I got laid off two years ago and I still think about it more than I'd like to admit.
-
-**Sales Executive:**
-
-That makes a lot of sense, and I'm glad you said that directly — it changes how we should think about this.
-
-Cloud engineering might genuinely be the right path. But the actual thing we need to solve for is stability, not the specific title.
-
-Does that distinction feel right to you?
-
-**Candidate:**
-
-Yeah... yeah, actually, I hadn't thought about it that way. But that's exactly it.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "Honestly, probably the security piece.", pauseAfter: 1500 },
+    { sender: "candidate", text: "I got laid off two months ago and I still think about it more than I'd like to admit." },
+    { sender: "rep", text: "That makes a lot of sense, and I'm glad you said that directly — it changes how we should think about this. Cloud engineering might genuinely be the right path. But the actual thing we need to solve for is stability, not the specific title. Does that distinction feel right to you?", annotation: "Names the reframe, then hands it back rather than asserting it" },
+    { sender: "candidate", text: "Yeah... yeah, actually, I hadn't thought about it that way. But that's exactly it." },
+  ]}
+/>
 
 ## Coaching Notes
 
-- Don't validate the surface goal ("cloud is in demand") before testing what's underneath it
-- Let the layoff disclosure land fully — don't rush to the reframe
-- End on a question, not a conclusion — "does that feel right" hands it back to him
+<CoachingNotes title="Coaching Notes">
+Don't validate the surface goal before testing what's underneath it, especially with a re-engaged candidate whose circumstances have shifted since the last conversation.
+</CoachingNotes>
 
-## Why This Worked
-
-- "Why that, specifically" is where a rehearsed answer cracks open
-- Forcing a single priority surfaces what actually matters most
-- Naming the reframe out loud, then checking it, avoids telling him who he is
+<CoachingNotes title="Why This Worked">
+"Why that, specifically" is where a rehearsed answer cracks open. Forcing a single priority surfaced what actually changed for Akash since he last spoke to Aayush — the layoff, not the industry trend.
+</CoachingNotes>
 
 ## Common Mistakes
 
-❌ Taking the first stated goal at face value
-❌ Jumping to certification tracks before the real need is confirmed
-❌ Treating "job security" as self-explanatory without asking why
-❌ Moving to program discussion before the goal is genuinely tested
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Accepting a re-engaged candidate's old goal without checking if it's still current", description: "Circumstances change; the goal stated months ago may not be the real one now.", correction: "Test the goal fresh, every time, especially after a gap." },
+    { title: "Jumping to certification tracks before the real need is confirmed", description: "Skips straight to solutioning before understanding.", correction: "Confirm the real need first." },
+    { title: "Treating 'job security' as self-explanatory without asking why", description: "The word alone doesn't reveal what's actually driving it.", correction: "Ask what it would actually change for them." },
+    { title: "Moving to program discussion before the goal is genuinely tested", description: "Locks onto a target before it's confirmed to be the right one.", correction: "Test the goal once, minimum, before moving forward." },
+  ]}
+/>
 
-## Better Alternative
+## Roleplay
 
-Weaker response: *"Okay, let's talk about which cloud certification track fits you."*
+### Easy
 
-Why it's weaker: Skips straight to solutioning before the actual need is understood. If the real driver turns out to be stability rather than the cloud title specifically, this response has already locked onto the wrong target.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "I want to move into a data analyst role. I've been doing support for two years and I'm not learning anything new anymore." },
+  ]}
+/>
 
-## Easy Roleplay
+<RoleplayCard
+  scenario="Candidate gives a clear, specific goal with reasoning already attached"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Rahul — articulate about why, goal already well-reasoned"
+  objective="Test it once, even though it's already well-articulated"
+  successCriteria="Advisor still tests the goal rather than accepting it as fully examined"
+  hints={["Even a clear goal deserves one test question", "Don't skip the test just because the reasoning sounds solid"]}
+  recommendedAnswer="That's a clear one. If you had to pick — is it more the stagnation, or specifically data as a field?"
+/>
 
-**Scenario:** Candidate gives a clear, specific goal with reasoning already attached.
+### Medium
 
-**Candidate:** Rahul — wants to move from support into a data role, articulate about why.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Priya"
+  appearance="phone"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "Honestly? More money, more respect, and something that's not so repetitive. All of it really." },
+  ]}
+/>
 
-**Conversation:**
+<RoleplayCard
+  scenario="Candidate names three goals in one breath, none prioritized"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Priya — currently in QA, names several goals at once"
+  objective="Force a single priority rather than trying to address all three"
+  successCriteria="Advisor gets to one clear priority instead of treating all three equally"
+  hints={["Multiple unprioritized goals produce an unfocused plan", "Force a real choice, kindly"]}
+  recommendedAnswer="All fair. But if you genuinely could only have one of those right now — which one would you keep?"
+/>
 
-**Sales Executive:** What's the goal, in your own words?
+### Difficult
 
-**Rahul:** I want to move into a data analyst role. I've been doing support for two years and I'm not learning anything new anymore.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "Look, before we get into all that — what does this actually cost? I don't want to waste time if it's out of budget." },
+  ]}
+/>
 
-**Decision Point:** Accept this as fully examined, or test it once?
-
-**Best Response:** "That's a clear one. If you had to pick — is it more the stagnation, or specifically data as a field?"
-
-**Why:** Even a well-articulated goal deserves one test question.
-
-## Medium Roleplay
-
-**Scenario:** Candidate names three goals in one breath, none prioritized.
-
-**Candidate:** Priya — currently in QA, wants "more money, more respect, and something less repetitive."
-
-**Conversation:**
-
-**Sales Executive:** What's the goal, in your own words?
-
-**Priya:** Honestly? More money, more respect, and something that's not so repetitive. All of it really.
-
-**Decision Point:** Try to address all three, or force a single priority?
-
-**Best Response:** "All fair. But if you genuinely could only have one of those right now — which one would you keep?"
-
-**Why:** Multiple unprioritized goals produce a plan that doesn't actually target anything.
-
-## Difficult Roleplay
-
-**Scenario:** Candidate skips goals discovery entirely and demands pricing upfront.
-
-**Candidate:** Emily — impatient, wants numbers before any discovery happens.
-
-**Conversation:**
-
-**Sales Executive:** What's the goal, in your own words?
-
-**Emily:** Look, before we get into all that — what does this actually cost? I don't want to waste time if it's out of budget.
-
-**Decision Point:** Give a number immediately, or hold the discovery sequence?
-
-**Best Response:** "Fair question, and I'll get you real numbers before this call ends — I just don't want to quote you something without knowing what you actually need first, or it won't mean anything. Two minutes on your goal, then straight to pricing?"
-
-**Why:** Refusing the question outright damages trust; answering it blind gives a meaningless number. Naming a specific, short delay — with a concrete promise to return to it — respects the request without abandoning discovery.
+<RoleplayCard
+  scenario="Candidate skips goals discovery entirely and demands pricing upfront"
+  difficulty="Expert"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — impatient, wants numbers before any discovery happens"
+  objective="Hold the discovery sequence without refusing the request outright"
+  context="Refusing outright damages trust; answering blind gives a meaningless number that doesn't actually help her."
+  successCriteria="Advisor names a specific, short delay with a concrete promise to return to pricing"
+  hints={["Don't refuse outright — that damages trust too", "Name a specific, short delay with a concrete promise"]}
+  recommendedAnswer="Fair question, and I'll get you real numbers before this call ends — I just don't want to quote you something without knowing what you actually need first. Two minutes on your goal, then straight to pricing?"
+  managerTip="A specific, short delay with a concrete promise respects the request without abandoning discovery entirely."
+/>
 
 ## Practice Exercise
 
-1. Write your own version of "what's the goal, in your own words" for a candidate who already sounds impatient.
-2. Candidate says: "Why do you need to know why? Just tell me if you can help." Write your response.
-3. Candidate names two goals that seem to contradict each other. Write the next 3 lines helping them prioritize.
+<PracticeBox
+  prompt="A re-engaged candidate repeats a goal they stated months ago. Write your question testing whether it's still current."
+  recommendedAnswer="A lot's changed since we last spoke — is that still the actual goal, or has something shifted?"
+/>
 
-## Manager Review Scorecard
+<PracticeBox
+  prompt="Candidate names two goals that seem to contradict each other. Write your next line helping them prioritize."
+  recommendedAnswer="Those pull in different directions a bit — if you had to pick one to solve first, which would it be?"
+/>
 
-| Criteria | What to Listen For | Score (1–5) |
-|---|---|---|
-| Own-words goal asked first | Didn't assume or lead the answer | |
-| "Why that, specifically" used | Tested the stated goal, didn't accept it flat | |
-| Prioritization forced | Got to one thing when multiple goals appeared | |
-| Constraint surfaced | Asked about timing/money/family directly | |
-| Reframe confirmed | Checked the read back with the candidate | |
+<PracticeBox
+  prompt="Candidate asks for pricing before any real discovery has happened. Write your response, naming a specific short delay."
+  recommendedAnswer="I'll get you real numbers before this call ends — two minutes on your goal first, then straight to pricing?"
+/>
 
 ## Quick Reference Cheat Sheet
 
-- Ask for the goal in their own words first
-- "Why that, specifically?" is where the real answer surfaces
-- Force a single priority when multiple goals show up
-- Ask about constraints directly — timing, money, family
-- Hold the first answer loosely until it's been tested once
-- Never say "that's not really a good enough reason"
-- Never promise a specific goal is guaranteed to be achieved
-- A goal that shifts mid-call is often the truer one — name it gently
-- If asked for pricing early, promise a specific return point — don't dodge or cave
+<QuickReferencePanel
+  title="Understanding Candidate Goals"
+  items={[
+    { label: "Ask for the goal", value: "In their own words, first" },
+    { label: "\"Why that, specifically?\"", value: "Where the real answer surfaces" },
+    { label: "Re-engaged candidate?", value: "Test the goal fresh — don't assume it's unchanged" },
+    { label: "Multiple goals named", value: "Force a single priority" },
+    { label: "Asked for pricing early?", value: "Promise a specific return point, don't dodge or cave" },
+  ]}
+/>
 
 ## Module Completion
 
-You've completed **Understanding Candidate Goals**. Use the Mark as Complete control above to log this lesson.
+<ModuleCompletion />
+
+**Next: Discovery Call Checklist.** Once you know what a candidate actually needs, the last step of Discovery is making sure nothing important got left unconfirmed before the call ends.

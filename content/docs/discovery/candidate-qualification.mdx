@@ -1,212 +1,216 @@
 ---
 title: "Candidate Qualification"
-description: "How to confirm work authorization and IT background honestly before any conversation about fit goes further."
+description: "How to confirm work authorization and IT background honestly — including when a referral's warmth makes you want to skip the real check."
 slug: "candidate-qualification"
 type: "discovery"
 category: "Discovery Calls"
 audience: "Admissions Advisors"
 funnel_stage: "Discovery"
 countries: ["US", "Canada", "UK"]
-version: "2.0"
+version: "3.0"
 last_updated: "2026-08-05"
 owner: "Chief Sales Trainer"
 status: "living-example"
-tags: ["discovery", "qualification", "work-authorization", "eligibility"]
+tags: ["discovery", "qualification", "work-authorization", "outbound"]
 related: ["understanding-candidate-goals", "opening-the-discovery-call", "discovery-call-checklist"]
 ---
 
 # Candidate Qualification
 
-Not every candidate who calls is a fit. Your job is to find out fast and honestly — not talk everyone into believing they qualify.
+A referral feels like it's already vetted — a friend sent them, so surely they're a fit. That feeling is exactly what makes referrals the easiest place to skip a check you'd never skip on a cold call.
 
 ## Lesson Objective
 
-- Confirm work authorization without it feeling like an interrogation
-- Get a real, concrete picture of IT background — not just enthusiasm
-- Say "this isn't a fit" clearly and kindly when that's the honest answer
+- Confirm work authorization without it feeling like an interrogation, referral or not
+- Get a real, concrete picture of IT background — not just enthusiasm or a friend's endorsement
+- Say "this isn't a fit" clearly and kindly when that's the honest answer, even for a referral
 
-## Estimated Time
+<EstimatedTime readingMinutes={8} practiceMinutes={10} />
 
-⏱ 8–10 minutes
-
-## Conversation Timeline
-
-| Time | Phase |
-|---|---|
-| 0:00–0:20 | Authorization status, in candidate's own words |
-| 0:20–0:50 | Specific follow-up — decision point |
-| 0:50–1:20 | Park the gap, move to IT background |
-| 1:20–1:40 | Confirm concrete experience |
+<ConversationTimeline currentStage="Qualification" />
 
 ## Full Conversation Viewer
 
-**Sales Executive (Aayush):**
+Priya was referred by a friend who enrolled last year. The referral already trusts SurelyPlaced — which is exactly why qualification still has to happen properly.
 
-Just so I have this right — what's your current work authorization status, in your own words?
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Priya"
+  appearance="phone"
+  callDuration="6:40"
+  visaStatus="H1B"
+  leadSource="Referral"
+  difficulty="Intermediate"
+  expectedOutcome="A referral's built-in warmth doesn't skip the real qualification check"
+  messages={[
+    { sender: "candidate", text: "Yeah, my friend Ankita said you guys were really good, so I figured I'd just sign up." },
+  ]}
+/>
 
-**Candidate (Priya):**
+<DecisionPoint
+  context="Priya sounds ready to skip straight to enrolling, on trust in her friend's experience alone. The temptation is to match that energy and skip qualification."
+  prompt="What should Aayush say next?"
+  bestAnswer="Glad to hear Ankita's experience was good — I still want to go through the same real check I'd do with anyone, so we're actually confirming this fits you specifically, not just going on her experience."
+/>
 
-I'm on H1B. My employer's my sponsor.
+<ManagerTip from="Aayush" priority="important">
+A referral's trust is a gift, not a shortcut. Skipping qualification because someone else vouched for you can lead a genuinely wrong-fit candidate straight into a program that doesn't serve them.
+</ManagerTip>
 
-**Sales Executive:**
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Priya"
+  appearance="phone"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "Oh — sure, okay. I'm on H1B, my employer's the sponsor." },
+    { sender: "rep", text: "Good, that's clear. Tell me about your IT background — what have you actually worked on, day to day?" },
+    { sender: "candidate", text: "I've been doing QA for about three years. Manual testing mostly, some Selenium automation recently." },
+    { sender: "candidate", text: "Actually — I keep hearing H1B holders can't really switch tracks easily. Is that true?", mood: "hesitant" },
+  ]}
+/>
 
-Good, that's clear. And that's for the US specifically?
-
-**Candidate:**
-
-Yes, US.
-
-**Sales Executive:**
-
-Perfect. Tell me about your IT background — what have you actually worked on, day to day?
-
-**Candidate:**
-
-I've been doing QA for about three years. Manual testing mostly, some automation with Selenium recently.
-
-**Sales Executive:**
-
-That's solid, concrete experience. Is there anything about your eligibility or background you're personally unsure about?
-
-**Candidate:**
-
-Actually... yeah. I keep hearing H1B holders can't really switch tracks easily. Is that true?
-
-## Decision Point
-
-⏸ **PAUSE. What should Aayush say next?**
-
-A. "Don't worry about that, we'll figure it out."
-B. "That's a fair question — H1B does add real constraints around timing and sponsorship that we should walk through honestly, not wave away."
-C. "Everyone can make a switch work with the right approach."
-
-## Correct Answer
-
-**B.**
-
-**Sales Executive:**
-
-That's a fair question, and I'd rather answer it properly than wave it away.
-
-H1B does add real constraints — around timing, around sponsorship — that we should walk through honestly.
-
-It doesn't mean it's off the table. It means we plan around it specifically, not generally.
-
-**Candidate:**
-
-Okay, that's actually reassuring, weirdly. Nobody's been that direct about it.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Priya"
+  appearance="phone"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "rep", text: "That's a fair question, and I'd rather answer it properly than wave it away. H1B does add real constraints — around timing, around sponsorship — that we should walk through honestly. It doesn't mean it's off the table. It means we plan around it specifically.", annotation: "Doesn't let referral trust turn into vague reassurance" },
+    { sender: "candidate", text: "Okay, that's actually reassuring, weirdly. Ankita didn't mention this part, so I wasn't sure if you'd just tell me what I want to hear." },
+  ]}
+/>
 
 ## Coaching Notes
 
-- Don't rush past a direct eligibility question — it's the moment candidates are testing your honesty
-- Say "constraints," not "problems" — accurate, not alarming
-- Keep tone matter-of-fact, not apologetic
+<CoachingNotes title="Coaching Notes">
+Don't let a referral's warmth turn "constraints" into "don't worry about it." Priya's friend vouched for the experience, not for skipping the honest parts.
+</CoachingNotes>
 
-## Why This Worked
-
-- Doesn't minimize a real constraint just to keep the mood positive
-- Reframes "off the table" vs. "planned around specifically" — precise, not vague
-- Directness here is what earns the "nobody's been that direct" reaction
+<CoachingNotes title="Why This Worked">
+Priya directly names the risk this lesson exists to prevent — that referral warmth might mean getting told what she wants to hear instead of the truth. Running the real check is what avoided that.
+</CoachingNotes>
 
 ## Common Mistakes
 
-❌ "Don't worry about that, we'll figure it out" — vague reassurance, not information
-❌ "Everyone can make a switch work" — not true, and it undercuts every honest answer around it
-❌ Treating a thin IT background as disqualifying without asking what else exists
-❌ Skipping straight to program details before qualification is settled
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Skipping qualification because a referral already trusts you", description: "Trust in the referrer isn't the same as confirmed fit for the new candidate.", correction: "Run the same real check, every time, referral or not." },
+    { title: "\"Everyone can make a switch work\" — vague reassurance instead of information", description: "Not true, and candidates who've been burned before can usually tell.", correction: "State real constraints honestly, without alarm or false comfort." },
+    { title: "Treating a thin IT background as disqualifying without asking what else exists", description: "One data point isn't the whole picture.", correction: "Ask for more before concluding there isn't a fit." },
+    { title: "Skipping straight to program details before qualification is settled", description: "Especially tempting with a referral who already seems sold.", correction: "Confirm fit first, regardless of how ready they seem." },
+  ]}
+/>
 
-## Better Alternative
+## Roleplay
 
-Weaker response: *"Everyone can make a switch work with the right approach."*
+### Easy
 
-Why it's weaker: Sounds encouraging but isn't true, and candidates who've been burned before can usually tell. It trades one moment of good feeling for the whole call's credibility.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  visaStatus="US Citizen"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "US citizen, no restrictions on my end." },
+  ]}
+/>
 
-## Easy Roleplay
+<RoleplayCard
+  scenario="Candidate answers confidently and specifically on the first try"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — US Citizen, no visa complexity, clear background"
+  objective="Move forward efficiently without over-verifying"
+  successCriteria="Advisor doesn't waste goodwill re-asking something already unambiguous"
+  hints={["No ambiguity here — move forward", "Over-verifying an already-clear answer wastes rapport"]}
+  recommendedAnswer="Great, that's a clean starting point. Tell me about your IT background."
+/>
 
-**Scenario:** Candidate answers confidently and specifically on the first try.
+### Medium
 
-**Candidate:** Emily — US Citizen, no visa complexity, clear background.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  visaStatus="F1 OPT"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "Honestly, I'm not totally sure. My school mentioned an extension but I never filed anything." },
+  ]}
+/>
 
-**Conversation:**
+<RoleplayCard
+  scenario="Candidate genuinely unsure which OPT stage they're in"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Rahul — graduated 8 months ago, hasn't filed the STEM extension, unsure of his own status"
+  objective="Reward the honest uncertainty, then park the gap rather than drop it"
+  successCriteria="Advisor acknowledges the honesty and parks the gap with a specific plan to resolve it"
+  hints={["Reward honesty about uncertainty, don't just move past it", "Park it with a plan, don't leave it open-ended"]}
+  recommendedAnswer="That's good to know — I appreciate you being upfront instead of guessing. This one's worth getting clear before we go further. Can we park it and come back in a few minutes?"
+/>
 
-**Sales Executive:** What's your current work authorization status?
+### Difficult
 
-**Emily:** US citizen, no restrictions on my end.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="phone"
+  visaStatus="H4 EAD"
+  candidateMood="resistant"
+  messages={[
+    { sender: "candidate", text: "H4 EAD. But honestly, another agency told me that basically doesn't work for most placements. So I don't know why I'm even on this call." },
+  ]}
+/>
 
-**Decision Point:** Move straight to background, or verify further?
-
-**Best Response:** "Great, that's a clean starting point. Tell me about your IT background."
-
-**Why:** No ambiguity here — over-verifying wastes goodwill. Move forward.
-
-## Medium Roleplay
-
-**Scenario:** Candidate isn't sure which stage of OPT they're in.
-
-**Candidate:** Rahul — F1 OPT, graduated 8 months ago, hasn't filed the STEM extension.
-
-**Conversation:**
-
-**Sales Executive:** Do you know if that's your initial OPT period, or have you moved into the STEM extension?
-
-**Rahul:** Honestly, I'm not totally sure. My school mentioned an extension but I never filed anything.
-
-**Decision Point:** Accept the ambiguity and move on, or pause to flag it directly?
-
-**Best Response:** "That's good to know — I appreciate you being upfront instead of guessing. This one's worth getting clear before we go further. Can we park it and come back in a few minutes?"
-
-**Why:** Rewarding honesty, then parking (not dropping) the gap, keeps momentum without leaving it unresolved.
-
-## Difficult Roleplay
-
-**Scenario:** Candidate is skeptical that her status even counts, and doesn't fully trust the answer.
-
-**Candidate:** Neha — H4 EAD, previously told by another agency that her status "doesn't really work" for placement.
-
-**Conversation:**
-
-**Sales Executive:** What's your current work authorization status?
-
-**Neha:** H4 EAD. But honestly, another agency told me that basically doesn't work for most placements. So I don't know why I'm even on this call.
-
-**Sales Executive:** I hear that — and I want to be precise, not just reassuring. H4 EAD is valid work authorization; it does come with dependency on your spouse's H1B status, which is a real factor, not a disqualifier.
-
-**Neha:** So it does work?
-
-**Decision Point:** Say "yes it works" flatly, or stay precise about what "works" actually means here?
-
-**Best Response:** "It's not a flat yes or no — it means we look at your spouse's H1B timeline as part of the picture. I'd rather walk through that specifically than give you a one-word answer that turns out to be wrong."
-
-**Why:** She's been given a flat, wrong answer before. Precision — not reassurance — is what rebuilds trust with a candidate who's already been misled once.
+<RoleplayCard
+  scenario="Candidate arrives already carrying a flat, wrong answer from a previous agency"
+  difficulty="Expert"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Neha — previously told by another agency her status 'doesn't really work'"
+  objective="Be precise, not just reassuring, to rebuild trust after a prior misleading answer"
+  context="A flat 'yes it works' would repeat the same kind of oversimplified answer that damaged her trust in the first place."
+  successCriteria="Advisor stays precise about what 'works' actually means rather than giving a flat yes or no"
+  hints={["Don't just say 'yes it works' to counter the other agency", "Precision, not reassurance, rebuilds trust with someone already misled once"]}
+  recommendedAnswer="It's not a flat yes or no — it means we look at your spouse's H1B timeline as part of the picture. I'd rather walk through that specifically than give you a one-word answer that turns out to be wrong."
+  managerTip="Neha's already been given a flat, wrong answer once. Precision is what actually rebuilds trust here — not a more confident-sounding version of the same oversimplification."
+/>
 
 ## Practice Exercise
 
-1. Write your own version of the authorization question for a candidate who already sounds defensive about being asked.
-2. Candidate says: "Why do you even need to know my visa status right now?" Write your response.
-3. Candidate says: "I think I have OPT but I'm not 100% sure what stage." Write the next 3 lines.
+<PracticeBox
+  prompt="A referral says they're ready to sign up on their friend's word alone. Write your response, still running the real check."
+  recommendedAnswer="Glad to hear that — I still want to run the same check I'd do with anyone, so we confirm this actually fits you."
+/>
 
-## Manager Review Scorecard
+<PracticeBox
+  prompt="Candidate asks a direct eligibility question you need to answer honestly, not vaguely. Write your response."
+  recommendedAnswer="That's a fair question — [state the real constraint honestly]. It doesn't mean it's off the table, it means we plan around it specifically."
+/>
 
-| Criteria | What to Listen For | Score (1–5) |
-|---|---|---|
-| Own-words authorization question | Asked openly, not leading | |
-| Country confirmed | Didn't assume which country applies | |
-| Concrete background probe | Asked for specifics, not general enthusiasm | |
-| Honest constraint framing | Named real limits without alarm or false reassurance | |
-| Fit stated plainly when absent | Said "not a fit" directly if warranted | |
+<PracticeBox
+  prompt="Candidate arrives with a wrong answer from a previous agency. Write your precise correction."
+  recommendedAnswer="It's not a flat yes or no — let me walk through what actually applies to your specific situation."
+/>
 
 ## Quick Reference Cheat Sheet
 
-- Ask authorization status in the candidate's own words
-- Always confirm which country it applies to
-- Vague answer = pause and clarify, never guess
-- Ask for concrete IT detail, not general enthusiasm
-- "Anything you're personally unsure about?" surfaces the real gap
-- Never say "don't worry about the visa stuff, we'll figure it out later"
-- Never say "everyone can make this work"
-- We don't sponsor authorization — we work with candidates who already have it
-- If it's genuinely not a fit, say so directly and kindly
+<QuickReferencePanel
+  title="Candidate Qualification"
+  items={[
+    { label: "Referral trust", value: "A gift, not a shortcut — run the same real check" },
+    { label: "Ask authorization", value: "In the candidate's own words, every time" },
+    { label: "Vague answer?", value: "Pause and clarify, never guess" },
+    { label: "Never say", value: "\"Everyone can make this work\"" },
+    { label: "Not a fit?", value: "Say so directly and kindly, referral or not" },
+  ]}
+/>
 
 ## Module Completion
 
-You've completed **Candidate Qualification**. Use the Mark as Complete control above to log this lesson.
+<ModuleCompletion />
+
+**Next: Understanding Candidate Goals.** A qualified candidate still might not know what they actually want yet — the next lesson is about finding the real goal underneath the first one they say.

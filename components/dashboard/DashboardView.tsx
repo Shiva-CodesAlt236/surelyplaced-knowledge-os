@@ -5,26 +5,12 @@ import { ContinueLearningCard } from "@/components/dashboard/ContinueLearningCar
 import { RecentActivityCard } from "@/components/dashboard/RecentActivityCard"
 import { KnowledgeCheckSummaryCard } from "@/components/dashboard/KnowledgeCheckSummaryCard"
 import { QuickActionsCard } from "@/components/dashboard/QuickActionsCard"
-import { MetricEmptyState } from "@/components/dashboard/MetricEmptyState"
+import { LearningJourneyStepper } from "@/components/learning/LearningJourneyStepper"
 import { KnowledgeCheckCard } from "@/components/assessment/KnowledgeCheckCard"
-import { Sparkles, Compass } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { useSearchStore } from "@/components/providers/SearchProvider"
 import { useAIStore } from "@/components/providers/AIProvider"
 
-/**
- * Milestone 4C, Priority 2/5/8: Search and Ask AI are now each a
- * single global system (SearchProvider / AIProvider, mounted once in
- * app/layout.tsx) — this view opens them via their shared Zustand
- * stores instead of mounting its own local `SearchOverlay`/`AskAIPanel`
- * instances with local open/close state, which produced two
- * disconnected Search and AI experiences depending on which button a
- * user clicked. The two hardcoded "Active Learning Paths" cards
- * Milestone 4B shipped (fabricated completion counts, and one linking
- * to a route that doesn't resolve) are removed — there is no Learning
- * Paths data model in this codebase yet, so an honest empty state
- * replaces them rather than inventing progress numbers for paths that
- * don't exist.
- */
 export function DashboardView() {
   const openSearch = useSearchStore((state) => state.open)
   const openAI = useAIStore((state) => state.open)
@@ -61,22 +47,9 @@ export function DashboardView() {
         {/* Main Left Column (2 Cols) */}
         <div className="lg:col-span-2 space-y-6">
           <ContinueLearningCard />
+          <LearningJourneyStepper />
 
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <Compass className="h-4 w-4 text-primary" />
-              Learning Paths
-            </h3>
-            <MetricEmptyState
-              icon={Compass}
-              title="No learning paths assigned yet"
-              description="Structured learning paths aren't set up yet. In the meantime, browse the full module library directly."
-              actionLabel="Browse Modules"
-              actionHref="/browse"
-            />
-          </div>
-
-          {/* Featured Knowledge Check — real, static practice content (not fabricated user data). */}
+          {/* Featured Knowledge Check — real, static practice content */}
           <div className="space-y-2">
             <h3 className="text-sm font-bold text-foreground">Featured Knowledge Check</h3>
             <KnowledgeCheckCard

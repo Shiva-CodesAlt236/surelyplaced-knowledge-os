@@ -1,209 +1,221 @@
 ---
 title: "Building Rapport"
-description: "How to build and maintain genuine rapport with a candidate throughout a discovery call, not just at the start."
+description: "How to turn a candidate who agreed to talk into one who actually opens up — especially when the call started as a WhatsApp follow-up or a re-engagement, not a warm inbound lead."
 slug: "building-rapport"
 type: "discovery"
 category: "Discovery Calls"
 audience: "Admissions Advisors"
 funnel_stage: "Discovery"
 countries: ["US", "Canada", "UK"]
-version: "2.0"
+version: "3.0"
 last_updated: "2026-08-05"
 owner: "Chief Sales Trainer"
 status: "living-example"
-tags: ["discovery", "rapport", "listening", "trust"]
+tags: ["discovery", "rapport", "listening", "outbound"]
 related: ["opening-the-discovery-call", "candidate-qualification", "understanding-candidate-goals"]
 ---
 
 # Building Rapport
 
-Rapport isn't small talk. It's what happens when a candidate says something a little vulnerable, and watches how you react.
+You got past the opener — Rahul stayed on the line, gave you thirty honest seconds. Rapport is what happens next: turning "still on the call" into "actually talking to you."
 
 ## Lesson Objective
 
-- Respond to an answer in a way that proves you were listening
-- Use silence on purpose instead of filling it out of habit
-- Notice the exact moment a candidate's answers start getting shorter
+- Respond to a disclosure in a way that proves you were listening, not just waiting your turn
+- Use silence on purpose, especially with a candidate who's still deciding if this call is worth it
+- Notice the exact moment a guarded outbound candidate's answers start opening up — or closing further
 
-## Estimated Time
+<EstimatedTime readingMinutes={8} practiceMinutes={10} />
 
-⏱ 7–9 minutes
-
-## Conversation Timeline
-
-| Time | Phase |
-|---|---|
-| 0:00–0:20 | Candidate discloses something vulnerable, downplays it |
-| 0:20–0:50 | Advisor decision point — acknowledge or move on |
-| 0:50–1:30 | Depth question, real answer surfaces |
-| 1:30–1:50 | Reflect back, confirm read |
+<ConversationTimeline currentStage="Rapport" />
 
 ## Full Conversation Viewer
 
-**Candidate (Neha):**
+Neha replied "okay, call me" to a WhatsApp follow-up three days ago. On the actual call, that one-line reply doesn't mean she's relaxed yet.
 
-Yeah, so... it's a bit complicated. I'm on H4 EAD.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="whatsapp"
+  callDuration="6:15"
+  visaStatus="H4 EAD"
+  leadSource="WhatsApp Follow-up"
+  candidateMood="hesitant"
+  difficulty="Intermediate"
+  expectedOutcome="A guarded, WhatsApp-agreed call turns into a real, open conversation"
+  messages={[
+    { sender: "candidate", text: "Yeah, so... it's a bit complicated. I'm on H4 EAD." },
+    { sender: "candidate", text: "My husband's on H1B, so my status depends on his, kind of.", pauseAfter: 1000 },
+    { sender: "candidate", text: "It's fine, it's manageable." },
+  ]}
+/>
 
-My husband's on H1B, so my status depends on his, kind of.
+<DecisionPoint
+  context="This is a WhatsApp-agreed call — Neha said yes to a text, not necessarily to a deep conversation. 'It's fine, it's manageable' is doing a lot of covering."
+  prompt="What should Aayush say next?"
+  bestAnswer="Can you say more about that? I don't want to just note it down and move on if there's more going on."
+/>
 
-It's fine, it's manageable.
+<ManagerTip from="Aayush" priority="important">
+A candidate who agreed to a call over WhatsApp hasn't necessarily agreed to open up. Rapport still has to be earned live, on the call itself — the text reply just got you the door open.
+</ManagerTip>
 
-**Sales Executive (Aayush):**
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="whatsapp"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "I mean...", pauseAfter: 1500 },
+    { sender: "candidate", text: "It's just, every time his H1B renewal comes up, I get nervous too. Even though it's his process, not mine." },
+    { sender: "candidate", text: "It's exhausting honestly, always feeling like a plus-one on my own work authorization." },
+  ]}
+/>
 
-Can you say more about that?
-
-I don't want to just note it and move on if there's more to it.
-
-**Candidate:**
-
-I mean...
-
-It's just, every time his H1B renewal comes up, I get nervous too. Even though it's his process, not mine.
-
-It's exhausting honestly, always feeling like a plus-one on my own work authorization.
-
-## Decision Point
-
-⏸ **PAUSE. What should Aayush say next?**
-
-A. "Don't worry, H4 EAD is pretty stable these days."
-B. "That makes sense — depending on someone else's renewal for your own status sounds exhausting in a way that doesn't really go away. What's that actually been like for you day to day?"
-C. "Okay, noted. So, moving on — what's your IT background?"
-
-## Correct Answer
-
-**B.**
-
-**Sales Executive:**
-
-That makes sense.
-
-Depending on someone else's renewal for your own status — that sounds exhausting in a way that doesn't really go away.
-
-What's that actually been like for you, day to day?
-
-**Candidate:**
-
-Honestly? I second-guess every career decision through that lens. Like, "will this even matter if his status changes."
-
-**Sales Executive:**
-
-That's a really common feeling among H4 EAD candidates, and it's useful for me to know — because part of today is figuring out what's actually in your control, separate from what depends on his timeline.
-
-**Candidate:**
-
-Yeah... yeah, nobody's actually said that to me before.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="whatsapp"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "rep", text: "That makes sense. Depending on someone else's renewal for your own status — that sounds exhausting in a way that doesn't really go away. What's that actually been like, day to day?", annotation: "Turns a fact into a story instead of logging it and moving on" },
+    { sender: "candidate", text: "Honestly? I second-guess every career decision through that lens. Like, will this even matter if his status changes." },
+    { sender: "candidate", text: "...yeah. Nobody's actually said that to me before, that it's exhausting. People usually just say it'll be fine." },
+  ]}
+/>
 
 ## Coaching Notes
 
-- Don't reassure with facts ("H4 EAD is stable") before you've acknowledged the feeling
-- Let "it's fine, it's manageable" register as a downplay, not a closed topic
-- Slow your pace here — this is not a moment to move quickly through
+<CoachingNotes title="Coaching Notes">
+Don't reassure with facts before acknowledging the feeling. "It'll be fine" is what everyone else says — that's exactly why it doesn't land as rapport.
+</CoachingNotes>
 
-## Why This Worked
-
-- "Can you say more about that" costs nothing and signals the answer mattered
-- Turns a fact (H4 EAD status) into a story (what it's actually like)
-- Names the pattern as common without minimizing her specific experience
+<CoachingNotes title="Why This Worked">
+"Can you say more about that" cost nothing and signaled the disclosure mattered. A WhatsApp yes only gets you the call — this is what actually earns the conversation.
+</CoachingNotes>
 
 ## Common Mistakes
 
-❌ Reassuring with facts before acknowledging the feeling
-❌ Moving straight to the next scripted question after a disclosure
-❌ Saying "I totally understand exactly how you feel"
-❌ Comparing her to another candidate's H4 situation
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Treating a WhatsApp or text agreement as the same as live trust", description: "A reply to a message isn't the same as being ready to open up on a call.", correction: "Still earn rapport live — don't assume it's already there." },
+    { title: "Reassuring with facts before acknowledging the feeling", description: "Skips past what actually needs to be heard.", correction: "Name the feeling first, information second." },
+    { title: "Moving straight to the next scripted question after a disclosure", description: "Logs it like a form field instead of a real moment.", correction: "Pause, respond, then move forward." },
+    { title: "Saying \"I totally understand exactly how you feel\"", description: "Overclaims and can feel dismissive.", correction: "Say what you actually noticed instead of claiming full understanding." },
+  ]}
+/>
 
-## Better Alternative
+## Roleplay
 
-Weaker response: *"Okay, noted. So, moving on — what's your IT background?"*
+### Easy
 
-Why it's weaker: Logs the disclosure like a form field instead of a real moment. Neha will notice the shift instantly, and her answers get shorter for the rest of the call.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  visaStatus="F1 OPT"
+  leadSource="Cold Call — from the opening lesson"
+  candidateMood="neutral"
+  messages={[
+    { sender: "candidate", text: "Honestly the silence is the hardest part. I apply and then nothing. Not even a rejection email half the time." },
+  ]}
+/>
 
-## Easy Roleplay
+<RoleplayCard
+  scenario="Candidate opens up naturally, without much prompting, once the opener earned him"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Rahul — forthcoming, once past the initial guardedness from the cold call"
+  objective="Give one real beat of acknowledgment before moving forward"
+  successCriteria="Advisor doesn't rush past the disclosure even though Rahul volunteered it easily"
+  hints={["Even an easy disclosure deserves a real response", "Don't just move to the next question"]}
+  recommendedAnswer="That silence is honestly one of the worst parts of this whole process. What's that been like, day to day?"
+/>
 
-**Scenario:** Candidate opens up without much prompting, naturally talkative.
+### Medium
 
-**Candidate:** Rahul — F1 OPT, nervous but forthcoming.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  visaStatus="US Citizen"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "I don't know. Soon I guess." },
+  ]}
+/>
 
-**Conversation:**
+<RoleplayCard
+  scenario="Candidate's answers got shorter mid-call after opening up earlier"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — mentioned a difficult family situation earlier, has gone quieter since"
+  objective="Notice and name the shift, rather than taking the short answer at face value"
+  successCriteria="Advisor checks in on the shift rather than continuing as if nothing changed"
+  hints={["A shorter answer than before is the real signal", "Check in directly rather than pushing forward"]}
+  recommendedAnswer="I want to check in — is this pace working for you, or would it help to slow down a bit?"
+/>
 
-**Sales Executive:** What's been the hardest part of the search so far?
+### Difficult
 
-**Rahul:** Honestly the silence. I apply and then nothing. Not even a rejection email half the time.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  visaStatus="Laid Off — no visa complexity"
+  leadSource="Re-engagement"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "You mentioned the layoff earlier — is that shaping your timeline at all?" },
+    { sender: "candidate", text: "I'd rather not get into that, honestly." },
+  ]}
+/>
 
-**Decision Point:** Move to the next question, or sit with this one beat longer?
-
-**Best Response:** "That silence is honestly one of the worst parts of this whole process. What's that been like, day to day?"
-
-**Why:** Even a talkative candidate deserves one beat of acknowledgment before you move forward.
-
-## Medium Roleplay
-
-**Scenario:** Candidate gives a short, guarded answer after opening up earlier in the call.
-
-**Candidate:** Emily — mentioned a difficult family situation earlier, has gone quieter since.
-
-**Conversation:**
-
-**Sales Executive:** Going back to timelines — how soon are you hoping to make a move?
-
-**Emily:** I don't know. Soon I guess.
-
-**Decision Point:** Take the short answer at face value, or check in on the shift?
-
-**Best Response:** "I want to check in — is this pace working for you, or would it help to slow down a bit?"
-
-**Why:** The answer got shorter — that's the actual signal, more than tone of voice.
-
-## Difficult Roleplay
-
-**Scenario:** Candidate shuts a sensitive topic down entirely, turns cold.
-
-**Candidate:** Akash — mentioned being laid off, then refuses to elaborate further.
-
-**Conversation:**
-
-**Sales Executive:** You mentioned the layoff earlier — is that shaping your timeline at all?
-
-**Akash:** I'd rather not get into that, honestly.
-
-**Sales Executive:** Of course — I hear you, we don't need to.
-
-**Akash:** ...Okay. Thanks.
-
-**Decision Point:** Circle back later "just to be sure," or drop it completely?
-
-**Best Response:** Drop it completely. Don't return to it unless he brings it up himself.
-
-**Why:** Respecting a stated boundary fully — not "for now" — is what actually rebuilds trust here.
+<RoleplayCard
+  scenario="A re-engaged candidate shuts a sensitive topic down entirely after initially seeming open"
+  difficulty="Expert"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Akash — re-engaged after months, mentioned the layoff, then refuses to elaborate"
+  objective="Respect the boundary completely, without circling back later"
+  successCriteria="Advisor drops the topic fully rather than planning to revisit it 'just to be sure'"
+  hints={["Don't plan to circle back later", "A full drop, not a soft one, is what rebuilds trust with a re-engaged candidate"]}
+  recommendedAnswer="Of course — I hear you, we don't need to. [Drops the topic completely, doesn't return to it unless he brings it up himself.]"
+  managerTip="With a re-engaged candidate especially, respecting a boundary fully — not 'for now' — is what actually earns back trust after months of silence."
+/>
 
 ## Practice Exercise
 
-1. A candidate mentions a rough patch at home. Write your next line.
-2. Candidate says: "Why does this even matter for a job search?" after you ask what a layoff was like. Write your response.
-3. Candidate gives a one-word answer ("Fine.") to a question that deserves more. Write your next 3 lines.
+<PracticeBox
+  prompt="Candidate mentions a rough patch at home. Write your next line."
+  recommendedAnswer="Can you say more about that? I don't want to just note it and move on."
+/>
 
-## Manager Review Scorecard
+<PracticeBox
+  prompt="Candidate gives a one-word answer ('Fine.') to a question that deserves more. Write your next line."
+  recommendedAnswer="I want to check in — is now still a good time, or should we slow down a bit?"
+/>
 
-| Criteria | What to Listen For | Score (1–5) |
-|---|---|---|
-| Acknowledgment before moving on | Named the disclosure, didn't skip it | |
-| Depth question used | "What was that actually like" or equivalent | |
-| Boundary respected | Dropped topic fully when declined | |
-| Silence tolerance | Let a pause sit before filling it | |
-| Rapport-slip awareness | Noticed and named shorter answers | |
+<PracticeBox
+  prompt="Candidate declines to elaborate on something sensitive. Write your response, dropping it completely."
+  recommendedAnswer="Of course, we don't need to get into that."
+/>
 
 ## Quick Reference Cheat Sheet
 
-- Acknowledge before you move forward, every time
-- "Can you say more about that?" works almost everywhere
-- Ask what something was "actually like," not just what happened
-- Offer an exit from sensitive topics — don't force depth
-- Shorter answers mid-call = rapport slipping, check in
-- Never say "I totally understand exactly how you feel"
-- Never compare one candidate's situation to another's
-- If they decline to elaborate, drop it completely
+<QuickReferencePanel
+  title="Building Rapport"
+  items={[
+    { label: "A WhatsApp or text yes", value: "Gets you the call — rapport is still earned live" },
+    { label: "Acknowledge before moving on", value: "Every time, even for easy disclosures" },
+    { label: "Reassure with facts?", value: "Only after acknowledging the feeling" },
+    { label: "Shorter answers mid-call", value: "= rapport slipping, check in directly" },
+    { label: "Declined to elaborate?", value: "Drop it completely, don't circle back" },
+  ]}
+/>
 
 ## Module Completion
 
-You've completed **Building Rapport**. Use the Mark as Complete control above to log this lesson.
+<ModuleCompletion />
+
+**Next: Candidate Qualification.** Once someone's actually talking to you, the next question is whether this is even the right conversation to keep having — that's what qualification is for.

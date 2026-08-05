@@ -1,9 +1,13 @@
 "use client"
 
 import React, { useEffect } from "react"
+import Link from "next/link"
 import { ModuleHeader } from "@/components/learning/ModuleHeader"
 import { NotesPanel } from "@/components/learning/NotesPanel"
 import { useProgressStore } from "@/lib/stores/useProgressStore"
+import { ACADEMY_JOURNEY_STEPS } from "@/components/learning/LearningJourneyStepper"
+import { Button } from "@/components/ui/button"
+import { Compass, ArrowLeft, ArrowRight, BookOpen } from "lucide-react"
 
 export interface LessonViewerProps {
   title: string
@@ -18,15 +22,6 @@ export interface LessonViewerProps {
   children: React.ReactNode
 }
 
-/**
- * Extends fumadocs' own `DocsPage`/`DocsBody` (app/docs/[[...slug]]/page.tsx)
- * with the Academy-specific chrome fumadocs doesn't provide — bookmark
- * and completion controls, and a personal notes panel — rather than
- * duplicating fumadocs' own MDX rendering or typography. `children` is
- * expected to already be `DocsBody`'s rendered output, so this
- * component does not wrap it in a second `prose` layer; fumadocs-ui's
- * own CSS already styles that content (Milestone 4C, Priority 7).
- */
 export function LessonViewer({
   title,
   description,
@@ -39,13 +34,6 @@ export function LessonViewer({
 }: LessonViewerProps) {
   const setLastActiveArticle = useProgressStore((state) => state.setLastActiveArticle)
 
-  // Milestone 4E, Priority 3: records the real article the learner is
-  // currently reading so ContinueLearningCard's Dashboard card can ever
-  // leave its empty state. No progressPercentage/estimatedTimeLeft is
-  // invented here — this codebase has no per-module article-count or
-  // duration data available client-side, so both fields are simply
-  // omitted (LastActiveArticle marks them optional) rather than
-  // fabricated.
   useEffect(() => {
     setLastActiveArticle({
       title,
@@ -53,6 +41,12 @@ export function LessonViewer({
       moduleName: moduleName ?? "Sales Academy Knowledge Module",
     })
   }, [title, articleSlug, moduleName, setLastActiveArticle])
+
+  // Determine current step and adjacent steps in the journey
+  const currentStepIdx = ACADEMY_JOURNEY_STEPS.findIndex((s) => articleSlug.includes(s.id))
+  const currentStep = currentStepIdx >= 0 ? ACADEMY_JOURNEY_STEPS[currentStepIdx] : null
+  const prevStep = currentStepIdx > 0 ? ACADEMY_JOURNEY_STEPS[currentStepIdx - 1] : null
+  const nextStep = currentStepIdx >= 0 && currentStepIdx < ACADEMY_JOURNEY_STEPS.length - 1 ? ACADEMY_JOURNEY_STEPS[currentStepIdx + 1] : null
 
   return (
     <>
@@ -68,7 +62,43 @@ export function LessonViewer({
 
       {children}
 
-      <div className="mt-8 pt-6 border-t border-border">
+      {/* Lesson Navigation & Journey Location Banner */}
+      <div className="mt-8 space-y-6 pt-6 border-t border-border">
+        {currentStep && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-border bg-fd-secondary/30">
+            <div className="flex items-center gap-2">
+              <Compass className="size-4 text-primary shrink-0" />
+              <div>
+                <span className="block text-[10px] font-bold uppercase tracking-wider text-fd-muted-foreground">
+                  Academy Step {currentStep.number} of {ACADEMY_JOURNEY_STEPS.length}
+                </span>
+                <span className="text-xs font-semibold text-fd-foreground">
+                  {currentStep.title}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {prevStep && (
+                <Link href={prevStep.href}>
+                  <Button variant="outline" size="sm" className="gap-1 text-xs h-8">
+                    <ArrowLeft className="size-3" />
+                    <span>Prev: {prevStep.id}</span>
+                  </Button>
+                </Link>
+              )}
+              {nextStep && (
+                <Link href={nextStep.href}>
+                  <Button variant="primary" size="sm" className="gap-1 text-xs h-8 font-semibold">
+                    <span>Next: {nextStep.id}</span>
+                    <ArrowRight className="size-3" />
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+
         <NotesPanel articleSlug={articleSlug} />
       </div>
     </>

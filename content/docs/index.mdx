@@ -1,81 +1,24 @@
 ---
-title: Getting Started
-description: Welcome to Surely Placed Knowledge OS — your structured documentation platform.
+title: "Sales Academy — Start Learning"
+description: "Welcome to Surely Placed Sales Academy — your interactive career advisor training platform."
+slug: "index"
 ---
 
-## Introduction
+import { LearningJourneyStepper } from "@/components/learning/LearningJourneyStepper";
+import { QuickReferencePanel } from "@/components/learning/QuickReferencePanel";
 
-**Surely Placed Knowledge OS** (SPK OS) is a documentation platform built for
-teams that value structured, discoverable, and maintainable knowledge.
+# Sales Academy Learning Journey
 
-It is powered by [Next.js](https://nextjs.org), [Fumadocs](https://fumadocs.dev),
-and [MDX](https://mdxjs.com) — giving you the full power of React components
-inside your documentation.
+Welcome to the **Surely Placed Sales Academy**. This platform is designed to transform candidate advisors into master sales communicators through structured call frameworks, objection scripts, closing psychology, and interactive scenario simulations.
 
-## Quick Start
+<LearningJourneyStepper />
 
-### Prerequisites
-
-- **Node.js** 18 or later
-- **pnpm** 9 or later
-
-### Installation
-
-Clone the repository and install dependencies:
-
-```bash
-git clone https://github.com/placeholder/spk-os.git
-cd spk-os
-pnpm install
-```
-
-### Development
-
-Start the development server:
-
-```bash
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the platform.
-
-### Production Build
-
-```bash
-pnpm build
-pnpm start
-```
-
-## Project Structure
-
-| Path | Description |
-| --- | --- |
-| `app/` | Next.js App Router pages and layouts |
-| `content/docs/` | MDX documentation files |
-| `lib/` | Shared utilities and configuration |
-| `source.config.ts` | Fumadocs MDX collection definitions |
-| `next.config.mjs` | Next.js configuration |
-
-## Writing Documentation
-
-All documentation lives in the `content/docs/` directory. Each `.mdx` file
-becomes a page in the documentation. Files require frontmatter with at least
-a `title` field:
-
-```mdx
----
-title: My Page Title
-description: A brief description of this page.
----
-
-Your content here.
-```
-
-## Next Steps
-
-This is the foundation of SPK OS. Future phases will add:
-
-- Knowledge domain taxonomies
-- Multi-author workflows
-- Version-controlled content pipelines
-- Advanced search and filtering
+<QuickReferencePanel
+  title="Academy Core Principles"
+  items={[
+    { label: "Candidate-First", value: "Prioritize genuine candidate career success over transactional rushing." },
+    { label: "Diagnostic Qualification", value: "Identify underlying goals, visa status, and objections before prescribing solutions." },
+    { label: "Value-Anchored Pricing", value: "Re-anchor on ROI and career impact rather than discounting core tuition." },
+    { label: "Ethical Integrity", value: "Deliver transparent, truthful expectations at every stage of the funnel." }
+  ]}
+/>

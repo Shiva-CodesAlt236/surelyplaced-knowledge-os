@@ -6,26 +6,21 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Phone, PhoneOff, Clock, Smile, Meh, Frown, AlertCircle,
-  Globe, Briefcase, BarChart2, Pause, Play, ChevronDown, ChevronUp,
+  Globe, Briefcase, BarChart2, Pause, ChevronDown, Linkedin, PhoneCall, PhoneIncoming, PhoneOutgoing,
 } from "lucide-react"
 
-/* ── Types ─────────────────────────────────────────────────────── */
-
 export type CandidateMood = "positive" | "neutral" | "hesitant" | "resistant"
-export type AppearanceMode = "chat" | "phone" | "whatsapp"
+export type AppearanceMode = "chat" | "phone" | "whatsapp" | "cold-call" | "linkedin"
+export type CallDirection = "inbound" | "outbound"
 
 export interface ChatMessage {
   sender: "rep" | "candidate"
   name?: string
   text: string
   annotation?: string
-  /** Optional mood indicator for this specific message. */
   mood?: CandidateMood
-  /** If true, a typing indicator animates before revealing text. */
   typing?: boolean
-  /** If true, renders a pause marker between this message and the next. */
   pauseAfter?: boolean
-  /** Timestamp label to show, e.g. "2:14 PM". Purely display. */
   timestamp?: string
 }
 
@@ -33,28 +28,18 @@ export interface ConversationViewerProps {
   messages: ChatMessage[]
   repName?: string
   candidateName?: string
-
-  /** Visual appearance: chat bubbles (default), phone call, or WhatsApp. */
+  /** Visual appearance mode: chat (default), phone, whatsapp, cold-call, linkedin. */
   appearance?: AppearanceMode
-  /** Call duration label shown in phone mode, e.g. "12:34". */
+  callDirection?: CallDirection
   callDuration?: string
-  /** Overall candidate mood badge in the header. */
   candidateMood?: CandidateMood
-  /** Visa status badge, e.g. "H-1B", "US Citizen", "Green Card". */
   visaStatus?: string
-  /** Lead source badge, e.g. "LinkedIn", "Referral", "Job Board". */
   leadSource?: string
-  /** Difficulty badge for the conversation. */
   difficulty?: "Foundational" | "Intermediate" | "Advanced" | "Expert"
-  /** Expected outcome label. */
   expectedOutcome?: string
-  /** When provided, dims messages after this 0-based index. */
   highlightUpTo?: number
-  /** If true, messages reveal one-by-one with typing animation. */
   autoReveal?: boolean
 }
-
-/* ── Helpers ───────────────────────────────────────────────────── */
 
 const moodConfig: Record<CandidateMood, { icon: React.ElementType; label: string; className: string }> = {
   positive:  { icon: Smile,       label: "Positive",  className: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border-emerald-500/20" },
@@ -91,20 +76,19 @@ function MoodBadge({ mood }: { mood: CandidateMood }) {
   const cfg = moodConfig[mood]
   const Icon = cfg.icon
   return (
-    <Badge className={cn("gap-1 border", cfg.className)}>
-      <Icon className="size-3" />
+    <Badge className={cn("gap-1 border text-[10px]", cfg.className)}>
+      <Icon className="size-2.5" />
       {cfg.label}
     </Badge>
   )
 }
-
-/* ── Component ─────────────────────────────────────────────────── */
 
 export function ConversationViewer({
   messages,
   repName = "Sales Executive",
   candidateName = "Candidate",
   appearance = "chat",
+  callDirection = "outbound",
   callDuration,
   candidateMood,
   visaStatus,
@@ -119,7 +103,6 @@ export function ConversationViewer({
   const [typing, setTyping] = useState(autoReveal)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Auto-reveal effect
   useEffect(() => {
     if (!autoReveal || showAll) return
     if (revealedCount >= messages.length) {
@@ -147,49 +130,74 @@ export function ConversationViewer({
   }
 
   const visibleMessages = showAll ? messages : messages.slice(0, revealedCount)
-  const isPhone = appearance === "phone"
+  const isPhone = appearance === "phone" || appearance === "cold-call"
   const isWhatsApp = appearance === "whatsapp"
+  const isLinkedIn = appearance === "linkedin"
+  const isColdCall = appearance === "cold-call"
 
   const hasMeta = candidateMood || visaStatus || leadSource || difficulty || expectedOutcome
 
   return (
     <div className="my-6 overflow-hidden rounded-xl border border-fd-border shadow-sm">
-      {/* ── CSS for typing bounce ── */}
       <style>{`@keyframes cv-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-4px)}}`}</style>
 
-      {/* ── Header bar ── */}
+      {/* Header bar */}
       <div
         className={cn(
           "flex flex-wrap items-center gap-2 border-b border-fd-border px-4 py-2.5",
-          isPhone && "bg-fd-secondary",
-          isWhatsApp && "bg-emerald-700 dark:bg-emerald-900",
-          !isPhone && !isWhatsApp && "bg-fd-card"
+          isPhone && !isColdCall && "bg-fd-secondary",
+          isColdCall && "bg-amber-500/10 border-amber-500/30",
+          isWhatsApp && "bg-emerald-700 dark:bg-emerald-900 text-white",
+          isLinkedIn && "bg-sky-700 dark:bg-sky-900 text-white",
+          !isPhone && !isWhatsApp && !isLinkedIn && "bg-fd-card"
         )}
       >
-        {isPhone && <Phone className="size-4 text-emerald-500" />}
-        {isWhatsApp && <Phone className="size-4 text-white" />}
+        {isColdCall ? (
+          <Badge variant="accent" className="gap-1 bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px]">
+            <PhoneCall className="size-3" /> Cold Call
+          </Badge>
+        ) : isLinkedIn ? (
+          <Linkedin className="size-4 text-white" />
+        ) : isWhatsApp ? (
+          <Phone className="size-4 text-white" />
+        ) : (
+          <Phone className="size-4 text-emerald-500" />
+        )}
 
         <span className={cn(
           "text-sm font-semibold",
-          isWhatsApp ? "text-white" : "text-fd-foreground"
+          isWhatsApp || isLinkedIn ? "text-white" : "text-fd-foreground"
         )}>
           {repName}
           <span className={cn(
             "mx-1.5",
-            isWhatsApp ? "text-white/50" : "text-fd-muted-foreground"
+            isWhatsApp || isLinkedIn ? "text-white/60" : "text-fd-muted-foreground"
           )}>↔</span>
           {candidateName}
         </span>
 
-        {isPhone && callDuration && (
-          <Badge variant="outline" className="ml-auto gap-1 font-mono text-[10px]">
+        {callDirection && (
+          <span className={cn(
+            "flex items-center gap-1 text-[10px] font-mono",
+            isWhatsApp || isLinkedIn ? "text-white/80" : "text-fd-muted-foreground"
+          )}>
+            {callDirection === "outbound" ? (
+              <><PhoneOutgoing className="size-2.5" /> Outbound</>
+            ) : (
+              <><PhoneIncoming className="size-2.5" /> Inbound</>
+            )}
+          </span>
+        )}
+
+        {callDuration && (
+          <Badge variant="outline" className={cn("ml-auto gap-1 font-mono text-[10px]", isWhatsApp || isLinkedIn ? "border-white/30 text-white" : "")}>
             <Clock className="size-3" />
             {callDuration}
           </Badge>
         )}
       </div>
 
-      {/* ── Metadata badges ── */}
+      {/* Metadata badges */}
       {hasMeta && (
         <div className="flex flex-wrap items-center gap-1.5 border-b border-fd-border px-4 py-2 bg-fd-card/60">
           {difficulty && (
@@ -219,13 +227,14 @@ export function ConversationViewer({
         </div>
       )}
 
-      {/* ── Message area ── */}
+      {/* Message area */}
       <div
         className={cn(
           "space-y-3 p-4",
           isWhatsApp && "bg-[#e5ddd5] dark:bg-[#0b1419]",
+          isLinkedIn && "bg-sky-50/50 dark:bg-sky-950/20",
           isPhone && "bg-fd-background",
-          !isPhone && !isWhatsApp && "bg-fd-card"
+          !isPhone && !isWhatsApp && !isLinkedIn && "bg-fd-card"
         )}
         role="log"
         aria-label="Sales conversation"
@@ -245,7 +254,10 @@ export function ConversationViewer({
               >
                 {isRep && (
                   <div
-                    className="mt-1 flex size-7 shrink-0 items-center justify-center rounded-full bg-fd-primary text-[10px] font-bold text-fd-primary-foreground"
+                    className={cn(
+                      "mt-1 flex size-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
+                      isLinkedIn ? "bg-sky-600" : "bg-fd-primary"
+                    )}
                     aria-hidden
                   >
                     {(msg.name ?? repName).charAt(0)}
@@ -266,7 +278,9 @@ export function ConversationViewer({
                     className={cn(
                       "rounded-xl px-3.5 py-2.5 text-sm leading-relaxed",
                       isRep
-                        ? "rounded-tl-sm bg-fd-secondary text-fd-secondary-foreground"
+                        ? isLinkedIn
+                          ? "rounded-tl-sm bg-sky-100 text-sky-950 dark:bg-sky-900 dark:text-sky-100"
+                          : "rounded-tl-sm bg-fd-secondary text-fd-secondary-foreground"
                         : isWhatsApp
                           ? "rounded-tr-sm bg-emerald-100 text-emerald-950 dark:bg-emerald-800 dark:text-emerald-50"
                           : "rounded-tr-sm bg-fd-primary/10 text-fd-foreground"
@@ -291,6 +305,8 @@ export function ConversationViewer({
                       "mt-1 flex size-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold",
                       isWhatsApp
                         ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+                        : isLinkedIn
+                        ? "bg-sky-500/20 text-sky-700 dark:text-sky-300"
                         : "bg-fd-accent text-fd-accent-foreground"
                     )}
                     aria-hidden
@@ -300,7 +316,6 @@ export function ConversationViewer({
                 )}
               </div>
 
-              {/* Pause marker */}
               {msg.pauseAfter && (
                 <div className="flex items-center gap-2 py-1" aria-hidden>
                   <div className="h-px flex-1 bg-fd-border" />
@@ -314,7 +329,6 @@ export function ConversationViewer({
           )
         })}
 
-        {/* Typing indicator */}
         {typing && revealedCount < messages.length && (
           <div className={cn("flex gap-2", messages[revealedCount]?.sender === "rep" ? "justify-start" : "justify-end")}>
             <div className={cn(
@@ -331,7 +345,7 @@ export function ConversationViewer({
         <div ref={bottomRef} />
       </div>
 
-      {/* ── Footer controls ── */}
+      {/* Footer controls */}
       {autoReveal && !showAll && revealedCount < messages.length && (
         <div className="flex items-center justify-between border-t border-fd-border px-4 py-2 bg-fd-card">
           <span className="text-[10px] text-fd-muted-foreground">
