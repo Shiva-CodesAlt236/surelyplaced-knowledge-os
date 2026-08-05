@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-05 (Milestone 5 Interactive Learning Widgets Implementation)
+**Last updated:** 2026-08-05 (Learning Experience & UI/UX Enhancements Complete)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Milestone 5 Interactive Learning Widgets implemented — 11 MDX-embeddable client components (`ConversationViewer`, `RoleplayCard`, `DecisionPoint`, `CoachingNotes`, `ConversationTimeline`, `QuickReferencePanel`, `MistakesPanel`, `PracticeBox`, `CallScorecard`, `EstimatedTime`, `ModuleCompletion`) registered in the Fumadocs MDX component map. Sales training platform UI evolution complete.
+Interactive Learning Experience Enhanced — Added `ManagerTip` and `DecisionTree` widgets, enhanced `ConversationViewer` with phone/WhatsApp/typing/mood/visa/lead/duration support, `RoleplayCard` with context/roles/success criteria/hints progress, and `CallScorecard` with score bars/grades/categories. All MDX-driven with zero hardcoded content.
 
 ## Latest Git Commit
 
-`33970a4` — "feat(learning): implement interactive sales training widgets for MDX embedding"
+`6bfa223` — "feat(learning): enhance interactive learning components UI/UX and add ManagerTip and DecisionTree"
 
 ## Repository Version
 
@@ -91,6 +91,7 @@ Milestone 5 Interactive Learning Widgets implemented — 11 MDX-embeddable clien
 - [x] Milestone 4D Production Readiness Validation & Deployment Preparation (RELEASE READY)
 - [x] Milestone 4E Production Stabilization Implementation (FINAL RELEASE READY)
 - [x] Milestone 5 Interactive Learning Widgets (Sales Training Platform UI)
+- [x] Learning Experience & UI/UX Enhancements (Phone/WhatsApp modes, Typing, Mood/Visa/Lead badges, DecisionTree, ManagerTip)
 
 ---
 
@@ -123,9 +124,9 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
 | Total Articles (`.mdx` files) | 344 |
 | Total `meta.json` files | 31 |
-| Repository Status | Production Ready — Milestone 4E Stabilization Complete |
-| Latest Milestone | Milestone 4E Production Stabilization (`FINAL_RELEASE_REPORT.md`, Consolidated Stores & Architecture) |
-| Completion Status | Final Release Ready — 15 Sales Academy modules + 14 Candidate Intelligence collections + 62 Engineering & Release Docs + Stabilized Codebase |
+| Repository Status | Active — Learning Platform UI/UX Enhancements Complete |
+| Latest Milestone | Interactive Learning UI/UX Enhancements (`ConversationViewer`, `RoleplayCard`, `CallScorecard`, `DecisionTree`, `ManagerTip`) |
+| Completion Status | Production Ready — 15 Sales Academy modules + 14 Candidate Intelligence collections + 62 Engineering & Release Docs + Enhanced Learning Codebase |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
