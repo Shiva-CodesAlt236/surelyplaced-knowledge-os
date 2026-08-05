@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Milestone 4A Production Application Shell Integration)
+**Last updated:** 2026-08-04 (Milestone 4B Feature Components Integration)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Milestone 4A Production Application Shell implemented (`components/layout/*`, `components/ui/*`, `components/providers/*`, `hooks/*`, `lib/*`, `types/*`, `app/page.tsx`, `app/layout.tsx`, `app/loading.tsx`, `app/error.tsx`). Transition to Implementation Phase complete.
+Milestone 4B Production Feature Components implemented (`components/dashboard/*`, `components/learning/*`, `components/search/*`, `components/ai/*`, `components/assessment/*`, `components/ui/*`). Full Career Advisor Dashboard, search modal, AI copilot drawer, and assessment widgets active.
 
 ## Latest Git Commit
 
-`58080b3` — "feat(app): implement Milestone 4A application shell"
+`58413ef` — "feat(app): implement Milestone 4B feature components"
 
 ## Repository Version
 
@@ -86,6 +86,7 @@ Milestone 4A Production Application Shell implemented (`components/layout/*`, `c
 - [x] Milestone 3C Implementation Assets
 - [x] Milestone 3D Component & Frontend Specifications (Documentation Complete)
 - [x] Milestone 4A Application Shell & UI Infrastructure (Implementation Started)
+- [x] Milestone 4B Feature Components & Dashboard Integration (Implementation Active)
 
 ---
 
@@ -118,9 +119,9 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
 | Total Articles (`.mdx` files) | 344 |
 | Total `meta.json` files | 31 |
-| Repository Status | Active — Implementation Phase (Milestone 4A Application Shell) |
-| Latest Milestone | Milestone 4A Application Shell & UI Infrastructure (`components/layout/`, `components/ui/`, `components/providers/`, `lib/`, `types/`) |
-| Completion Status | Implementation Phase Active — 15 Sales Academy modules + 14 Candidate Intelligence collections + 61 Engineering Docs + Milestone 4A Codebase |
+| Repository Status | Active — Implementation Phase (Milestone 4B Feature Components) |
+| Latest Milestone | Milestone 4B Feature Components (`components/dashboard/`, `components/learning/`, `components/search/`, `components/ai/`, `components/assessment/`) |
+| Completion Status | Implementation Phase Active — 15 Sales Academy modules + 14 Candidate Intelligence collections + 61 Engineering Docs + Milestone 4A/4B Codebase |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
