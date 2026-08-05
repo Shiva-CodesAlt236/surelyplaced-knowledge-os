@@ -21,6 +21,11 @@ related: ["explaining-the-process", "discussion-call-checklist"]
 
 By now the candidate understands the recommendation and the process. Cost is no longer an isolated number — it's tied to everything already discussed.
 
+**Why this matters:** cost introduced before the value behind it lands as an isolated, unjustified number instead of a decision the candidate can actually evaluate.
+**When to use this:** once the recommendation and the process are both genuinely understood — never earlier, and never avoided once they are.
+**What skill this builds:** introducing cost directly, tied explicitly to value already discussed, and treating financial hesitation as real information.
+**What happens next:** with cost on the table honestly, the discussion call moves toward its close and confirming the candidate's real next steps.
+
 ## Lesson Objective
 
 - Introduce cost directly, once earlier stages have earned the right to raise it
@@ -47,7 +52,8 @@ Akash's real driver, from Discovery, was security after being laid off two years
   messages={[
     { sender: "rep", text: "Let's talk about what this actually costs, and what it's tied to. I want to give you the accurate current figure rather than something from memory, so let me confirm that precisely with you." },
     { sender: "rep", text: "But I do want to frame it against what we just walked through — the readiness work, the employer access, the ongoing support. This isn't a number floating on its own." },
-    { sender: "rep", text: "How are you feeling about it, now that you've seen what it's actually connected to?", pauseAfter: true },
+    { sender: "rep", text: "How are you feeling about it, now that you've seen what it's actually connected to?", pauseAfter: 2000 },
+    { sender: "candidate", text: "...", pauseAfter: 1500, mood: "hesitant" },
     { sender: "candidate", text: "I mean... that's more than I was expecting, if I'm honest.", mood: "hesitant" },
   ]}
 />
@@ -84,18 +90,6 @@ Let the silence after stating cost actually sit. Don't fill it by softening the 
 Separating "is this a fair number" from "is now the right time financially" matters because they sound identical in the first sentence but need completely different responses. Answering the wrong one wastes trust and doesn't resolve anything.
 </CoachingNotes>
 
-## Common Mistakes
-
-<MistakesPanel
-  title="Common Mistakes"
-  mistakes={[
-    { title: "Reciting a number from memory", description: "Prices change. Stating one you haven't freshly confirmed risks giving inaccurate information.", correction: "Always confirm the current figure through the authoritative pricing resource before stating it." },
-    { title: "Justifying the number immediately after hesitation", description: "Responds to a question the candidate hasn't actually asked yet.", correction: "Ask what's behind the hesitation before responding to it." },
-    { title: "Treating every hesitation as a pricing objection", description: "Sometimes it's a timing or confidence issue wearing a pricing costume.", correction: "Ask directly whether it's the number or the timing." },
-    { title: "Promising a discount or special arrangement on the call", description: "Not something to invent or promise in the moment.", correction: "Direct any discount or payment request to the proper internal process." },
-  ]}
-/>
-
 ## Roleplay
 
 ### Easy
@@ -121,6 +115,7 @@ Separating "is this a fair number" from "is now the right time financially" matt
   successCriteria="Advisor confirms genuinely, checks for any remaining uncertainty, and moves toward next steps"
   hints={["Don't keep selling once she's already positive", "Still check for hidden uncertainty before moving on"]}
   recommendedAnswer="Good to hear — and I'd rather you tell me that honestly than just go along with it. Anything about it that still feels uncertain?"
+  managerTip="A positive first reaction to cost is still worth one genuine check — some hesitation surfaces a beat later, once the number has had a moment to sink in."
 />
 
 ### Medium
@@ -146,6 +141,7 @@ Separating "is this a fair number" from "is now the right time financially" matt
   successCriteria="Advisor asks a specific question rather than accepting the vague answer or pushing for an immediate decision"
   hints={["Don't push for a same-call decision", "'I need to think about it' almost always has something more specific underneath"]}
   recommendedAnswer="That's completely fair — this should take real thought. Can I ask what specifically you'd be thinking through, so I make sure you actually have what you need to decide?"
+  managerTip={`"I need to think about it" almost always has a specific something underneath it. Ask once, gently — don't accept the vague version as the final answer.`}
 />
 
 ### Difficult
@@ -192,18 +188,16 @@ Separating "is this a fair number" from "is now the right time financially" matt
   recommendedAnswer="I can't offer anything on this call — I don't want to promise something I'm not authorized to confirm. Let me route that through the proper process and get you a real answer."
 />
 
-## Manager Review Scorecard
+## Common Mistakes
 
-<CallScorecard
-  title="Discussing Investment — Scorecard"
-  criteria={[
-    { criterion: "Introduced cost directly, without apologizing for it", score: "na", weight: 2, category: "Introduction" },
-    { criterion: "Tied the number explicitly to value already discussed", score: "na", weight: 3, category: "Introduction" },
-    { criterion: "Confirmed figure was current, not recited from memory", score: "na", weight: 3, category: "Accuracy" },
-    { criterion: "Distinguished 'number' hesitation from 'timing' hesitation", score: "na", weight: 3, category: "Diagnosis" },
-    { criterion: "Did not invent or promise a discount", score: "na", weight: 3, category: "Accuracy" },
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Reciting a number from memory", description: "Prices change. Stating one you haven't freshly confirmed risks giving inaccurate information.", correction: "Always confirm the current figure through the authoritative pricing resource before stating it." },
+    { title: "Justifying the number immediately after hesitation", description: "Responds to a question the candidate hasn't actually asked yet.", correction: "Ask what's behind the hesitation before responding to it." },
+    { title: "Treating every hesitation as a pricing objection", description: "Sometimes it's a timing or confidence issue wearing a pricing costume.", correction: "Ask directly whether it's the number or the timing." },
+    { title: "Promising a discount or special arrangement on the call", description: "Not something to invent or promise in the moment.", correction: "Direct any discount or payment request to the proper internal process." },
   ]}
-  summary="'na' means not yet evaluated. This lesson's stakes are high — score honestly, especially on the accuracy criteria."
 />
 
 ## Quick Reference Cheat Sheet

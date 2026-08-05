@@ -24,6 +24,8 @@ import { EstimatedTime } from '@/components/learning/EstimatedTime';
 import { ModuleCompletion } from '@/components/learning/ModuleCompletion';
 import { ManagerTip } from '@/components/learning/ManagerTip';
 import { DecisionTree } from '@/components/learning/DecisionTree';
+import { AcademyHomeHeader } from '@/components/learning/AcademyHomeHeader';
+import { LearningJourneyStepper } from '@/components/learning/LearningJourneyStepper';
 
 /**
  * MDX-available interactive learning components.
@@ -43,6 +45,8 @@ const learningComponents = {
   ModuleCompletion,
   ManagerTip,
   DecisionTree,
+  AcademyHomeHeader,
+  LearningJourneyStepper,
 };
 
 interface PageProps {

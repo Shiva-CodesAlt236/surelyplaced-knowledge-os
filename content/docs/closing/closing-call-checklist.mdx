@@ -19,6 +19,11 @@ related: ["decision-to-enrollment", "asking-for-the-commitment", "payment-and-ag
 
 A well-closed "not now" is just as much a successful call as a well-closed "yes." This lesson is about closing every outcome with the same care.
 
+**Why this matters:** an outcome treated as a loss instead of a legitimate result is where a candidate relationship quietly ends for good, even when it didn't need to.
+**When to use this:** in the final minutes of every closing call, regardless of what the candidate decided.
+**What skill this builds:** confirming readiness was checked honestly, setting a specific follow-up for anything short of a clean yes, and catching your own overstated claims before the call ends.
+**What happens next:** every outcome closes with real care, and the conversation moves into whatever comes next for that specific candidate — enrollment, a follow-up, or genuinely nothing further right now.
+
 ## Lesson Objective
 
 - Confirm the ask was clear and the silence after it was held
@@ -44,7 +49,8 @@ Akash's week is up. He looked at his numbers honestly — and the honest answer 
   expectedOutcome="A genuine 'not now' is closed with the same honesty and care as a yes"
   messages={[
     { sender: "rep", text: "So — where'd you land, after sitting with the numbers?" },
-    { sender: "candidate", text: "Honestly, Aayush... I don't think now's the right time. Two months of savings just isn't enough of a cushion to take this on right now.", mood: "hesitant" },
+    { sender: "candidate", text: "Honestly, Aayush...", pauseAfter: 1800, mood: "hesitant" },
+    { sender: "candidate", text: "I don't think now's the right time. Two months of savings just isn't enough of a cushion to take this on right now, na.", mood: "hesitant" },
   ]}
 />
 
@@ -81,18 +87,6 @@ Don't let your own disappointment leak into your tone here. Akash needs to hear 
 Naming that "not now" is the right call, given his situation, is what actually kept the relationship intact. A candidate who feels pushed toward a decision they know isn't right for them doesn't come back later — one who feels respected often does.
 </CoachingNotes>
 
-## Common Mistakes
-
-<MistakesPanel
-  title="Common Mistakes"
-  mistakes={[
-    { title: "Ending a 'not now' without a specific follow-up date", description: "Leaves the door only vaguely open.", correction: "Always confirm a real timeframe before ending the call." },
-    { title: "Assuming a 'yes' means the call is essentially over", description: "Rushes past a clear explanation of what comes next.", correction: "Give the same careful close to a yes as to any other outcome." },
-    { title: "Letting a difficult or emotional call end abruptly", description: "The ending matters more, not less, when the call was hard.", correction: "Close every call, including a hard one, with real care." },
-    { title: "Treating this checklist as silent, internal review only", description: "Confirming things only in your own head, not with the candidate.", correction: "Confirm the outcome-specific items directly, out loud, with the candidate." },
-  ]}
-/>
-
 ## Roleplay
 
 ### Easy
@@ -118,6 +112,7 @@ Naming that "not now" is the right call, given his situation, is what actually k
   successCriteria="Advisor confirms and ends the call warmly without dragging it out"
   hints={["Don't add unnecessary detail once it's already accurate", "A short, warm confirmation closes this well"]}
   recommendedAnswer="Exactly right. That's coming directly and accurately, not guessed at on this call."
+  managerTip="A candidate who's already internalized the 'accurate, not guessed at' standard is proof it landed earlier in the call — reinforce it briefly rather than re-explaining it."
 />
 
 ### Medium
@@ -143,6 +138,7 @@ Naming that "not now" is the right call, given his situation, is what actually k
   successCriteria="Advisor converts 'sometime' into an actual date"
   hints={["Don't accept 'sometime' as good enough", "Precision here matters as much as it did at the end of Discovery and Discussion"]}
   recommendedAnswer="Let's make that specific rather than leave it open — I'll send the agreement today, and let's actually pick a day this week to confirm you've got everything you need."
+  managerTip="'Sometime' is exactly the kind of soft next step that quietly falls apart later. Convert it to a real date before the call ends, every time."
 />
 
 ### Difficult
@@ -189,18 +185,16 @@ Naming that "not now" is the right call, given his situation, is what actually k
   recommendedAnswer="Actually, let me correct something I just said — I want to confirm that rather than leave it stated with more confidence than I actually have."
 />
 
-## Manager Review Scorecard
+## Common Mistakes
 
-<CallScorecard
-  title="Closing Call Checklist — Scorecard"
-  criteria={[
-    { criterion: "Confirmed next steps directly, out loud, for any outcome", score: "na", weight: 3, category: "Confirmation" },
-    { criterion: "Set a specific follow-up date for any non-yes outcome", score: "na", weight: 3, category: "Follow-up" },
-    { criterion: "Closed a 'not now' with the same warmth as a 'yes'", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "Caught and corrected any overstated claim from the call", score: "na", weight: 2, category: "Honesty" },
-    { criterion: "Did not rush the ending regardless of call length", score: "na", weight: 2, category: "Pacing" },
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Ending a 'not now' without a specific follow-up date", description: "Leaves the door only vaguely open.", correction: "Always confirm a real timeframe before ending the call." },
+    { title: "Assuming a 'yes' means the call is essentially over", description: "Rushes past a clear explanation of what comes next.", correction: "Give the same careful close to a yes as to any other outcome." },
+    { title: "Letting a difficult or emotional call end abruptly", description: "The ending matters more, not less, when the call was hard.", correction: "Close every call, including a hard one, with real care." },
+    { title: "Treating this checklist as silent, internal review only", description: "Confirming things only in your own head, not with the candidate.", correction: "Confirm the outcome-specific items directly, out loud, with the candidate." },
   ]}
-  summary="'na' means not yet evaluated. This is the module's final checkpoint — score the whole call's closing, not just the words used."
 />
 
 ## Quick Reference Cheat Sheet
@@ -222,3 +216,5 @@ Naming that "not now" is the right call, given his situation, is what actually k
 <ModuleCompletion />
 
 This closes the **Closing Calls** module. Rahul, Priya, and Neha all reach agreement. Akash's honest "not now" is exactly as complete a call as any of theirs — and the door stays genuinely open for him, in two months.
+
+**Next module: Objection Handling.** Not every hesitation resolves as cleanly as these did. The next module is about the ones that don't — reading what's actually underneath an objection, at any stage of the funnel, not just here at the end.

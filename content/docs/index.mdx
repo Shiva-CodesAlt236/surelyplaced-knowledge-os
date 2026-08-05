@@ -1,15 +1,14 @@
 ---
-title: "Sales Academy — Start Learning"
+title: "Sales Academy — Home"
 description: "Welcome to Surely Placed Sales Academy — your interactive career advisor training platform."
 slug: "index"
 ---
 
+import { AcademyHomeHeader } from "@/components/learning/AcademyHomeHeader";
 import { LearningJourneyStepper } from "@/components/learning/LearningJourneyStepper";
 import { QuickReferencePanel } from "@/components/learning/QuickReferencePanel";
 
-# Sales Academy Learning Journey
-
-Welcome to the **Surely Placed Sales Academy**. This platform is designed to transform candidate advisors into master sales communicators through structured call frameworks, objection scripts, closing psychology, and interactive scenario simulations.
+<AcademyHomeHeader />
 
 <LearningJourneyStepper />
 
@@ -18,7 +17,7 @@ Welcome to the **Surely Placed Sales Academy**. This platform is designed to tra
   items={[
     { label: "Candidate-First", value: "Prioritize genuine candidate career success over transactional rushing." },
     { label: "Diagnostic Qualification", value: "Identify underlying goals, visa status, and objections before prescribing solutions." },
-    { label: "Value-Anchored Pricing", value: "Re-anchor on ROI and career impact rather than discounting core tuition." },
+    { label: "Value-Anchored Pricing", value: "Re-anchor on ROI and career impact rather than discounting tuition." },
     { label: "Ethical Integrity", value: "Deliver transparent, truthful expectations at every stage of the funnel." }
   ]}
 />

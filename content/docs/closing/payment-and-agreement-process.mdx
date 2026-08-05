@@ -21,6 +21,11 @@ related: ["decision-to-enrollment", "discussing-investment", "closing-call-check
 
 Once a candidate says yes, the conversation shifts from selling to operations. Trust is reinforced or quietly damaged right here, depending on how honestly this stage is handled.
 
+**Why this matters:** the moment right after a yes is the easiest moment to fill a knowledge gap with a guess that sounds reasonable — and the easiest moment for that guess to quietly damage trust.
+**When to use this:** immediately after a candidate says yes, before any payment or agreement detail gets discussed.
+**What skill this builds:** stating clearly what you know for certain and routing anything you don't to the accurate source, without ever approximating.
+**What happens next:** once next steps are honestly confirmed, the closing call moves to its final checklist to make sure nothing was left vague.
+
 ## Lesson Objective
 
 - Confirm the decision plainly before moving into logistics
@@ -45,7 +50,8 @@ Neha's husband is on board. She says yes — and now the standard this whole aca
   difficulty="Intermediate"
   expectedOutcome="Candidate leaves with an honest, accurate sense of next steps — nothing guessed at"
   messages={[
-    { sender: "candidate", text: "Okay — we talked, he's on board. Let's do it.", mood: "positive" },
+    { sender: "candidate", text: "Okay — we talked, he's on board.", pauseAfter: 800, mood: "positive" },
+    { sender: "candidate", text: "Let's do it.", mood: "positive" },
     { sender: "rep", text: "Congratulations, Neha — I know that wasn't a small decision, especially with everything tied to his H1B timeline too." },
     { sender: "rep", text: "I want to be straightforward about what happens next. I can walk you through the general shape of it, but for the exact payment terms and agreement details, I want you to get the accurate, current version — not something I recite from memory." },
     { sender: "candidate", text: "Okay, that's fair. What happens next, then?" },
@@ -71,18 +77,6 @@ Keep this stage calm and unhurried. Neha just made a real decision — she deser
 <CoachingNotes title="Why This Worked">
 Being explicit about the boundary — "here's what I know, here's what needs to come from elsewhere" — is more trustworthy than a confident-sounding guess. Candidates remember being told the truth far longer than they remember a smooth answer.
 </CoachingNotes>
-
-## Common Mistakes
-
-<MistakesPanel
-  title="Common Mistakes"
-  mistakes={[
-    { title: "Inventing payment amounts, timelines, or terms", description: "Guessing to avoid an awkward 'I'm not sure' moment risks telling a candidate something inaccurate.", correction: "Say plainly you'll confirm the exact detail rather than guess." },
-    { title: "Describing a refund policy from general assumption", description: "\"These things usually work like...\" is not something to state as fact.", correction: "Direct the question to the accurate, current resource." },
-    { title: "Rushing this stage because the 'real' conversation already happened", description: "The emotional high point isn't the only part that matters.", correction: "Treat the handoff with the same care as the ask itself." },
-    { title: "Leaving next steps vague right after a real commitment", description: "A candidate who just said yes deserves clarity, not uncertainty.", correction: "State clearly what you do know for certain about what happens next." },
-  ]}
-/>
 
 ## Roleplay
 
@@ -110,6 +104,7 @@ Being explicit about the boundary — "here's what I know, here's what needs to 
   successCriteria="Advisor states what's certain and defers the specific mechanism to the accurate source"
   hints={["Don't invent a payment method to sound helpful", "It's fine to say 'I'll make sure you get that exactly right'"]}
   recommendedAnswer="I want to get you the exact steps rather than describe it from memory and risk getting a detail wrong — you'll have that clearly laid out for you directly."
+  managerTip="Even a low-stakes logistics question deserves the same accuracy discipline as a high-stakes pricing one — the habit shouldn't be selective."
 />
 
 ### Medium
@@ -136,6 +131,7 @@ Being explicit about the boundary — "here's what I know, here's what needs to 
   successCriteria="Advisor doesn't say yes or no to the discount itself and routes it to the correct process"
   hints={["Don't improvise an answer to sound accommodating", "Routing the question honestly is better than guessing wrong in either direction"]}
   recommendedAnswer="I can't confirm anything like that on this call — I don't want to promise something I'm not authorized to. Let me route that properly and get you a real answer."
+  managerTip="A discount request right after a yes is a natural moment to want to keep the good feeling going by saying yes to something. Route it honestly instead."
 />
 
 ### Difficult
@@ -183,18 +179,16 @@ Being explicit about the boundary — "here's what I know, here's what needs to 
   recommendedAnswer="That's something I want you to get directly and accurately, not guessed at on this call. I'll make sure that reaches you clearly."
 />
 
-## Manager Review Scorecard
+## Common Mistakes
 
-<CallScorecard
-  title="Payment & Agreement Process — Scorecard"
-  criteria={[
-    { criterion: "Confirmed the decision plainly before moving to logistics", score: "na", weight: 2, category: "Handoff" },
-    { criterion: "Stated only what was actually known for certain", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "No invented price, discount, or refund term", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "Directed unknown specifics to the correct resource", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "Kept the stage calm and unhurried", score: "na", weight: 2, category: "Handoff" },
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Inventing payment amounts, timelines, or terms", description: "Guessing to avoid an awkward 'I'm not sure' moment risks telling a candidate something inaccurate.", correction: "Say plainly you'll confirm the exact detail rather than guess." },
+    { title: "Describing a refund policy from general assumption", description: "\"These things usually work like...\" is not something to state as fact.", correction: "Direct the question to the accurate, current resource." },
+    { title: "Rushing this stage because the 'real' conversation already happened", description: "The emotional high point isn't the only part that matters.", correction: "Treat the handoff with the same care as the ask itself." },
+    { title: "Leaving next steps vague right after a real commitment", description: "A candidate who just said yes deserves clarity, not uncertainty.", correction: "State clearly what you do know for certain about what happens next." },
   ]}
-  summary="'na' means not yet evaluated. The honesty criteria matter most in this lesson — score them carefully."
 />
 
 ## Quick Reference Cheat Sheet

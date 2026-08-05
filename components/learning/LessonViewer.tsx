@@ -5,9 +5,9 @@ import Link from "next/link"
 import { ModuleHeader } from "@/components/learning/ModuleHeader"
 import { NotesPanel } from "@/components/learning/NotesPanel"
 import { useProgressStore } from "@/lib/stores/useProgressStore"
-import { ACADEMY_JOURNEY_STEPS } from "@/components/learning/LearningJourneyStepper"
+import { getLessonNavigation } from "@/lib/academy-sequence"
 import { Button } from "@/components/ui/button"
-import { Compass, ArrowLeft, ArrowRight, BookOpen } from "lucide-react"
+import { Compass, ArrowLeft, ArrowRight, Layers } from "lucide-react"
 
 export interface LessonViewerProps {
   title: string
@@ -42,11 +42,8 @@ export function LessonViewer({
     })
   }, [title, articleSlug, moduleName, setLastActiveArticle])
 
-  // Determine current step and adjacent steps in the journey
-  const currentStepIdx = ACADEMY_JOURNEY_STEPS.findIndex((s) => articleSlug.includes(s.id))
-  const currentStep = currentStepIdx >= 0 ? ACADEMY_JOURNEY_STEPS[currentStepIdx] : null
-  const prevStep = currentStepIdx > 0 ? ACADEMY_JOURNEY_STEPS[currentStepIdx - 1] : null
-  const nextStep = currentStepIdx >= 0 && currentStepIdx < ACADEMY_JOURNEY_STEPS.length - 1 ? ACADEMY_JOURNEY_STEPS[currentStepIdx + 1] : null
+  // Get strict sequential navigation data
+  const nav = getLessonNavigation(articleSlug)
 
   return (
     <>
@@ -62,35 +59,55 @@ export function LessonViewer({
 
       {children}
 
-      {/* Lesson Navigation & Journey Location Banner */}
-      <div className="mt-8 space-y-6 pt-6 border-t border-border">
-        {currentStep && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-border bg-fd-secondary/30">
-            <div className="flex items-center gap-2">
-              <Compass className="size-4 text-primary shrink-0" />
-              <div>
-                <span className="block text-[10px] font-bold uppercase tracking-wider text-fd-muted-foreground">
-                  Academy Step {currentStep.number} of {ACADEMY_JOURNEY_STEPS.length}
-                </span>
-                <span className="text-xs font-semibold text-fd-foreground">
-                  {currentStep.title}
-                </span>
+      {/* Lesson Navigation & Sequential Journey Location Banner */}
+      <div className="mt-8 space-y-4 pt-6 border-t border-border">
+        {nav.current && (
+          <div className="rounded-xl border border-border bg-fd-secondary/30 p-4 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2">
+                <Compass className="size-4 text-primary shrink-0" />
+                <div>
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-fd-muted-foreground">
+                    Lesson {nav.currentPosition} of {nav.totalCount} • {nav.current.moduleName}
+                  </span>
+                  <span className="text-xs font-semibold text-fd-foreground">
+                    {nav.current.title}
+                  </span>
+                </div>
               </div>
+
+              {nav.nextModule && (
+                <div className="flex items-center gap-1.5 text-[10px] font-mono text-fd-muted-foreground">
+                  <Layers className="size-3" />
+                  <span>Up Next Module: {nav.nextModule.moduleName}</span>
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center gap-2">
-              {prevStep && (
-                <Link href={prevStep.href}>
-                  <Button variant="outline" size="sm" className="gap-1 text-xs h-8">
+            {/* Navigation Button Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+              {nav.prevLesson ? (
+                <Link href={nav.prevLesson.slug}>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">
                     <ArrowLeft className="size-3" />
-                    <span>Prev: {prevStep.id}</span>
+                    <span>Prev: {nav.prevLesson.title}</span>
                   </Button>
                 </Link>
+              ) : (
+                <div />
               )}
-              {nextStep && (
-                <Link href={nextStep.href}>
-                  <Button variant="primary" size="sm" className="gap-1 text-xs h-8 font-semibold">
-                    <span>Next: {nextStep.id}</span>
+
+              {nav.nextLesson ? (
+                <Link href={nav.nextLesson.slug}>
+                  <Button variant="primary" size="sm" className="gap-1.5 text-xs h-8 font-semibold ml-auto">
+                    <span>Next: {nav.nextLesson.title}</span>
+                    <ArrowRight className="size-3" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/docs/sales-coaching/complete-sales-call-walkthrough">
+                  <Button variant="primary" size="sm" className="gap-1.5 text-xs h-8 font-semibold ml-auto bg-emerald-600 hover:bg-emerald-700 text-white">
+                    <span>Graduate: Complete Walkthrough</span>
                     <ArrowRight className="size-3" />
                   </Button>
                 </Link>

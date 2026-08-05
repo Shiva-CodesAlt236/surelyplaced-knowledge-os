@@ -19,6 +19,11 @@ related: ["structuring-the-discussion-call", "discussing-investment"]
 
 By the end of a discussion call, the candidate has heard a real recommendation, a real process, and possibly real money. This close carries more weight than discovery's did.
 
+**Why this matters:** a discussion call that ends on an assumption, rather than a confirmed understanding, sets up a closing call that starts from the wrong place.
+**When to use this:** in the final few minutes of every discussion call, before the candidate moves toward a closing conversation.
+**What skill this builds:** confirming the four-stage structure genuinely held, and getting the candidate to restate next steps in their own words.
+**What happens next:** once a discussion call closes clean, the candidate moves into Closing, where readiness gets confirmed and the commitment is actually asked for.
+
 ## Lesson Objective
 
 - Confirm the four-stage structure genuinely held before the call ends
@@ -44,7 +49,8 @@ Full circle — this is Rahul again, closing out the same call that opened this 
   expectedOutcome="Candidate accurately restates next steps in his own words"
   messages={[
     { sender: "rep", text: "Before we finish up — what's your understanding of what happens next?" },
-    { sender: "candidate", text: "I think... I look over the cost details you're sending, and we talk again in a few days?", mood: "neutral" },
+    { sender: "candidate", text: "Um...", pauseAfter: 1000, mood: "neutral" },
+    { sender: "candidate", text: "I think... I look over the cost details you're sending, and we talk again in a few days? Something like that only.", mood: "neutral" },
   ]}
 />
 
@@ -67,18 +73,6 @@ Ask "what's your understanding of what happens next" and actually wait for the f
 <CoachingNotes title="Why This Worked">
 Confirming the recap in Rahul's own words (not Aayush's own summary) is the more reliable check — candidates will tell you what's actually landed if you ask plainly, rather than nodding along to your own recap.
 </CoachingNotes>
-
-## Common Mistakes
-
-<MistakesPanel
-  title="Common Mistakes"
-  mistakes={[
-    { title: "Ending with an advisor-delivered summary only", description: "Doesn't confirm the candidate's understanding actually matches it.", correction: "Ask the candidate to state next steps back in their own words." },
-    { title: "Leaving a real hesitation from earlier in the call unaddressed", description: "Especially cost-related hesitation — letting it go because the call is running long.", correction: "Name it directly before the call ends, even if it takes a few more minutes." },
-    { title: "Scheduling a vague follow-up", description: "\"We'll touch base soon\" instead of a specific time, right when specificity matters most.", correction: "Convert every vague next step into an actual date." },
-    { title: "Rushing the close of a call that went well", description: "Assuming a good call doesn't need a careful ending.", correction: "Run the same checklist regardless of how well the call felt." },
-  ]}
-/>
 
 ## Roleplay
 
@@ -105,6 +99,7 @@ Confirming the recap in Rahul's own words (not Aayush's own summary) is the more
   successCriteria="Advisor confirms accuracy and ends the call without dragging it out"
   hints={["Don't add unnecessary detail once it's already precise", "A short, warm confirmation is enough here"]}
   recommendedAnswer="Exactly right. Talk Thursday at 4."
+  managerTip="When the candidate's own recap is already precise, match that precision back — don't pad a clean answer with unnecessary restatement."
 />
 
 ### Medium
@@ -130,6 +125,7 @@ Confirming the recap in Rahul's own words (not Aayush's own summary) is the more
   successCriteria="Advisor restates next steps clearly and gets an explicit confirmation, not just a nod"
   hints={["Don't make her feel embarrassed for not remembering", "State it precisely, then confirm she's got it"]}
   recommendedAnswer="No problem — let me say it clearly. I'll email you the process and cost breakdown today, and we'll talk again Tuesday at 11. Does that work?"
+  managerTip="A candidate who's forgotten the details isn't a candidate who wasn't listening — restate plainly and get an explicit yes, without making them feel bad for asking again."
 />
 
 ### Difficult
@@ -176,18 +172,16 @@ Confirming the recap in Rahul's own words (not Aayush's own summary) is the more
   recommendedAnswer="Before we wrap up — I want to go back to something you mentioned earlier. I don't want to just let that sit unaddressed."
 />
 
-## Manager Review Scorecard
+## Common Mistakes
 
-<CallScorecard
-  title="Discussion Call Checklist — Scorecard"
-  criteria={[
-    { criterion: "Asked the candidate to restate next steps themselves", score: "na", weight: 3, category: "Confirmation" },
-    { criterion: "Converted any vague timeframe into a specific date", score: "na", weight: 2, category: "Confirmation" },
-    { criterion: "Named any unresolved hesitation before ending", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "Did not rush the close despite call length", score: "na", weight: 2, category: "Pacing" },
-    { criterion: "Recommendation and process both genuinely held up", score: "na", weight: 2, category: "Structure" },
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Ending with an advisor-delivered summary only", description: "Doesn't confirm the candidate's understanding actually matches it.", correction: "Ask the candidate to state next steps back in their own words." },
+    { title: "Leaving a real hesitation from earlier in the call unaddressed", description: "Especially cost-related hesitation — letting it go because the call is running long.", correction: "Name it directly before the call ends, even if it takes a few more minutes." },
+    { title: "Scheduling a vague follow-up", description: "\"We'll touch base soon\" instead of a specific time, right when specificity matters most.", correction: "Convert every vague next step into an actual date." },
+    { title: "Rushing the close of a call that went well", description: "Assuming a good call doesn't need a careful ending.", correction: "Run the same checklist regardless of how well the call felt." },
   ]}
-  summary="'na' means not yet evaluated. This is the module's final checkpoint — score the whole call's structure, not just the ending."
 />
 
 ## Quick Reference Cheat Sheet
@@ -208,3 +202,5 @@ Confirming the recap in Rahul's own words (not Aayush's own summary) is the more
 <ModuleCompletion />
 
 This closes the **Discussion Calls** module — Rahul, Priya, Neha, Akash, and Emily all carry forward into the next stage of the academy.
+
+**Next module: Closing.** A candidate who has genuinely understood the recommendation and the process is ready for a real conversation about whether to move forward — that's what Closing is built around.

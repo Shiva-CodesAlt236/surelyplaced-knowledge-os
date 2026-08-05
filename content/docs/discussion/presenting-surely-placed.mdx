@@ -19,6 +19,11 @@ related: ["structuring-the-discussion-call", "explaining-the-process", "understa
 
 Two candidates can hear the exact same facts and walk away with completely different impressions — depending on whether those facts were tied to them, or delivered as a generic pitch.
 
+**Why this matters:** the same accurate facts, delivered as a generic pitch instead of a tailored recommendation, can make a candidate disengage even when nothing you said was wrong.
+**When to use this:** right after Discovery's goals are understood and the diagnostic part of Discussion is complete — this is where you actually introduce Surely Placed.
+**What skill this builds:** opening a recommendation with the candidate's own words instead of a program description, and recovering cleanly if it still lands as generic.
+**What happens next:** once the recommendation is tailored and landed, the conversation moves into explaining exactly what the process involves.
+
 ## Lesson Objective
 
 - Open the recommendation with the candidate's own words, not a program description
@@ -44,8 +49,10 @@ Priya's recap confirmed — her real question from the qualification call was wh
   expectedOutcome="Candidate agrees the recommendation is specific to her situation, not generic"
   messages={[
     { sender: "rep", text: "So, based on what you told me — that switching tracks on H1B feels genuinely uncertain to you, more than the QA-to-cloud move itself — here's how I'd frame this specifically for you." },
+    { sender: "candidate", text: "Okay.", mood: "neutral" },
     { sender: "rep", text: "It's structured preparation and an employer network in IT roles, built around candidates who already hold work authorization like yours. It's aimed at getting you in front of the right roles with real readiness behind you." },
-    { sender: "rep", text: "It's not a guarantee of an offer. Nobody can honestly promise you that. But it's built to put you in a stronger position than searching alone, especially with the constraints you're actually working with." },
+    { sender: "rep", text: "It's not a guarantee of an offer. Nobody can honestly promise you that. But it's built to put you in a stronger position than searching alone, especially with the constraints you're actually working with.", pauseAfter: 1500 },
+    { sender: "candidate", text: "Hmm.", pauseAfter: 1000, mood: "hesitant" },
     { sender: "candidate", text: "Okay... I mean, that sounds fine, but that's kind of what every program says, no?", mood: "hesitant" },
   ]}
 />
@@ -69,18 +76,6 @@ Reuse Priya's own phrase — "switching tracks feels genuinely uncertain" — al
 <CoachingNotes title="Why This Worked">
 Naming the limitation ("not a guarantee") in the same breath as genuine confidence didn't undercut the pitch — it made it more credible. A recommendation that's confident and honest about its limits lands better than one that's confident and silent about them.
 </CoachingNotes>
-
-## Common Mistakes
-
-<MistakesPanel
-  title="Common Mistakes"
-  mistakes={[
-    { title: "Opening with a program description instead of the candidate's need", description: "A pitch that opens with 'SurelyPlaced is a program that...' sounds like it was written before discovery ever happened.", correction: "Open with the candidate's own stated need, in their own words." },
-    { title: "Reusing identical phrasing across every candidate", description: "Candidates can tell within the first sentence whether they're hearing a real answer or a script.", correction: "Anchor every recommendation in something only this candidate said." },
-    { title: "Letting enthusiasm imply a guaranteed outcome", description: "Even unintentional — 'this basically guarantees you'll land something' is a promise nobody can honestly make.", correction: "Describe what's provided. Never describe a promised result." },
-    { title: "Inventing a statistic to sound more convincing", description: "Placement rates, past outcomes, timelines from memory are not something an advisor states or invents in the moment.", correction: "If you don't have a confirmed current figure, don't state one." },
-  ]}
-/>
 
 ## Roleplay
 
@@ -107,6 +102,7 @@ Naming the limitation ("not a guarantee") in the same breath as genuine confiden
   successCriteria="Advisor confirms the recommendation matches what Rahul expected before moving to process"
   hints={["Don't over-sell once it's landed", "Check expectations directly instead of assuming"]}
   recommendedAnswer="Good — does that actually match what you were expecting, or is there a piece I should say more about before we move on?"
+  managerTip="Even when a recommendation lands cleanly, check it explicitly rather than assuming silence means full agreement."
 />
 
 ### Medium
@@ -132,6 +128,7 @@ Naming the limitation ("not a guarantee") in the same breath as genuine confiden
   successCriteria="Advisor states clearly what's provided and is explicit that no outcome is guaranteed"
   hints={["Don't deflect the question", "Being direct about the limit builds more trust than dodging it"]}
   recommendedAnswer="Honestly? I can't promise you a job — nobody can, and anyone who does is lying to you. What I can tell you is exactly what we provide, and why it puts you in a stronger position than searching alone."
+  managerTip="A direct outcome question deserves a direct answer, not a smoother deflection. Naming the limit plainly builds more trust than a well-hedged non-answer."
 />
 
 ### Difficult
@@ -178,18 +175,16 @@ Naming the limitation ("not a guarantee") in the same breath as genuine confiden
   recommendedAnswer="Hold on — that changes things. Before I repeat what I said last time, tell me about this new offer, because the recommendation needs to actually respond to where you are now, not where you were a week ago."
 />
 
-## Manager Review Scorecard
+## Common Mistakes
 
-<CallScorecard
-  title="Presenting Surely Placed — Scorecard"
-  criteria={[
-    { criterion: "Opened with the candidate's own stated need", score: "na", weight: 3, category: "Opening" },
-    { criterion: "Described what's provided, not a guaranteed outcome", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "No invented statistic or placement rate used", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "Responded to skepticism with a question, not a louder pitch", score: "na", weight: 2, category: "Recovery" },
-    { criterion: "Checked whether the recommendation matched expectations", score: "na", weight: 2, category: "Closing the stage" },
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Opening with a program description instead of the candidate's need", description: "A pitch that opens with 'SurelyPlaced is a program that...' sounds like it was written before discovery ever happened.", correction: "Open with the candidate's own stated need, in their own words." },
+    { title: "Reusing identical phrasing across every candidate", description: "Candidates can tell within the first sentence whether they're hearing a real answer or a script.", correction: "Anchor every recommendation in something only this candidate said." },
+    { title: "Letting enthusiasm imply a guaranteed outcome", description: "Even unintentional — 'this basically guarantees you'll land something' is a promise nobody can honestly make.", correction: "Describe what's provided. Never describe a promised result." },
+    { title: "Inventing a statistic to sound more convincing", description: "Placement rates, past outcomes, timelines from memory are not something an advisor states or invents in the moment.", correction: "If you don't have a confirmed current figure, don't state one." },
   ]}
-  summary="'na' means not yet evaluated — score against what was actually said on the call, not what should have been said."
 />
 
 ## Quick Reference Cheat Sheet

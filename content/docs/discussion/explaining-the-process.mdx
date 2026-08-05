@@ -21,6 +21,11 @@ related: ["presenting-surely-placed", "discussing-investment", "candidate-qualif
 
 "Okay, so what would actually happen" is the natural next question once a recommendation lands. Answer it clearly, honestly, and with what's expected of the candidate — not just what they receive.
 
+**Why this matters:** a candidate who can't repeat the process back accurately hasn't actually understood it, no matter how clear it felt while you were explaining it.
+**When to use this:** immediately after a recommendation lands, once the candidate's natural next question becomes "so what would actually happen."
+**What skill this builds:** explaining a process in sequence, honestly, including what's expected of the candidate, not just what they receive.
+**What happens next:** once the process itself is clear, the conversation moves into the investment it requires.
+
 ## Lesson Objective
 
 - Explain the process so a candidate could repeat it back accurately
@@ -47,7 +52,8 @@ Neha's recommendation landed. Her H4 EAD situation makes timeline the thing she'
   messages={[
     { sender: "rep", text: "So broadly, this moves through a few stages — getting you set up and assessed, technical and interview readiness, then active engagement with employers, then ongoing support once you're in process with someone specific." },
     { sender: "rep", text: "I want to be upfront — each of those stages involves real work on your end. Want the full walkthrough, or the headline version for now?" },
-    { sender: "candidate", text: "Actually — how long does the whole thing usually take?", mood: "hesitant" },
+    { sender: "candidate", text: "Um, headline is fine, but —", pauseAfter: 800, mood: "hesitant" },
+    { sender: "candidate", text: "actually — how long does the whole thing usually take?", mood: "hesitant" },
   ]}
 />
 
@@ -84,18 +90,6 @@ Don't rush past "none of this matters anyway" — that's the real sentence in th
 Refusing to give a made-up number, then asking what's underneath the question, surfaced the real constraint (the husband's H1B renewal) instead of Aayush guessing at anxiety he couldn't see.
 </CoachingNotes>
 
-## Common Mistakes
-
-<MistakesPanel
-  title="Common Mistakes"
-  mistakes={[
-    { title: "Making up a timeline to sound concrete", description: "Inventing a step count or number to avoid saying 'it depends' erodes trust the moment it turns out to be wrong.", correction: "Say plainly you don't want to guess, and confirm what's actually current." },
-    { title: "Only describing what SurelyPlaced provides", description: "A process description that never names what's expected of the candidate sets an inaccurate expectation.", correction: "State both sides at every stage — what's provided, what's expected." },
-    { title: "Treating 'how long does this take' as answerable with one number", description: "It genuinely depends on individual factors — a confident single number is usually a guess dressed up.", correction: "Ask what's actually driving the timeline question before answering it." },
-    { title: "Delivering full detail to someone who wanted the headline", description: "Overwhelms a candidate who just wanted the outline.", correction: "Ask which depth they want — don't assume." },
-  ]}
-/>
-
 ## Roleplay
 
 ### Easy
@@ -121,6 +115,7 @@ Refusing to give a made-up number, then asking what's underneath the question, s
   successCriteria="Advisor gives the outline and offers — doesn't force — deeper detail on any stage"
   hints={["Respect the stated preference", "Leave the door open without forcing it"]}
   recommendedAnswer="Sure — broadly, it's setup and assessment, readiness work, employer engagement, then ongoing support. Tell me if you want to go deeper on any one of those."
+  managerTip="Respecting a stated preference for the short version is itself a trust signal — resist the urge to prove thoroughness by over-explaining anyway."
 />
 
 ### Medium
@@ -146,6 +141,7 @@ Refusing to give a made-up number, then asking what's underneath the question, s
   successCriteria="Advisor acknowledges the surprise honestly and doesn't overcorrect into false reassurance"
   hints={["Don't say 'don't worry, we handle most of it' if that's not true", "Acknowledging the surprise builds more trust than smoothing over it"]}
   recommendedAnswer="Fair reaction, and I'd rather you know that now than be surprised later. This does require real work on your side — that's true for any process that actually works, honestly."
+  managerTip="Softening real effort to keep a candidate comfortable in the moment just relocates the disappointment to later in the process, when it's harder to recover from."
 />
 
 ### Difficult
@@ -192,18 +188,16 @@ Refusing to give a made-up number, then asking what's underneath the question, s
   recommendedAnswer="That's a real, specific thing to plan around — thank you for telling me directly. Let's talk about what that actually means for what's realistic here, honestly."
 />
 
-## Manager Review Scorecard
+## Common Mistakes
 
-<CallScorecard
-  title="Explaining the Process — Scorecard"
-  criteria={[
-    { criterion: "Gave the high-level outline before drilling into detail", score: "na", weight: 2, category: "Structure" },
-    { criterion: "Named what's expected of the candidate at each stage", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "No invented timeline or step count", score: "na", weight: 3, category: "Honesty" },
-    { criterion: "Asked what was underneath a timeline question", score: "na", weight: 3, category: "Diagnosis" },
-    { criterion: "Took a real constraint seriously, not as an objection", score: "na", weight: 2, category: "Empathy" },
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Making up a timeline to sound concrete", description: "Inventing a step count or number to avoid saying 'it depends' erodes trust the moment it turns out to be wrong.", correction: "Say plainly you don't want to guess, and confirm what's actually current." },
+    { title: "Only describing what SurelyPlaced provides", description: "A process description that never names what's expected of the candidate sets an inaccurate expectation.", correction: "State both sides at every stage — what's provided, what's expected." },
+    { title: "Treating 'how long does this take' as answerable with one number", description: "It genuinely depends on individual factors — a confident single number is usually a guess dressed up.", correction: "Ask what's actually driving the timeline question before answering it." },
+    { title: "Delivering full detail to someone who wanted the headline", description: "Overwhelms a candidate who just wanted the outline.", correction: "Ask which depth they want — don't assume." },
   ]}
-  summary="'na' means not yet evaluated. Score against the actual call, not the ideal version of it."
 />
 
 ## Quick Reference Cheat Sheet

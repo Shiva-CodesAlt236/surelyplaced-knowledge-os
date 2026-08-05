@@ -19,6 +19,14 @@ related: ["asking-for-the-commitment", "handling-final-hesitation", "payment-and
 
 A closing call isn't a separate persuasion event bolted onto the end. It's the natural conclusion of discovery and discussion — and it should feel that way to the candidate.
 
+## Start Here
+
+**When do I use this?** Once Discussion is genuinely finished — the candidate has heard the recommendation, understands the process, and knows roughly what it costs. This is where you find out what they actually decided.
+
+**What will this module help me achieve?** Confirming real readiness instead of assuming it, making the ask once and plainly, and treating both "yes" and "not now" as complete, honest outcomes rather than a win and a loss.
+
+**When should I move to the next module?** When hesitation comes up that a direct ask alone can't resolve. Objection Handling is where you learn to work with that hesitation instead of arguing past it.
+
 ## Lesson Objective
 
 - Confirm readiness honestly before asking for anything
@@ -44,7 +52,8 @@ Rahul, a few days on. His Discussion call ended with a specific plan: review the
   expectedOutcome="Candidate confirms genuine readiness before any ask is made"
   messages={[
     { sender: "rep", text: "Rahul, before I ask you anything today — where are you at with this, after everything we've talked through?" },
-    { sender: "candidate", text: "Honestly, I think I'm ready. I went through the cost breakdown, I understand the process now. I don't really have open questions left.", mood: "positive" },
+    { sender: "candidate", text: "Honestly...", pauseAfter: 900, mood: "positive" },
+    { sender: "candidate", text: "I think I'm ready. I went through the cost breakdown, I understand the process now. I don't really have open questions left, I think.", mood: "positive" },
     { sender: "rep", text: "Good to hear, and I believe you — you've been thorough about this the whole way, checking your STEM extension, asking the right questions." },
   ]}
 />
@@ -68,18 +77,6 @@ When a candidate hands you a clean "I'm ready, no open questions," don't respond
 <CoachingNotes title="Why This Worked">
 Naming something specific Rahul actually did — checking his STEM extension — proves the readiness check wasn't a formality. It's the same principle as the Discussion recap: precision proves you were paying attention.
 </CoachingNotes>
-
-## Common Mistakes
-
-<MistakesPanel
-  title="Common Mistakes"
-  mistakes={[
-    { title: "Skipping the readiness check because the call was scheduled as 'closing'", description: "Moving straight to the ask assumes readiness instead of confirming it.", correction: "Always open with a genuine, open-ended readiness check." },
-    { title: "Treating leftover Discussion-stage questions as closing hesitation", description: "Unfinished business from an earlier call isn't a closing objection — it's a gap that needs to go back a step.", correction: "If something should have been resolved earlier, pause and address it directly." },
-    { title: "Rushing toward same-call enrollment despite a named missing decision-maker", description: "Pushing past a stated need to involve someone else damages trust.", correction: "Respect a named decision-maker and build them into the process." },
-    { title: "Treating 'not now' as a failed call", description: "A well-handled 'not now' is a complete, honest outcome, not a loss.", correction: "Close it with the same care as a 'yes' — specific follow-up, warm ending." },
-  ]}
-/>
 
 ## Roleplay
 
@@ -106,6 +103,7 @@ Naming something specific Rahul actually did — checking his STEM extension —
   successCriteria="Advisor doesn't over-explain — moves to a direct ask"
   hints={["Don't add reassurance she didn't ask for", "Trust the clean answer"]}
   recommendedAnswer="Good — then let's not overcomplicate it. Do you want to move forward?"
+  managerTip="A clean 'I'm ready' is a gift — don't talk past it. More explanation here reads as if you didn't believe her the first time."
 />
 
 ### Medium
@@ -131,6 +129,7 @@ Naming something specific Rahul actually did — checking his STEM extension —
   successCriteria="Advisor addresses the named concern directly instead of asking for commitment prematurely"
   hints={["Don't skip past 'one small thing' to get to the ask faster", "A specific concern deserves a specific answer first"]}
   recommendedAnswer="Good that you said something — let's clear that up properly before we go any further. What's the specific concern on the timeline?"
+  managerTip="'One small thing' is rarely actually small to the person saying it. Resolve it fully before asking for anything."
 />
 
 ### Difficult
@@ -177,18 +176,16 @@ Naming something specific Rahul actually did — checking his STEM extension —
   recommendedAnswer="That makes complete sense — this is a real decision, and it should involve them. What would help move that conversation forward?"
 />
 
-## Manager Review Scorecard
+## Common Mistakes
 
-<CallScorecard
-  title="Decision to Enrollment — Scorecard"
-  criteria={[
-    { criterion: "Opened with a genuine, open-ended readiness check", score: "na", weight: 3, category: "Readiness" },
-    { criterion: "Did not assume readiness because the call was labeled 'closing'", score: "na", weight: 2, category: "Readiness" },
-    { criterion: "Addressed any leftover Discussion-stage gap before asking", score: "na", weight: 3, category: "Sequencing" },
-    { criterion: "Respected a named missing decision-maker", score: "na", weight: 3, category: "Respect" },
-    { criterion: "Treated 'not now' as a legitimate outcome, not a failure", score: "na", weight: 2, category: "Mindset" },
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Skipping the readiness check because the call was scheduled as 'closing'", description: "Moving straight to the ask assumes readiness instead of confirming it.", correction: "Always open with a genuine, open-ended readiness check." },
+    { title: "Treating leftover Discussion-stage questions as closing hesitation", description: "Unfinished business from an earlier call isn't a closing objection — it's a gap that needs to go back a step.", correction: "If something should have been resolved earlier, pause and address it directly." },
+    { title: "Rushing toward same-call enrollment despite a named missing decision-maker", description: "Pushing past a stated need to involve someone else damages trust.", correction: "Respect a named decision-maker and build them into the process." },
+    { title: "Treating 'not now' as a failed call", description: "A well-handled 'not now' is a complete, honest outcome, not a loss.", correction: "Close it with the same care as a 'yes' — specific follow-up, warm ending." },
   ]}
-  summary="'na' means not yet evaluated. Score against the actual call."
 />
 
 ## Quick Reference Cheat Sheet

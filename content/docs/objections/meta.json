@@ -1,6 +1,7 @@
 {
   "title": "Objection Handling",
   "pages": [
+    "overview",
     "objection-handling-framework",
     "price-objection",
     "need-time-to-think",

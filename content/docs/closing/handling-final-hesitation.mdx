@@ -19,6 +19,11 @@ related: ["asking-for-the-commitment", "decision-to-enrollment", "discussing-inv
 
 Not every closing call ends in a clean yes on the first ask — and that's not a sign anything went wrong.
 
+**Why this matters:** treating ordinary hesitation as a crisis, or pushing past it, can turn a resolvable moment into a lost candidate.
+**When to use this:** right after the ask, any time the answer isn't a clean yes.
+**What skill this builds:** telling resolvable-in-the-call hesitation apart from a genuine need for time, and setting a real follow-up date either way.
+**What happens next:** a resolved hesitation moves straight to agreement; a genuine need for time moves to a specific, honored follow-up date.
+
 ## Lesson Objective
 
 - Ask "what specifically" instead of "why" to surface what's actually behind hesitation
@@ -44,7 +49,8 @@ Akash promised, back in Discussion, to look at his numbers before deciding anyth
   expectedOutcome="The real, specific shape of Akash's hesitation is surfaced honestly"
   messages={[
     { sender: "rep", text: "Last time you said you needed to look at your numbers. Did you get a chance to do that?" },
-    { sender: "candidate", text: "Yeah, I did. Honestly... I think I need more time. It's a big decision for me right now.", mood: "hesitant" },
+    { sender: "candidate", text: "Yeah, yeah, I did.", pauseAfter: 1200, mood: "hesitant" },
+    { sender: "candidate", text: "Honestly... I think I need more time, only. It's a big decision for me right now.", mood: "hesitant" },
   ]}
 />
 
@@ -81,18 +87,6 @@ Don't keep probing once Akash has clearly said, more than once, that this is gen
 "What would be a reasonable amount of time for you" hands the pacing decision back to Akash instead of Aayush guessing at it. A specific week, confirmed together, is a real commitment — "whenever you're ready" isn't.
 </CoachingNotes>
 
-## Common Mistakes
-
-<MistakesPanel
-  title="Common Mistakes"
-  mistakes={[
-    { title: "Accepting a vague 'I need to think about it' without asking what specifically", description: "Leaves the real shape of the hesitation unknown.", correction: "Always ask 'what specifically' before responding to hesitation." },
-    { title: "Continuing to probe after a genuine need for time is clear", description: "Once a candidate has said it plainly more than once, more probing reads as pressure.", correction: "Respect it and move to setting a specific follow-up." },
-    { title: "Treating a missing decision-maker as an obstacle", description: "A spouse or family member the candidate wants to consult is a legitimate factor.", correction: "Build them into the process, don't route around them." },
-    { title: "Setting a vague, open-ended follow-up", description: "\"Whenever you're ready\" isn't a real commitment from either side.", correction: "Pick an actual date on the call." },
-  ]}
-/>
-
 ## Roleplay
 
 ### Easy
@@ -118,6 +112,7 @@ Don't keep probing once Akash has clearly said, more than once, that this is gen
   successCriteria="Advisor addresses the specific point and checks whether it was the whole concern"
   hints={["Answer the actual concern, don't generalize", "Check if there's more underneath before assuming it's resolved"]}
   recommendedAnswer="Good to know — let me walk you through exactly what that looks like. If that resolves it, is there anything else underneath, or was that the main thing?"
+  managerTip="Resolving the stated concern isn't the whole job — checking whether it was the only concern is what actually closes the loop."
 />
 
 ### Medium
@@ -143,6 +138,7 @@ Don't keep probing once Akash has clearly said, more than once, that this is gen
   successCriteria="Advisor stops probing after one gentle follow-up and moves to setting a specific date"
   hints={["Don't keep asking 'but what specifically' a third time", "A candidate who genuinely can't name it just needs time"]}
   recommendedAnswer="That's completely fine — not everything needs a specific reason. What would be a fair amount of time, so I know when to check back?"
+  managerTip="A candidate who genuinely can't name a reason isn't hiding something — a third round of 'but what specifically' starts to feel like an interrogation, not a discovery question."
 />
 
 ### Difficult
@@ -189,18 +185,16 @@ Don't keep probing once Akash has clearly said, more than once, that this is gen
   recommendedAnswer="Let's set up a short call with both of you this week, so they can ask their own questions directly instead of hearing it secondhand."
 />
 
-## Manager Review Scorecard
+## Common Mistakes
 
-<CallScorecard
-  title="Handling Final Hesitation — Scorecard"
-  criteria={[
-    { criterion: "Asked 'what specifically' rather than 'why'", score: "na", weight: 3, category: "Diagnosis" },
-    { criterion: "Distinguished resolvable-now from genuine need for time", score: "na", weight: 3, category: "Diagnosis" },
-    { criterion: "Respected a named missing decision-maker", score: "na", weight: 3, category: "Respect" },
-    { criterion: "Set a specific date, not an open-ended follow-up", score: "na", weight: 2, category: "Follow-up" },
-    { criterion: "Stopped probing once genuine time-need was clear", score: "na", weight: 2, category: "Restraint" },
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Accepting a vague 'I need to think about it' without asking what specifically", description: "Leaves the real shape of the hesitation unknown.", correction: "Always ask 'what specifically' before responding to hesitation." },
+    { title: "Continuing to probe after a genuine need for time is clear", description: "Once a candidate has said it plainly more than once, more probing reads as pressure.", correction: "Respect it and move to setting a specific follow-up." },
+    { title: "Treating a missing decision-maker as an obstacle", description: "A spouse or family member the candidate wants to consult is a legitimate factor.", correction: "Build them into the process, don't route around them." },
+    { title: "Setting a vague, open-ended follow-up", description: "\"Whenever you're ready\" isn't a real commitment from either side.", correction: "Pick an actual date on the call." },
   ]}
-  summary="'na' means not yet evaluated. Score against what was actually said."
 />
 
 ## Quick Reference Cheat Sheet
