@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-05 (Sales Coaching Module Lessons Engineering Validation Complete)
+**Last updated:** 2026-08-05 (Sales Constitution Module Lessons Engineering Validation Complete)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Engineering Validation Complete for Sales Coaching Module — Verified MDX compilation, TypeScript types, 348 SSG page generation, widget reuse & props, mobile responsiveness, accessibility, theme compatibility, and zero lint errors across 10 articles in `content/docs/sales-coaching/`. All educational content preserved untouched per engineering boundaries.
+Engineering Validation Complete for Sales Constitution Module — Verified MDX compilation, TypeScript types, 348 SSG page generation, widget reuse & props, mobile responsiveness, accessibility, theme compatibility, and zero lint errors across 10 articles in `content/docs/sales-constitution/`. All educational content preserved untouched per engineering boundaries.
 
 ## Latest Git Commit
 
-`bff8659` — "feat(sales-coaching): integrate updated sales coaching module MDX lessons"
+`7368ff9` — "feat(sales-constitution): integrate updated sales constitution module MDX lessons"
 
 ## Repository Version
 
@@ -97,6 +97,7 @@ Engineering Validation Complete for Sales Coaching Module — Verified MDX compi
 - [x] Objection Handling Modules Engineering Validation (`content/docs/objections/*`)
 - [x] Pricing Module Engineering Validation (`content/docs/pricing/*`)
 - [x] Sales Coaching Module Engineering Validation (`content/docs/sales-coaching/*`)
+- [x] Sales Constitution Module Engineering Validation (`content/docs/sales-constitution/*`)
 
 ---
 
@@ -129,8 +130,8 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
 | Total Articles (`.mdx` files) | 344 |
 | Total `meta.json` files | 31 |
-| Repository Status | Active — Sales Coaching Module Lessons Engineering Validation Complete |
-| Latest Milestone | Sales Coaching Module Lessons Engineering Validation (`content/docs/sales-coaching/*`) |
+| Repository Status | Active — Sales Constitution Module Lessons Engineering Validation Complete |
+| Latest Milestone | Sales Constitution Module Lessons Engineering Validation (`content/docs/sales-constitution/*`) |
 | Completion Status | Production Ready — 15 Sales Academy modules + 14 Candidate Intelligence collections + 62 Engineering & Release Docs + Stabilized Codebase |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
