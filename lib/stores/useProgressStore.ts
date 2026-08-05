@@ -7,8 +7,17 @@ export interface LastActiveArticle {
   title: string
   href: string
   moduleName: string
-  progressPercentage: number
-  estimatedTimeLeft: string
+  /**
+   * Omitted when a real per-module completion ratio isn't available to
+   * the caller — no fixed fallback is shown, since one would be
+   * fabricated (Milestone 4E, Priority 3).
+   */
+  progressPercentage?: number
+  /**
+   * Omitted when a real time estimate isn't available — this codebase
+   * has no per-article duration data yet.
+   */
+  estimatedTimeLeft?: string
 }
 
 interface ProgressState {

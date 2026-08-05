@@ -20,9 +20,7 @@ export function ContinueLearningCard() {
         title="No Active Learning Session"
         description="Select any lesson from the Sales Academy or Candidate Intelligence collections to begin tracking your active progress."
         actionLabel="Explore Modules"
-        onAction={() => {
-          window.location.href = "/docs/candidate-intelligence/cloud-devops"
-        }}
+        actionHref="/docs/candidate-intelligence/README"
       />
     )
   }
@@ -37,10 +35,12 @@ export function ContinueLearningCard() {
           <Badge variant="accent" className="font-medium">
             Active Lesson
           </Badge>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" />
-            {lastActiveArticle.estimatedTimeLeft}
-          </span>
+          {lastActiveArticle.estimatedTimeLeft && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" />
+              {lastActiveArticle.estimatedTimeLeft}
+            </span>
+          )}
         </div>
         <CardTitle className="mt-2 text-xl font-bold text-foreground line-clamp-1">
           {lastActiveArticle.title}
@@ -49,13 +49,15 @@ export function ContinueLearningCard() {
           {lastActiveArticle.moduleName}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3 pb-4">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-semibold text-foreground">Current Module Progress</span>
-          <span className="font-mono text-primary font-bold">{lastActiveArticle.progressPercentage}%</span>
-        </div>
-        <Progress value={lastActiveArticle.progressPercentage} className="h-2.5" />
-      </CardContent>
+      {typeof lastActiveArticle.progressPercentage === "number" && (
+        <CardContent className="space-y-3 pb-4">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-semibold text-foreground">Current Module Progress</span>
+            <span className="font-mono text-primary font-bold">{lastActiveArticle.progressPercentage}%</span>
+          </div>
+          <Progress value={lastActiveArticle.progressPercentage} className="h-2.5" />
+        </CardContent>
+      )}
       <CardFooter className="pt-0">
         <Link href={lastActiveArticle.href} className="w-full">
           <Button className="w-full gap-2 shadow-sm">

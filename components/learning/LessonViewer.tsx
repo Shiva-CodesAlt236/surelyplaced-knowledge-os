@@ -1,8 +1,9 @@
 "use client"
 
-import React from "react"
+import React, { useEffect } from "react"
 import { ModuleHeader } from "@/components/learning/ModuleHeader"
 import { NotesPanel } from "@/components/learning/NotesPanel"
+import { useProgressStore } from "@/lib/stores/useProgressStore"
 
 export interface LessonViewerProps {
   title: string
@@ -36,6 +37,23 @@ export function LessonViewer({
   showTitle = true,
   children,
 }: LessonViewerProps) {
+  const setLastActiveArticle = useProgressStore((state) => state.setLastActiveArticle)
+
+  // Milestone 4E, Priority 3: records the real article the learner is
+  // currently reading so ContinueLearningCard's Dashboard card can ever
+  // leave its empty state. No progressPercentage/estimatedTimeLeft is
+  // invented here — this codebase has no per-module article-count or
+  // duration data available client-side, so both fields are simply
+  // omitted (LastActiveArticle marks them optional) rather than
+  // fabricated.
+  useEffect(() => {
+    setLastActiveArticle({
+      title,
+      href: articleSlug,
+      moduleName: moduleName ?? "Sales Academy Knowledge Module",
+    })
+  }, [title, articleSlug, moduleName, setLastActiveArticle])
+
   return (
     <>
       <ModuleHeader

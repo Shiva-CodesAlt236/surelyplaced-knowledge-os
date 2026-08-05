@@ -163,6 +163,7 @@ export function QuizRunner({
             <button
               key={option.id}
               onClick={() => handleSelectOption(option.id)}
+              aria-pressed={isSelected}
               className={`w-full text-left p-3 rounded-lg border text-xs transition-all flex items-start gap-2.5 ${
                 isSelected
                   ? "border-primary bg-primary/10 text-primary font-medium"

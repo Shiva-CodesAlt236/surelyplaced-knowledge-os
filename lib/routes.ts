@@ -7,21 +7,34 @@
  */
 
 export const ROUTES = {
-  dashboard: '/dashboard',
+  // Milestone 4E, Priority 8: this pointed at "/dashboard", a route
+  // that has never existed — the Dashboard has always been rendered at
+  // "/" (app/page.tsx). Header's logo link and TopNavigation's
+  // "Dashboard" item both used this constant and both 404'd.
+  dashboard: '/',
 
   learning: {
     index: '/learning',
     path: (pathId: string) => `/learning/${pathId}`,
   },
 
+  // Milestone 4E, Priority 8: "browse.*" pointed at a "/browse/*" route
+  // tree that was never implemented — the real, working content lives
+  // under fumadocs' "/docs/*" tree (app/docs/[[...slug]]/page.tsx).
+  // These builders fed both the Dashboard-page Sidebar
+  // (lib/content-navigation.ts) and Breadcrumbs (lib/breadcrumbs.ts),
+  // so every Sidebar module link and every "Browse"/"Candidate
+  // Intelligence" breadcrumb 404'd. Repointed at the real "/docs/*"
+  // paths rather than building a new "/browse" section, which would be
+  // new functionality outside this stabilization sprint's scope.
   browse: {
-    index: '/browse',
-    module: (moduleId: string) => `/browse/${moduleId}`,
-    candidateIntelligence: '/browse/candidate-intelligence',
-    roleCollection: (collectionId: string) => `/browse/candidate-intelligence/${collectionId}`,
-    article: (moduleId: string, articleSlug: string) => `/browse/${moduleId}/${articleSlug}`,
+    index: '/docs',
+    module: (moduleId: string) => `/docs/${moduleId}`,
+    candidateIntelligence: '/docs/candidate-intelligence',
+    roleCollection: (collectionId: string) => `/docs/candidate-intelligence/${collectionId}`,
+    article: (moduleId: string, articleSlug: string) => `/docs/${moduleId}/${articleSlug}`,
     roleCollectionArticle: (collectionId: string, articleSlug: string) =>
-      `/browse/candidate-intelligence/${collectionId}/${articleSlug}`,
+      `/docs/candidate-intelligence/${collectionId}/${articleSlug}`,
   },
 
   bookmarks: {

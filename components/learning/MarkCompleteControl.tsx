@@ -27,6 +27,7 @@ export function MarkCompleteControl({ articleSlug }: MarkCompleteControlProps) {
       variant={completed ? "secondary" : "primary"}
       size="sm"
       onClick={handleToggle}
+      aria-pressed={completed}
       className={cn(
         "gap-2 font-medium transition-all shadow-sm",
         completed && "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25 border-emerald-500/30"

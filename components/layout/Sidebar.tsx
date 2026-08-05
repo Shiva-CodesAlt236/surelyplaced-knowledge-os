@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ChevronRight, Route as RouteIcon, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSidebar } from '@/hooks/useSidebar';
-import { useProgressStore } from '@/components/providers/ProgressProvider';
+import { useProgressStore } from '@/lib/stores/useProgressStore';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import type { SidebarModuleNode } from '@/types/navigation';
 
@@ -13,19 +13,21 @@ interface SidebarProps {
   tree: SidebarModuleNode[];
 }
 
+/**
+ * Milestone 4E: reads from `lib/stores/useProgressStore.ts` — the one
+ * Progress store that survived state-management consolidation — instead
+ * of the now-deleted `components/providers/ProgressProvider.tsx`, whose
+ * `articleStatus` map nothing ever wrote to, leaving every completion
+ * dot permanently blank. That store also only tracks a binary
+ * completed/not-completed set (`completedSlugs`), with no separate
+ * "in-progress" state, so this dot now renders only for completed
+ * articles rather than distinguishing complete from in-progress.
+ */
 function CompletionDot({ articleId }: { articleId: string }) {
-  const status = useProgressStore((state) => state.getArticleStatus(articleId));
-  if (status === 'not-started') return null;
+  const completed = useProgressStore((state) => state.isCompleted(articleId));
+  if (!completed) return null;
 
-  return (
-    <span
-      aria-label={status === 'complete' ? 'Complete' : 'In progress'}
-      className={cn(
-        'ml-auto size-1.5 shrink-0 rounded-full',
-        status === 'complete' ? 'bg-fd-primary' : 'border border-fd-primary',
-      )}
-    />
-  );
+  return <span aria-label="Complete" className="ml-auto size-1.5 shrink-0 rounded-full bg-fd-primary" />;
 }
 
 function SidebarNode({ node, depth = 0 }: { node: SidebarModuleNode; depth?: number }) {
