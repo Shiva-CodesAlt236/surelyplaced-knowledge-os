@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-05 (Learning Experience & UI/UX Enhancements Complete)
+**Last updated:** 2026-08-05 (Discussion Call Lessons Engineering Validation Complete)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Interactive Learning Experience Enhanced — Added `ManagerTip` and `DecisionTree` widgets, enhanced `ConversationViewer` with phone/WhatsApp/typing/mood/visa/lead/duration support, `RoleplayCard` with context/roles/success criteria/hints progress, and `CallScorecard` with score bars/grades/categories. All MDX-driven with zero hardcoded content.
+Engineering Validation Complete for Discussion Call Modules — Verified MDX compilation, TypeScript types, 348 SSG page generation, widget reuse, mobile responsiveness, and zero lint errors across `content/docs/discussion/`. All educational content preserved untouched per engineering boundaries.
 
 ## Latest Git Commit
 
-`6bfa223` — "feat(learning): enhance interactive learning components UI/UX and add ManagerTip and DecisionTree"
+`d97c003` — "feat(discussion): integrate updated discussion call MDX lessons"
 
 ## Repository Version
 
@@ -92,6 +92,7 @@ Interactive Learning Experience Enhanced — Added `ManagerTip` and `DecisionTre
 - [x] Milestone 4E Production Stabilization Implementation (FINAL RELEASE READY)
 - [x] Milestone 5 Interactive Learning Widgets (Sales Training Platform UI)
 - [x] Learning Experience & UI/UX Enhancements (Phone/WhatsApp modes, Typing, Mood/Visa/Lead badges, DecisionTree, ManagerTip)
+- [x] Discussion Call Modules Engineering Validation (`content/docs/discussion/*`)
 
 ---
 
@@ -124,9 +125,9 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
 | Total Articles (`.mdx` files) | 344 |
 | Total `meta.json` files | 31 |
-| Repository Status | Active — Learning Platform UI/UX Enhancements Complete |
-| Latest Milestone | Interactive Learning UI/UX Enhancements (`ConversationViewer`, `RoleplayCard`, `CallScorecard`, `DecisionTree`, `ManagerTip`) |
-| Completion Status | Production Ready — 15 Sales Academy modules + 14 Candidate Intelligence collections + 62 Engineering & Release Docs + Enhanced Learning Codebase |
+| Repository Status | Active — Discussion Call Lessons Engineering Validation Complete |
+| Latest Milestone | Discussion Call Lessons Engineering Validation (`content/docs/discussion/*`) |
+| Completion Status | Production Ready — 15 Sales Academy modules + 14 Candidate Intelligence collections + 62 Engineering & Release Docs + Stabilized Codebase |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
