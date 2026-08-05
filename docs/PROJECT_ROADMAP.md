@@ -2,7 +2,7 @@
 
 **Status:** Canonical reference — permanent executive dashboard
 **Owner:** Documentation Architect
-**Last updated:** 2026-08-04 (Milestone 4B Feature Components Integration)
+**Last updated:** 2026-08-04 (Milestone 4C Real Stores, Orama Search & Grounded AI Integration)
 
 ## Project Overview
 
@@ -42,11 +42,11 @@ Every content folder carries its own `meta.json` for sidebar navigation, and eve
 
 ## Current Sprint
 
-Milestone 4B Production Feature Components implemented (`components/dashboard/*`, `components/learning/*`, `components/search/*`, `components/ai/*`, `components/assessment/*`, `components/ui/*`). Full Career Advisor Dashboard, search modal, AI copilot drawer, and assessment widgets active.
+Milestone 4C Real Stores & Grounded Integration implemented (`lib/stores/useProgressStore.ts`, `useBookmarksStore.ts`, `useNotesStore.ts`, `useAssessmentsStore.ts`, real Orama search via `/api/search`, grounded AI retrieval in `AskAIPanel.tsx`, honest empty states).
 
 ## Latest Git Commit
 
-`58413ef` — "feat(app): implement Milestone 4B feature components"
+`1fac41d` — "chore: remove .pnpm-store from repository history" / `1d062d2` — "feat(app): implement Milestone 4C real stores, Orama search & grounded AI integration"
 
 ## Repository Version
 
@@ -87,6 +87,7 @@ Milestone 4B Production Feature Components implemented (`components/dashboard/*`
 - [x] Milestone 3D Component & Frontend Specifications (Documentation Complete)
 - [x] Milestone 4A Application Shell & UI Infrastructure (Implementation Started)
 - [x] Milestone 4B Feature Components & Dashboard Integration (Implementation Active)
+- [x] Milestone 4C Real Stores, Orama Search & Grounded AI (Implementation Complete)
 
 ---
 
@@ -119,9 +120,9 @@ Of these, QA/Testing, Business Analyst, Project Management, Healthcare, and Supp
 | Total Collections (Role Collections under `candidate-intelligence/`, including Reference Profile) | 14 |
 | Total Articles (`.mdx` files) | 344 |
 | Total `meta.json` files | 31 |
-| Repository Status | Active — Implementation Phase (Milestone 4B Feature Components) |
-| Latest Milestone | Milestone 4B Feature Components (`components/dashboard/`, `components/learning/`, `components/search/`, `components/ai/`, `components/assessment/`) |
-| Completion Status | Implementation Phase Active — 15 Sales Academy modules + 14 Candidate Intelligence collections + 61 Engineering Docs + Milestone 4A/4B Codebase |
+| Repository Status | Active — Implementation Phase Complete (Milestone 4C Real Stores & Grounded AI) |
+| Latest Milestone | Milestone 4C Real Stores & Grounded Integration (`lib/stores/*`, `SearchOverlay.tsx`, `AskAIPanel.tsx`, `LessonViewer.tsx`) |
+| Completion Status | Implementation Complete — 15 Sales Academy modules + 14 Candidate Intelligence collections + 61 Engineering Docs + Milestone 4 Full Codebase |
 | GitHub Repository | *(placeholder — repository URL not recorded in this documentation; add when confirmed)* |
 
 ---
