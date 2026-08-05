@@ -7,9 +7,9 @@ category: "Objection Handling"
 audience: "Admissions Advisors"
 funnel_stage: "Cross-Stage"
 countries: ["US", "Canada", "UK"]
-version: "1.0"
-last_updated: "2026-07-31"
-owner: "Documentation Architect"
+version: "2.0"
+last_updated: "2026-08-05"
+owner: "Chief Sales Trainer"
 status: "living-example"
 tags: ["objection", "framework", "cross-stage", "philosophy"]
 related: ["price-objection", "need-time-to-think", "no-guarantee-concern"]
@@ -17,87 +17,209 @@ related: ["price-objection", "need-time-to-think", "no-guarantee-concern"]
 
 # Objection Handling Framework
 
-## Purpose
+An objection isn't an obstacle. It's a candidate telling you, directly, what information they're still missing before they can decide.
 
-Objections show up in discovery, discussion, and closing calls, and they're often treated as obstacles to get past. This article sets a different starting point: an objection is a candidate telling you, directly, what information they're still missing before they can decide. This framework is the foundation every other article in this module builds on — the specific objections that follow (price, timing, family approval, competing programs, trust, the absence of a guarantee) are all applications of the same underlying approach, not separate techniques.
+## Lesson Objective
 
-## Learning Objectives
+- Apply the same four-step approach to any objection, regardless of content
+- Ask what's underneath an objection instead of responding to the surface version
+- Accept that a well-handled objection can still end in "no"
 
-- Explain why an objection is treated as information rather than resistance to overcome
-- Apply a consistent four-step approach to any objection, regardless of its specific content
-- Distinguish between an objection that's resolvable in the conversation and one that genuinely needs more time or information
-- Recognize that handling an objection well can still end in "no," and that this is not a failure
-- Avoid the reflex to argue harder when an objection doesn't resolve on the first attempt
+<EstimatedTime readingMinutes={8} practiceMinutes={11} />
 
-## When To Use
+<ConversationTimeline currentStage="Objections" />
 
-- As the foundation for every other article in this module — read this one first
-- Any time a candidate raises a concern, hesitation, or pushback at any point in the funnel, not only during a closing call
-- When training a newer advisor on how to think about objections before teaching them specific scripts
+## Full Conversation Viewer
 
-## Understanding the Candidate's Concern
+Objections show up everywhere in the funnel, not just at closing. Priya raises this one mid-Discovery, before any recommendation has even been made.
 
-Underneath almost every objection is one of a small number of real things: missing information, a genuine constraint (time, money, someone else's approval), a bad past experience with a similar program or recruiter, or a deeper doubt about whether this is the right decision that hasn't fully surfaced yet. The specific words a candidate uses rarely tell you which one you're dealing with — that takes a direct follow-up question, not a guess.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Priya"
+  appearance="phone"
+  callDuration="6:40"
+  visaStatus="H1B"
+  leadSource="Referral"
+  difficulty="Foundational"
+  expectedOutcome="The vague surface objection gets replaced with the real, specific concern underneath it"
+  messages={[
+    { sender: "candidate", text: "I don't know, it just feels like a lot right now.", mood: "hesitant" },
+  ]}
+/>
 
-It's also worth naming a pattern that shows up across almost every objection type: candidates in this population have often been sold to badly before. That history means an objection is sometimes less about the specific thing being raised and more about testing whether this conversation is going to go the way the last one did. An advisor who responds with genuine curiosity, rather than a rehearsed rebuttal, is usually the first sign to the candidate that this conversation is different.
+<DecisionPoint
+  context="'A lot' is vague on purpose or by accident — Aayush doesn't know which yet, and doesn't know what 'a lot' even refers to."
+  prompt="What should Aayush say next?"
+  bestAnswer="That's fair — can you tell me more about what's behind that? 'A lot' could mean a few different things."
+/>
 
-## Recommended Conversation Framework
+<ManagerTip from="Aayush" priority="important">
+Never respond to "it's a lot" with a longer, more reassuring pitch. You don't yet know what "a lot" means. Ask before you respond to anything.
+</ManagerTip>
 
-**Acknowledge before responding.** Whatever the objection is, the candidate needs to feel heard before they can hear anything back. A quick "that's a fair thing to raise" or "I'm glad you said that directly" costs nothing and keeps the conversation open.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Priya"
+  appearance="phone"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "I guess it's mostly that I'd be adding this on top of a job search I'm already doing, and I'm already stretched thin." },
+    { sender: "rep", text: "That's really useful to know — that's a different conversation than if it were about the decision itself. Let's talk about how this would actually fit alongside what you're already doing, rather than assume it just adds to the pile.", annotation: "Responds to the real thing, not the vague first version" },
+  ]}
+/>
 
-**Ask what's underneath it.** Most objections are shorthand for something more specific. "I need to think about it" might mean a dozen different things. Ask directly rather than responding to the surface version.
+<DecisionTree
+  situation="Priya just said 'it just feels like a lot right now' — how should Aayush respond to that first sentence?"
+  branches={[
+    { label: "Ask what's actually behind it before responding to anything", outcome: "Surfaces the real concern (time, not decision-worthiness) and lets Aayush respond to what's actually true.", quality: "best" },
+    { label: "Reassure her that it's simpler than it sounds", outcome: "Sounds warm, but responds to a guess. If the real issue is time pressure, this reassurance doesn't address it at all.", quality: "acceptable" },
+    { label: "Repeat the value pitch more confidently, assuming she missed something", outcome: "Talks past the actual concern entirely and reads as not listening — the objection will likely resurface later in the call.", quality: "poor" },
+  ]}
+  note="This is the whole framework in miniature: acknowledge, ask what's underneath, respond to the real thing."
+/>
 
-**Respond to the real thing, not the first thing.** Once you know what's actually driving the objection, address that — not a generic version of the objection that might not match what this candidate is actually experiencing.
+## Coaching Notes
 
-**Accept that resolution isn't the only good outcome.** If, after a genuine conversation, the honest answer is that this isn't the right fit or the right time, that's the framework working correctly, not failing.
+<CoachingNotes title="Coaching Notes">
+"That's fair" costs nothing and keeps the door open. Resist any urge to sound more certain than you actually are before you know what you're responding to.
+</CoachingNotes>
 
-## Questions to Ask
-
-1. "Can you tell me more about what's behind that?"
-2. "Is this the main thing, or is there something else sitting underneath it too?"
-3. "If I could fully resolve this for you right now, would that change where you're at — or is this something that needs time regardless?"
-4. "What would need to be true for this not to be a concern anymore?"
-
-## Best Practices
-
-- Treat every objection as legitimate until you understand it, even if it initially sounds like a stalling tactic — most aren't.
-- Resist responding to an objection with a longer, more confident version of what you already said. If it didn't land the first time, repeating it rarely helps.
-- Keep track of which objections keep resurfacing across a single call — a concern that returns after being "resolved" once usually means the real concern wasn't fully addressed.
-- Use the specific objection articles in this module once you know what you're actually dealing with — this framework tells you how to get there.
+<CoachingNotes title="Why This Worked">
+"A lot" turned out to mean bandwidth, not doubt about the decision itself. Responding to the wrong guess — reassurance about legitimacy, say — would have wasted the exchange entirely.
+</CoachingNotes>
 
 ## Common Mistakes
 
-- Treating every objection as the same generic "objection" and reaching for a one-size-fits-all rebuttal
-- Responding to the surface version of a concern without asking what's underneath it
-- Arguing harder when an objection doesn't resolve on the first pass, instead of asking a different question
-- Treating a resolved-sounding "okay, that makes sense" as real resolution without checking that it actually was
-- Continuing to push after a candidate has clearly indicated the honest answer is no, or not yet
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Treating every objection as the same generic thing", description: "Reaching for a one-size-fits-all rebuttal ignores what's actually being said.", correction: "Ask what's specifically behind this particular objection." },
+    { title: "Responding to the surface version without asking what's underneath", description: "The first sentence is rarely the whole concern.", correction: "Ask directly before responding to anything." },
+    { title: "Arguing harder when an objection doesn't resolve the first time", description: "Repeating yourself more confidently rarely helps.", correction: "Ask a different question instead of repeating the same point." },
+    { title: "Treating a vague 'okay, that makes sense' as real resolution", description: "Politeness isn't the same as agreement.", correction: "Check that it actually resolved before moving on." },
+  ]}
+/>
 
-## Real Conversation Examples
+## Roleplay
 
-**Getting past the surface version of an objection:**
+### Easy
 
-> **Candidate:** "I don't know, it just feels like a lot right now."
-> **Advisor:** "That's fair — can you tell me more about what's behind that? 'A lot' could mean a few different things."
-> **Candidate:** "I guess it's mostly that I'd be adding this on top of a job search I'm already doing, and I'm already stretched."
-> **Advisor:** "That's really useful to know — that's a different conversation than if it were about the decision itself. Let's talk about how this would actually fit alongside what you're already doing, rather than assume it just adds to the pile."
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  visaStatus="US Citizen"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "I'm just not sure this is the right move for me." },
+  ]}
+/>
 
-**Accepting a genuine "not now" as a real outcome:**
+<RoleplayCard
+  scenario="Vague, generic hesitation with no specifics offered"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — vague hesitation, hasn't named anything specific"
+  objective="Get past the vague statement to something concrete"
+  successCriteria="Advisor asks an open question instead of guessing at the concern"
+  hints={["Don't guess what she means", "One open question does more than three assumptions"]}
+  recommendedAnswer="Can you say more about that? I want to understand what's actually behind it before I respond to anything."
+/>
 
-> **Advisor:** "If I could resolve this fully right now, would that change things, or does this need time regardless?"
-> **Candidate:** "Honestly, it needs time. I don't think there's anything you could say today that would change that."
-> **Advisor:** "I appreciate you being that direct — that's actually really helpful. Let's talk about what a fair amount of time looks like, rather than me trying to talk you out of needing it."
+### Medium
 
-## Related Articles
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  visaStatus="F1 OPT"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "I mean, it sounds good, but I don't know, something feels off, I can't really explain it." },
+  ]}
+/>
 
-- [Price Objection](/docs/objections/price-objection) — a direct application of this framework to cost-related hesitation
-- [Need Time to Think](/docs/objections/need-time-to-think) — the most common surface-level objection this framework is built to get underneath
-- [No Guarantee Concern](/docs/objections/no-guarantee-concern) — an objection this framework handles by being honest rather than by resolving it away
+<RoleplayCard
+  scenario="Candidate senses something is wrong but can't articulate it"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Rahul — genuinely can't name the specific concern yet"
+  objective="Help him get more specific without putting words in his mouth"
+  successCriteria="Advisor asks a narrowing question rather than filling in the blank for him"
+  hints={["Don't suggest a reason for him", "A narrower question is easier to answer than a wide-open one"]}
+  recommendedAnswer="That's okay — sometimes it takes a minute to find the words. Is it something about the program itself, or more about the timing for you right now?"
+/>
 
-## Key Takeaways
+### Difficult
 
-Every objection in this module is an application of the same underlying approach: acknowledge it, find out what's actually underneath it, respond to the real thing, and accept that a genuine, well-handled "no" is a legitimate outcome. The specific objections that follow in this module tell you what to listen for and how to respond to each one — this framework tells you how to think about all of them.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  visaStatus="Laid Off — no visa complexity"
+  candidateMood="resistant"
+  messages={[
+    { sender: "candidate", text: "Honestly, I've heard this whole 'let me understand you first' thing before. It's a sales tactic. Just tell me what you're selling." },
+  ]}
+/>
 
-## Tags
+<RoleplayCard
+  scenario="Candidate names the framework itself as a manipulation tactic"
+  difficulty="Expert"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Akash — recognizes and rejects the acknowledge-then-ask pattern as a script"
+  objective="Don't defend the framework as sincere — let the actual conversation prove it instead of arguing the point"
+  context="Trying to convince Akash the approach is genuine, in words, will sound exactly like more of the tactic he's calling out."
+  successCriteria="Advisor doesn't argue that the approach is sincere and instead just asks a real, specific question"
+  hints={["Don't try to prove sincerity with more words", "The only proof is the next question actually being specific to him"]}
+  recommendedAnswer="Fair — I won't try to convince you it's not a tactic, that's not something I can prove in words anyway. So let me just ask you something specific instead: what's actually going on with your search right now?"
+  managerTip="Arguing that you're being genuine is always weaker than just being genuine in the very next sentence. Let the specificity of your next question do the work."
+/>
 
-`objection` · `framework` · `cross-stage` · `philosophy`
+## Practice Exercise
+
+<PracticeBox
+  prompt="Candidate says 'I don't know, maybe not right now.' Write your follow-up to find out what's underneath it."
+  recommendedAnswer="That's fair — can you tell me more about what's behind that?"
+/>
+
+<PracticeBox
+  prompt="Write the question that checks whether an objection genuinely resolved or was just dropped."
+  recommendedAnswer="Does that actually resolve it for you, or is there still something sitting underneath it?"
+/>
+
+<PracticeBox
+  prompt="An objection resurfaces later in the same call after seeming resolved earlier. Write your next 2 lines."
+  recommendedAnswer="I want to go back to something — earlier this felt resolved, but I want to check honestly whether it actually was."
+/>
+
+## Manager Review Scorecard
+
+<CallScorecard
+  title="Objection Handling Framework — Scorecard"
+  criteria={[
+    { criterion: "Acknowledged the objection before responding", score: "na", weight: 3, category: "Framework" },
+    { criterion: "Asked what was underneath it before answering", score: "na", weight: 3, category: "Framework" },
+    { criterion: "Responded to the real concern, not a guess", score: "na", weight: 3, category: "Framework" },
+    { criterion: "Accepted a genuine non-resolution as legitimate", score: "na", weight: 2, category: "Mindset" },
+    { criterion: "Did not argue harder after the first response didn't land", score: "na", weight: 2, category: "Mindset" },
+  ]}
+  summary="'na' means not yet evaluated. This scorecard is the foundation every other lesson in this module builds on."
+/>
+
+## Quick Reference Cheat Sheet
+
+<QuickReferencePanel
+  title="Objection Handling Framework"
+  items={[
+    { label: "Step 1", value: "Acknowledge before responding" },
+    { label: "Step 2", value: "Ask what's underneath it" },
+    { label: "Step 3", value: "Respond to the real thing, not the first thing" },
+    { label: "Step 4", value: "Accept that resolution isn't the only good outcome" },
+    { label: "Never", value: "Argue harder when the first response doesn't land" },
+  ]}
+/>
+
+## Module Completion
+
+<ModuleCompletion />
