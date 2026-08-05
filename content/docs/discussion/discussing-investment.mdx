@@ -7,116 +7,219 @@ category: "Discussion Calls"
 audience: "Admissions Advisors"
 funnel_stage: "Discussion"
 countries: ["US", "Canada", "UK"]
-version: "1.0"
-last_updated: "2026-07-30"
-owner: "Documentation Architect"
+version: "2.0"
+last_updated: "2026-08-05"
+owner: "Chief Sales Trainer"
 status: "living-example"
 tags: ["discussion", "investment", "cost", "value"]
-related: ["explaining-the-process", "objection-need-to-think-about-it", "discussion-call-checklist"]
+related: ["explaining-the-process", "discussion-call-checklist"]
 ---
 
 # Discussing Investment
 
-> **Note on pricing:** This article teaches how to have the cost conversation honestly and well. It does not state a specific price, fee, payment structure, or discount anywhere, and it never will — those numbers change, and this document doesn't. Confirm current program cost and payment structure with the authoritative internal pricing resource before every investment conversation. Never quote a figure from memory.
+> **Note on pricing:** This lesson teaches how to have the cost conversation honestly and well. It does not state a specific price, fee, payment structure, or discount anywhere, and it never will. Confirm current program cost and payment structure with the authoritative internal pricing resource before every investment conversation. Never quote a figure from memory.
 
-## Purpose
+By now the candidate understands the recommendation and the process. Cost is no longer an isolated number — it's tied to everything already discussed.
 
-By this point in a well-structured discussion call, the candidate understands what's being recommended and what the process actually involves. This is where cost comes into the conversation — not as an isolated number, but as something now genuinely connected to everything discussed before it. This article is about having that conversation honestly: naming cost directly, tying it to what it actually buys, and treating a candidate's financial hesitation as legitimate information rather than an obstacle to manage.
+## Lesson Objective
 
-## Learning Objectives
+- Introduce cost directly, once earlier stages have earned the right to raise it
+- Tie the number explicitly to value already discussed — never present it in isolation
+- Treat financial hesitation as real information, not an obstacle to push past
 
-- Introduce cost directly and without unnecessary hedging, once the earlier stages of the call have earned the right to raise it
-- Connect cost explicitly to the specific value discussed earlier in the call, rather than presenting it as a disconnected number
-- Respond to financial hesitation by understanding it, not by minimizing it or rushing past it
-- Avoid ever stating a specific number, discount, or guarantee not confirmed as current
-- Recognize when a cost conversation is really surfacing a bigger, unresolved doubt about the recommendation itself
+<EstimatedTime readingMinutes={9} practiceMinutes={12} />
 
-## Candidate Psychology
+<ConversationTimeline currentStage="Objections" />
 
-Very few candidates hear a cost number in isolation. They hear it against whatever they've already decided the recommendation is worth to them — which is exactly why this conversation belongs after the recommendation and process have been genuinely understood, not before. A number introduced too early gets evaluated against almost nothing; the same number introduced after real understanding gets evaluated against something concrete.
+## Full Conversation Viewer
 
-Cost conversations also tend to surface things candidates haven't said out loud yet — a tighter financial situation than they've admitted to, a spouse who isn't fully convinced, real uncertainty about whether they're making the right call at all. It's worth remembering that hesitation at this stage is rarely only about the number. Sometimes the number is simply the number, and sometimes it's the first concrete, unavoidable moment where a bigger, quieter doubt finally has to be addressed.
+Akash's real driver, from Discovery, was security after being laid off two years ago. That same anxiety is exactly what surfaces now, when cost comes up.
 
-There's also a specific anxiety worth naming: many candidates in this population have been in a vulnerable financial position before — between jobs, managing a visa timeline, supporting family — and a conversation about spending money on themselves can trigger genuine guilt or self-doubt that has nothing to do with whether the investment is reasonable. An advisor who notices this and responds to the person, not just the budget question, handles this stage far better than one who treats it as purely a numbers conversation.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  callDuration="21:05"
+  visaStatus="Laid Off — no visa complexity"
+  leadSource="Job Board"
+  difficulty="Advanced"
+  expectedOutcome="Real financial concern is surfaced and treated honestly as a timing question, not just a pricing objection"
+  messages={[
+    { sender: "rep", text: "Let's talk about what this actually costs, and what it's tied to. I want to give you the accurate current figure rather than something from memory, so let me confirm that precisely with you." },
+    { sender: "rep", text: "But I do want to frame it against what we just walked through — the readiness work, the employer access, the ongoing support. This isn't a number floating on its own." },
+    { sender: "rep", text: "How are you feeling about it, now that you've seen what it's actually connected to?", pauseAfter: true },
+    { sender: "candidate", text: "I mean... that's more than I was expecting, if I'm honest.", mood: "hesitant" },
+  ]}
+/>
 
-## Advisor Objective
+<DecisionPoint
+  context="Akash just admitted hesitation directly instead of going quiet. This is the moment to find out what's actually behind it, not to start justifying the number."
+  prompt="What should Aayush say next?"
+  bestAnswer="I appreciate you saying that directly instead of going quiet on me. Can I ask — is it the number itself that's the issue, or is it more about where things stand for you financially right now?"
+/>
 
-Introduce cost clearly and directly, tied explicitly to the value already discussed, and respond to any hesitation by understanding what's actually behind it — without ever stating a specific figure that hasn't been confirmed as current, and without treating hesitation as something to be talked past.
+<ManagerTip from="Aayush" priority="critical">
+Never respond to hesitation by justifying the number harder. That answers a question nobody asked yet. Find out first whether this is about the number or about timing — they need completely different responses.
+</ManagerTip>
 
-## When To Use
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "candidate", text: "...It's more the second thing. I've been out of work a few months, so anything feels like a lot right now." },
+    { sender: "rep", text: "That makes complete sense, and I'm glad you said it out loud. That's actually a different conversation than negotiating a number — it's about whether the timing is right for you at all." },
+    { sender: "rep", text: "Can we talk through that honestly, instead of me just trying to make the number feel smaller?", annotation: "Names it as a timing question, not a discount request" },
+  ]}
+/>
 
-- As the fourth and final stage of a structured discussion call, after recommendation and process have both been covered (see [Structuring the Discussion Call](/docs/discussion/structuring-the-discussion-call))
-- When a candidate asks about cost earlier than the natural sequence, and needs a direct acknowledgment plus a request to cover it in order (see [Structuring the Discussion Call](/docs/discussion/structuring-the-discussion-call) § Decision Points)
-- When a candidate's reaction to cost seems to be about more than the number itself, and the real concern needs to be surfaced before the conversation can move forward honestly
+## Coaching Notes
 
-## Discussion Flow
+<CoachingNotes title="Coaching Notes">
+Let the silence after stating cost actually sit. Don't fill it by softening the number before Akash has said anything. He needs a moment to process, not a reflex response from you.
+</CoachingNotes>
 
-Introduce the topic directly — don't apologize for bringing up cost or bury it in soft language. A brief, clear transition works better than a long lead-in: something like "let's talk about what this actually costs, and what that's tied to."
-
-State plainly that you'll confirm the exact current figure rather than reciting a number from memory if there's any chance it's changed — accuracy here matters more than sounding fluent.
-
-Connect the cost directly back to what was covered in the recommendation and process stages — remind the candidate concretely what it's attached to, rather than letting the number sit on its own.
-
-Ask directly how the candidate is feeling about it, and actually listen to the answer rather than moving straight into handling an objection that hasn't been raised yet.
-
-## Conversation Examples
-
-**Direct introduction, tied to value already discussed:**
-
-> **Advisor:** "Let's talk about what this actually costs, and what it's tied to. I want to give you the accurate, current figure rather than something from memory, so let me confirm that with you precisely — but I do want to frame it against what we just walked through: the readiness work, the employer access, the ongoing support through the process. This isn't a number floating on its own — it's attached to all of that. How are you feeling about it, now that you've seen what it's actually connected to?"
-> **Candidate:** "Honestly, better than I expected, now that I understand what's included."
-> **Advisor:** "Good to hear — and I'd rather you tell me that honestly than just go along with it. Anything about it that still feels uncertain?"
-
-**Surfacing a deeper concern underneath a cost reaction:**
-
-> **Candidate:** "I mean... that's more than I was expecting, if I'm honest."
-> **Advisor:** "I appreciate you saying that directly instead of just going quiet on me. Can I ask — is it the number itself that's the issue, or is it more about where things stand for you financially right now, more broadly?"
-> **Candidate:** "...It's more the second thing. I've been out of work for a few months, so anything feels like a lot right now."
-> **Advisor:** "That makes complete sense, and it's an important thing to have said out loud. That's actually a different conversation than just negotiating a number — it's about whether the timing is right for you at all. Can we talk through that honestly, rather than me just trying to make the number feel smaller?"
-
-## Decision Points
-
-- IF the candidate responds neutrally or positively once cost is connected to the value discussed →
-  THEN move naturally toward next steps, without over-explaining or continuing to sell past a decision that seems settled.
-- IF the candidate expresses direct hesitation about the number itself →
-  THEN ask what's underneath it before responding — a specific concern about the number's fairness is a different conversation than a broader concern about affordability right now.
-- IF the hesitation turns out to be about broader financial timing rather than the number itself →
-  THEN treat this honestly as a timing question, not a pricing objection — this may mean the honest answer is "not right now," and that's a legitimate outcome (see the Objection Handling module, planned for a future sprint).
-- IF a candidate asks for a discount, waiver, or nonstandard payment arrangement →
-  THEN do not invent or promise any adjustment on the call — direct the request to the appropriate current internal process rather than answering from assumption.
-- IF cost hesitation seems to be masking doubt about the recommendation itself, not the money →
-  THEN go back and check whether the recommendation genuinely landed, rather than continuing to discuss cost as if that's the real issue.
+<CoachingNotes title="Why This Worked">
+Separating "is this a fair number" from "is now the right time financially" matters because they sound identical in the first sentence but need completely different responses. Answering the wrong one wastes trust and doesn't resolve anything.
+</CoachingNotes>
 
 ## Common Mistakes
 
-- Introducing cost apologetically, as though it's an uncomfortable thing to bring up rather than a normal part of an honest conversation
-- Reciting a number from memory instead of confirming it's current before stating it to a candidate
-- Responding to hesitation by immediately trying to justify the number harder, instead of asking what's actually behind the reaction
-- Treating every instance of hesitation as a pricing objection, when it's sometimes a timing or confidence issue wearing a pricing costume
-- Promising or implying a discount, waiver, or special arrangement without confirming it through the proper internal process
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Reciting a number from memory", description: "Prices change. Stating one you haven't freshly confirmed risks giving inaccurate information.", correction: "Always confirm the current figure through the authoritative pricing resource before stating it." },
+    { title: "Justifying the number immediately after hesitation", description: "Responds to a question the candidate hasn't actually asked yet.", correction: "Ask what's behind the hesitation before responding to it." },
+    { title: "Treating every hesitation as a pricing objection", description: "Sometimes it's a timing or confidence issue wearing a pricing costume.", correction: "Ask directly whether it's the number or the timing." },
+    { title: "Promising a discount or special arrangement on the call", description: "Not something to invent or promise in the moment.", correction: "Direct any discount or payment request to the proper internal process." },
+  ]}
+/>
 
-## Things Never To Say
+## Roleplay
 
-- Any specific dollar figure, discount, or payment term not freshly confirmed as current — see the standing note at the top of this article.
-- "It's an investment in yourself, so it's always worth it." (A blanket claim that dismisses a candidate's real, individual financial situation instead of engaging with it honestly.)
-- "A lot of people find a way to make it work." (Vague social pressure that sidesteps the candidate's actual concern rather than addressing it directly.)
+### Easy
 
-## Advanced Advisor Tips
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  visaStatus="US Citizen"
+  candidateMood="positive"
+  messages={[
+    { sender: "rep", text: "So that's the number, and what it's tied to. How are you feeling about it?" },
+    { sender: "candidate", text: "Honestly, better than I expected, now that I see what's included." },
+  ]}
+/>
 
-Experienced advisors learn to sit with a candidate's silence after stating cost, the same way they would after any other direct ask — resisting the urge to immediately soften the number or start negotiating against an objection that hasn't actually been raised yet. Often the candidate just needs a moment to process, not a response.
+<RoleplayCard
+  scenario="Candidate responds positively once cost is tied to value"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — reacts well once she understands what's included"
+  objective="Don't over-sell past a decision that already seems settled"
+  successCriteria="Advisor confirms genuinely, checks for any remaining uncertainty, and moves toward next steps"
+  hints={["Don't keep selling once she's already positive", "Still check for hidden uncertainty before moving on"]}
+  recommendedAnswer="Good to hear — and I'd rather you tell me that honestly than just go along with it. Anything about it that still feels uncertain?"
+/>
 
-It's also worth developing the instinct to separate "is this a fair number for what's included" from "is now the right time for me financially" as two genuinely different conversations, even though they can sound identical in the first sentence a candidate says. Responding to the wrong one wastes the candidate's patience and doesn't resolve the real concern.
+### Medium
 
-## Summary
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  visaStatus="F1 OPT"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "rep", text: "So that's the number, tied to the readiness work and employer access we talked through. How's that sitting with you?" },
+    { sender: "candidate", text: "I mean, I need to think about it. It's a big decision." },
+  ]}
+/>
 
-Discuss cost directly, once the recommendation and process have earned the right to raise it, and always tie the number to the specific value already discussed rather than presenting it in isolation. Confirm figures rather than reciting them from memory, and when hesitation shows up, find out honestly whether it's about the number, the timing, or a deeper doubt about the recommendation itself — each of those deserves a different, honest response, not a single script applied to all three.
+<RoleplayCard
+  scenario="Candidate gives a vague 'need to think about it' response"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Rahul — non-committal, hasn't named the actual concern"
+  objective="Get past the vague deferral to the real thing underneath it, without pressuring him to decide now"
+  successCriteria="Advisor asks a specific question rather than accepting the vague answer or pushing for an immediate decision"
+  hints={["Don't push for a same-call decision", "'I need to think about it' almost always has something more specific underneath"]}
+  recommendedAnswer="That's completely fair — this should take real thought. Can I ask what specifically you'd be thinking through, so I make sure you actually have what you need to decide?"
+/>
 
-## Related Articles
+### Difficult
 
-- [Explaining the Process](/docs/discussion/explaining-the-process) — the process understanding this cost conversation depends on landing first
-- *Objection: I Need to Think About It* (`objection-need-to-think-about-it`) — the closing-stage objection framework this article's timing-related hesitation often leads into. Not yet published in this repository; planned for a future sprint.
-- [Discussion Call Checklist](/docs/discussion/discussion-call-checklist) — the overall sequence this stage completes
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="phone"
+  visaStatus="H4 EAD"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "rep", text: "So that's the number, tied to everything we've walked through. How are you feeling about it?" },
+    { sender: "candidate", text: "I need to ask my husband first, honestly. We make these decisions together, especially with his visa situation too." },
+  ]}
+/>
 
-## Tags
+<RoleplayCard
+  scenario="Candidate needs to consult her spouse before deciding"
+  difficulty="Expert"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Neha — H4 EAD, decision genuinely tied to her husband's situation, not a stall tactic"
+  objective="Support a real joint decision-making process without treating it as an objection to overcome"
+  context="Given her H4 EAD status, this isn't a brush-off — her husband's H1B timeline genuinely affects the decision."
+  successCriteria="Advisor respects the need to involve her husband and offers a concrete way to include him, rather than pressuring for a solo decision"
+  hints={["Don't treat this as a stall tactic to push past", "Offer to include her husband directly rather than working around him"]}
+  recommendedAnswer="That makes complete sense, especially given how tied together your situations are. Would it help to set up a short call with both of you, so he can ask his own questions directly instead of hearing it secondhand?"
+  managerTip="Never treat 'I need to ask my spouse' as a soft no to push past. For candidates whose visa status is genuinely linked to a spouse's, it's not a delay tactic — it's an accurate description of how the decision actually gets made."
+/>
 
-`discussion` · `investment` · `cost` · `value`
+## Practice Exercise
+
+<PracticeBox
+  prompt="Write a direct, non-apologetic 2-line transition into the cost conversation."
+  recommendedAnswer="Let's talk about what this actually costs, and what it's tied to. I'll confirm the accurate current figure with you rather than reciting it from memory."
+/>
+
+<PracticeBox
+  prompt="Candidate goes quiet after hearing the number. Write your next line."
+  recommendedAnswer="Take your time — I'd rather you sit with that than rush a reaction. What's going through your mind?"
+/>
+
+<PracticeBox
+  prompt="Candidate asks for a discount. Write your response without inventing or promising anything."
+  recommendedAnswer="I can't offer anything on this call — I don't want to promise something I'm not authorized to confirm. Let me route that through the proper process and get you a real answer."
+/>
+
+## Manager Review Scorecard
+
+<CallScorecard
+  title="Discussing Investment — Scorecard"
+  criteria={[
+    { criterion: "Introduced cost directly, without apologizing for it", score: "na", weight: 2, category: "Introduction" },
+    { criterion: "Tied the number explicitly to value already discussed", score: "na", weight: 3, category: "Introduction" },
+    { criterion: "Confirmed figure was current, not recited from memory", score: "na", weight: 3, category: "Accuracy" },
+    { criterion: "Distinguished 'number' hesitation from 'timing' hesitation", score: "na", weight: 3, category: "Diagnosis" },
+    { criterion: "Did not invent or promise a discount", score: "na", weight: 3, category: "Accuracy" },
+  ]}
+  summary="'na' means not yet evaluated. This lesson's stakes are high — score honestly, especially on the accuracy criteria."
+/>
+
+## Quick Reference Cheat Sheet
+
+<QuickReferencePanel
+  title="Discussing Investment"
+  items={[
+    { label: "Introduce cost", value: "Directly, tied to value — never apologetically" },
+    { label: "Always", value: "Confirm the current figure — never recite from memory" },
+    { label: "Hesitation?", value: "Ask: the number itself, or timing/finances broadly?" },
+    { label: "Never say", value: "\"It's an investment in yourself, always worth it.\"" },
+    { label: "Never promise", value: "A discount or payment arrangement on the call" },
+    { label: "\"Need to ask my spouse\"", value: "Respect it — offer to include them, don't push past it" },
+  ]}
+/>
+
+## Module Completion
+
+<ModuleCompletion />

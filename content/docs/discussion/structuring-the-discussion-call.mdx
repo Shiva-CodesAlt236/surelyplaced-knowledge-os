@@ -7,120 +7,213 @@ category: "Discussion Calls"
 audience: "Admissions Advisors"
 funnel_stage: "Discussion"
 countries: ["US", "Canada", "UK"]
-version: "1.0"
-last_updated: "2026-07-30"
-owner: "Documentation Architect"
+version: "2.0"
+last_updated: "2026-08-05"
+owner: "Chief Sales Trainer"
 status: "living-example"
 tags: ["discussion", "call-structure", "recommendation", "sequencing"]
-related: ["understanding-candidate-goals", "presenting-surely-placed", "discussion-reality-check-market"]
+related: ["understanding-candidate-goals", "presenting-surely-placed", "discussing-investment"]
 ---
 
 # Structuring the Discussion Call
 
-## Purpose
+Discovery gathers the picture. Discussion hands it back as an actual recommendation. Get the order wrong and even a good recommendation falls flat.
 
-Discovery gathers the picture. The discussion call is where that picture gets handed back to the candidate in the form of an actual recommendation — what Surely Placed is, how the process works, and what it would take from them. This article is about the architecture of that call: what order things need to happen in, and why getting the order wrong quietly undermines a conversation that might otherwise go well.
+## Lesson Objective
 
-This isn't a script. It's a sequence, and the sequence matters because each part of a discussion call depends on the one before it landing first. You can't discuss investment honestly before the candidate understands the process. You can't explain the process convincingly before you've shown them you actually understood their discovery conversation. Structure isn't a formality here — it's what makes the recommendation believable.
+- Run a discussion call in four stages: recap, recommendation, process, investment — in that order
+- Open by proving discovery was heard, not by starting fresh
+- Hold a cost question at bay honestly when it comes too early
 
-## Learning Objectives
+<EstimatedTime readingMinutes={9} practiceMinutes={12} />
 
-- Lay out the four-part shape of a well-run discussion call and explain why that order holds
-- Open a discussion call by demonstrating what was retained from discovery, not by starting fresh
-- Recognize when a call is drifting out of sequence and bring it back without making the shift feel abrupt
-- Know when a discussion call should pause and route back to discovery instead of continuing forward
-- Hand a call off cleanly to a closing conversation once discussion is genuinely complete
+<ConversationTimeline currentStage="Presentation" />
 
-## Candidate Psychology
+## Full Conversation Viewer
 
-A candidate walking into a discussion call is testing something specific: did the last conversation actually go anywhere? Discovery calls ask a lot of a candidate — background, goals, sometimes uncomfortable details about authorization status or employment history. If the discussion call opens without any visible sign that information was used, the candidate reasonably concludes the discovery call was a formality, not a real diagnostic step. That reaction is fast and it's hard to undo later in the same call.
+Rahul is back — this is his Discussion call, a few days after his Discovery call where Aayush learned his STEM OPT status was unfiled and his real driver was stability, not the "Data Analyst" title itself.
 
-There's also a pacing expectation candidates bring into this call that's worth naming directly. By the time someone agrees to a second, longer conversation, they've usually decided they want a real recommendation, not another round of general information. A discussion call that spends too long re-explaining basics, or that jumps around between topics without a clear throughline, reads as either disorganized or evasive — neither of which the candidate is likely to say out loud, but both of which show up as quiet disengagement.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  callDuration="18:42"
+  visaStatus="F1 OPT"
+  leadSource="Website"
+  difficulty="Intermediate"
+  expectedOutcome="Candidate confirms recap and agrees to hear the recommendation"
+  messages={[
+    { sender: "rep", text: "Rahul, before I get into anything today, I want to make sure I've got last time right. That okay?" },
+    { sender: "candidate", text: "Yeah sure, go ahead." },
+    { sender: "rep", text: "From what you told me, the real driver isn't the Data Analyst title specifically — it's stability. You've been applying four months with almost nothing back, and that's what's actually driving this." },
+    { sender: "rep", text: "And you mentioned you weren't sure if you'd filed your STEM extension yet." },
+    { sender: "candidate", text: "Right, yeah. Actually — I checked. I did file it, it's approved now.", annotation: "Good sign — he followed up on the parked item himself" },
+    { sender: "rep", text: "That's great news, genuinely. Okay, so — did I get the rest right, or is there anything you'd change?" },
+    { sender: "candidate", text: "That's pretty much it. I'd just add... I also want to feel technically sharp again. Not just secure." },
+    { sender: "rep", text: "Good addition, and useful — that actually shapes what I want to walk you through today.", pauseAfter: true },
+    { sender: "candidate", text: "Okay so... what does SurelyPlaced actually do then? Like specifically.", mood: "neutral" },
+  ]}
+/>
 
-Finally, candidates are listening for the order things come up in as a signal in itself. A call that jumps to cost early, before the candidate understands what they'd actually be paying for, tends to put candidates on the defensive regardless of how reasonable the number eventually turns out to be. Sequence isn't just organizational — it shapes how everything that follows gets received.
+<DecisionPoint
+  context="Rahul just asked the generic 'what do you guys do' question — the exact moment where a canned pitch either lands or falls flat."
+  prompt="What should Aayush say next?"
+  bestAnswer="Given what you just told me — stability, and feeling technically sharp again — here's how I'd frame it specifically for you. Not a general pitch, a direct answer to that. Let's start there."
+/>
 
-## Advisor Objective
+<ManagerTip from="Aayush" priority="important">
+Don't answer "what do you guys do" with a brochure line. If your first sentence back could be said to literally any candidate on any call, you've already lost the thread you just built with the recap. Anchor the answer in the exact two words the candidate just gave you.
+</ManagerTip>
 
-Run the discussion call in a sequence that lets each part build credibility for the next — opening with what was learned in discovery, moving to a tailored recommendation, then process, then investment — so that by the time cost comes up, the candidate already understands exactly what it's attached to.
+## Coaching Notes
 
-## When To Use
+<CoachingNotes title="Coaching Notes">
+Keep the recap to 20–30 seconds with one or two precise details — not a long summary. Precision proves you listened; length just proves you took notes. Let Rahul correct you before you build anything on top of the recap.
+</CoachingNotes>
 
-- At the start of every discussion call, as the mental structure the rest of the call is organized around
-- When a call has jumped ahead of itself — for example, a candidate asking about cost before the recommendation has been made — and needs to be brought back into sequence
-- When a discussion call reveals a gap that should have been caught in discovery, and the call needs to pause and go back a step
-- When training a newer advisor who tends to let discussion calls wander without a clear shape
-
-## Discussion Flow
-
-A well-structured discussion call generally moves through four stages, in this order:
-
-**1. Reflect discovery back.** Open by summarizing what you understood from the discovery conversation — the goal underneath the stated goal, the constraints that came up, the authorization status that was confirmed. This isn't a recap for its own sake; it's proof the last call mattered, and it gives the candidate a chance to correct anything you got wrong before you build a recommendation on it.
-
-**2. Present a tailored recommendation.** Once the discovery summary is confirmed, present what Surely Placed can offer specifically in light of that candidate's situation — not a general description of the program, but a direct line from what they told you to what you're recommending (see [Presenting Surely Placed](/docs/discussion/presenting-surely-placed)).
-
-**3. Walk through the process.** Once the candidate understands what's being recommended and why, explain what actually happens if they move forward — the shape of the experience, not just the pitch (see [Explaining the Process](/docs/discussion/explaining-the-process)).
-
-**4. Address investment.** Only once the candidate understands what they'd be getting and how it would actually work does a conversation about cost make sense. Raised any earlier, it tends to land as a number floating with no context; raised here, it lands as the cost of something the candidate already understands and, ideally, already wants (see [Discussing Investment](/docs/discussion/discussing-investment)).
-
-Each stage should end with a natural checkpoint — a question that confirms the candidate is actually with you — before moving to the next. Don't treat the four stages as a monologue split into four parts; each one is still a conversation.
-
-## Conversation Examples
-
-**Opening a discussion call with a discovery recap:**
-
-> **Advisor:** "Before I get into anything today, I want to make sure I've got last time right. From what you told me, the real driver for you isn't the title — it's job security, especially after what happened with the layoff. And you're on STEM OPT with about a year left, cap question not relevant since you're not on H-1B yet. Did I get that right, or is there anything you'd change?"
-> **Candidate:** "That's pretty much it, yeah — maybe I'd add that I also just want to feel technically sharp again, not just secure."
-> **Advisor:** "Good addition, and useful — that actually shapes what I want to walk you through today. Let's start there."
-
-**Catching a call that's jumped ahead of itself:**
-
-> **Candidate:** "So what does this actually cost?"
-> **Advisor:** "I'll get you a clear answer on that, I promise — but I want to walk you through what you'd actually be paying for first, because the number on its own won't mean much without that context. Is it okay if we cover that first, and then get straight to cost?"
-> **Candidate:** "Yeah, that's fair."
-
-## Decision Points
-
-- IF the candidate confirms the discovery recap without correction →
-  THEN proceed directly into the tailored recommendation — the shared understanding is solid enough to build on.
-- IF the candidate corrects or adds to the recap →
-  THEN incorporate the correction before moving forward, even if it means adjusting the recommendation you'd planned to present.
-- IF the recap reveals something that should have been caught in discovery — an authorization detail, a goal that's shifted significantly — →
-  THEN pause discussion and address it directly, routing to [Candidate Qualification](/docs/discovery/candidate-qualification) or a focused visa conversation if needed, before continuing.
-- IF the candidate asks about cost before the recommendation or process has been covered →
-  THEN acknowledge the question honestly, commit to answering it, and ask permission to cover recommendation and process first so the number has context.
-- IF a candidate seems disengaged or rushed through the recap stage →
-  THEN check in directly rather than pushing forward on a shaky foundation — a discussion call built on an unconfirmed recap tends to unravel later.
+<CoachingNotes title="Why This Worked">
+The recap named a fact only Rahul could have told him (STEM OPT status), which made "did I get that right" land as real, not procedural. Confirming before recommending meant the whole rest of the call is now built on agreed ground, not an assumption.
+</CoachingNotes>
 
 ## Common Mistakes
 
-- Starting a discussion call as if it's the candidate's first conversation with Surely Placed, instead of building visibly on discovery
-- Presenting cost early because the candidate asked, without first securing agreement on what they'd be paying for
-- Treating the four-stage structure as a rigid script rather than a sequence that still needs real back-and-forth at each stage
-- Moving forward with a recommendation after a discovery recap that the candidate only partially confirmed
-- Letting a call wander between the four stages without a clear sense of which one is currently happening
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Starting fresh, as if this is the first conversation", description: "Skips the one thing that proves discovery mattered — the candidate quietly concludes it was a formality.", correction: "Open with a specific, 20-second recap before anything else." },
+    { title: "Answering a cost question the moment it's asked", description: "A number with no context gets evaluated against nothing — it tends to land worse than the same number would later.", correction: "Acknowledge the question, commit to answering it, and ask to cover recommendation and process first." },
+    { title: "Treating the four stages as a script to read", description: "Each stage still needs real back-and-forth — a monologue split into four parts isn't a conversation.", correction: "End each stage with a real checkpoint question before moving to the next." },
+    { title: "Proceeding after a partially-confirmed recap", description: "Building a recommendation on a recap the candidate only half-agreed with tends to unravel later in the call.", correction: "If the candidate corrects or adds anything, incorporate it before moving forward." },
+  ]}
+/>
 
-## Things Never To Say
+## Roleplay
 
-- "We covered that last time, so let's not go over it again." (Skipping the recap because it feels redundant to the advisor removes the exact thing that makes the candidate feel heard — even a short version matters.)
-- "Let's just get to the number, since that's what everyone really wants to know." (Undermines the sequence this whole structure depends on, and reduces the conversation to a transaction before it's earned that framing.)
-- Any suggestion that discovery findings don't actually shape what gets recommended — the recommendation has to be visibly built on what was learned, not generic regardless of what the candidate said.
+### Easy
 
-## Advanced Advisor Tips
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  visaStatus="US Citizen"
+  candidateMood="positive"
+  messages={[
+    { sender: "rep", text: "Emily, before anything else — from our last call, the main thing was you wanted more ownership, not just a title change. Did I get that right?" },
+    { sender: "candidate", text: "Yep, exactly right." },
+  ]}
+/>
 
-Experienced advisors learn to keep the discovery recap short but specific — a thirty-second summary that includes one or two precise details is more convincing than a longer, vaguer one. Precision is what proves the last call was actually heard; length just proves the advisor took notes.
+<RoleplayCard
+  scenario="Confirmed recap, straightforward candidate"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — US Citizen, confirmed recap without correction"
+  objective="Move cleanly from a confirmed recap into the recommendation stage"
+  context="Emily agreed with the recap immediately, no corrections."
+  successCriteria="Advisor transitions directly into a tailored recommendation without re-litigating discovery"
+  hints={["Don't over-explain why you're moving on — just move", "Reference her specific word: 'ownership'"]}
+  recommendedAnswer="Great — so let's build on that. Here's what this looks like specifically for someone chasing ownership, not just a new title."
+/>
 
-It's also worth developing comfort with holding a candidate's cost question at bay briefly, without making it feel like a dodge. The line between "I'll get to that, here's why the order matters" and stonewalling is mostly about tone and about actually following through quickly — candidates tolerate a short delay easily as long as they trust it's genuinely coming, and soon.
+### Medium
 
-## Summary
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Priya"
+  appearance="phone"
+  visaStatus="H1B"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "rep", text: "Priya, last time the big thing was — H1B does add real constraints, and you wanted to understand those specifically before going further. Did I get that right?" },
+    { sender: "candidate", text: "Yeah, sort of. But also — can we just get to what this costs? I don't want to sit through a long pitch." },
+  ]}
+/>
 
-A discussion call works best in a specific order: reflect discovery back, present a tailored recommendation, explain the process, then address investment. Each stage earns credibility for the next, and skipping ahead — especially straight to cost — tends to undercut a conversation that would otherwise land well. Confirm the discovery recap before building on it, and don't be afraid to pause the sequence if something surfaces that needs to be resolved first.
+<RoleplayCard
+  scenario="Candidate asks for cost before recommendation or process"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Priya — H1B QA Engineer, impatient, wants the number early"
+  objective="Hold the sequence honestly without sounding like a dodge"
+  context="Priya is testing whether the call will actually respect her time."
+  successCriteria="Advisor names the request, commits to answering it, and gets explicit permission to cover recommendation and process first"
+  hints={["Don't say 'we'll get there' vaguely — name a real order", "A short, honest delay is fine if she trusts it's coming"]}
+  recommendedAnswer="Fair ask. I'll get you a real number today, I promise — but it won't mean much without knowing what it's attached to. Give me five minutes on that first, then straight to cost?"
+  managerTip="If she says no and wants the number immediately, give an honest range-free answer: confirm you'll answer directly, right after this. Don't cave and don't stall."
+/>
 
-## Related Articles
+### Difficult
 
-- [Understanding Candidate Goals](/docs/discovery/understanding-candidate-goals) — the discovery work this call's opening recap is built directly on
-- [Presenting Surely Placed](/docs/discussion/presenting-surely-placed) — the tailored recommendation stage this article sequences ahead of process and investment
-- *Aligning Expectations with the Market* (`discussion-reality-check-market`) — the market-alignment conversation that often runs alongside or just before this structure, depending on what discovery surfaced. Not yet published in this repository; planned for a future sprint.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  visaStatus="Laid Off — no visa complexity"
+  candidateMood="resistant"
+  messages={[
+    { sender: "rep", text: "Akash, last time the core thing was job security, after the layoff. Did I get that right?" },
+    { sender: "candidate", text: "Yeah. Look, honestly — I've already spoken with three consultancies this month. Can you just tell me the price so I can compare?" },
+  ]}
+/>
 
-## Tags
+<RoleplayCard
+  scenario="Candidate demands price to comparison-shop against competitors"
+  difficulty="Advanced"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Akash — recently laid off, comparison-shopping, defensive"
+  objective="Respect the comparison instinct without giving a meaningless, context-free number"
+  context="Akash has already spoken to three other consultancies and is treating this as a price comparison exercise."
+  successCriteria="Advisor acknowledges the comparison directly, doesn't get defensive about competitors, and still holds the sequence"
+  hints={["Don't badmouth the other three consultancies", "Naming that you understand he's comparing builds more trust than resisting it"]}
+  recommendedAnswer="Makes complete sense to compare — you should. I'll give you a real number today. But if I hand it to you with zero context, it's not actually comparable to anything. Ten minutes on what it's attached to, then the number — deal?"
+  managerTip="A candidate who's comparison-shopping isn't being difficult, he's being smart. Fighting that instinct loses. Respecting it while still holding your sequence wins."
+/>
 
-`discussion` · `call-structure` · `recommendation` · `sequencing`
+## Practice Exercise
+
+<PracticeBox
+  prompt="Write your own 3-line discovery recap for a candidate whose real driver turned out to be family pressure, not the stated goal."
+  recommendedAnswer="Before anything else, let me make sure I've got last time right. The stated goal was moving into cloud, but what actually came up was pressure from family to show progress. Did I get that right, or would you change anything?"
+/>
+
+<PracticeBox
+  prompt="Candidate says: 'Let's just get to the number, that's what everyone really wants to know.' Write your response."
+  recommendedAnswer="I hear that, and I'll get you there. I just don't want to give you a number with nothing behind it — five minutes on what it's attached to, then straight to cost."
+/>
+
+<PracticeBox
+  prompt="Candidate corrects your recap significantly — the goal has shifted since discovery. Write your next 2 lines."
+  recommendedAnswer="Good that you told me — that actually changes what I want to walk you through today. Let's build from where you actually are now, not where you were on that first call."
+/>
+
+## Manager Review Scorecard
+
+<CallScorecard
+  title="Structuring the Discussion Call — Scorecard"
+  criteria={[
+    { criterion: "Opened with a specific discovery recap", score: "na", weight: 3, category: "Recap" },
+    { criterion: "Got explicit confirmation before proceeding", score: "na", weight: 3, category: "Recap" },
+    { criterion: "Recommendation followed directly from the recap", score: "na", weight: 2, category: "Recommendation" },
+    { criterion: "Held cost questions until recommendation + process were covered", score: "na", weight: 3, category: "Sequencing" },
+    { criterion: "Each stage ended with a real checkpoint question", score: "na", weight: 2, category: "Sequencing" },
+  ]}
+  summary="Use this scorecard live on a recorded or shadowed call. 'na' means not yet evaluated — score honestly against what you actually heard."
+/>
+
+## Quick Reference Cheat Sheet
+
+<QuickReferencePanel
+  title="Structuring the Discussion Call"
+  items={[
+    { label: "Stage 1", value: "Reflect discovery back — specific, 20-30 seconds" },
+    { label: "Stage 2", value: "Present a tailored recommendation" },
+    { label: "Stage 3", value: "Walk through the process, honestly" },
+    { label: "Stage 4", value: "Address investment, tied to value" },
+    { label: "If cost comes early", value: "Acknowledge, commit, ask to sequence it properly" },
+    { label: "Never say", value: "\"We covered that last time, let's not go over it again.\"" },
+  ]}
+/>
+
+## Module Completion
+
+<ModuleCompletion />

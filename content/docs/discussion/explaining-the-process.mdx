@@ -7,9 +7,9 @@ category: "Discussion Calls"
 audience: "Admissions Advisors"
 funnel_stage: "Discussion"
 countries: ["US", "Canada", "UK"]
-version: "1.0"
-last_updated: "2026-07-30"
-owner: "Documentation Architect"
+version: "2.0"
+last_updated: "2026-08-05"
+owner: "Chief Sales Trainer"
 status: "living-example"
 tags: ["discussion", "process", "expectations", "onboarding"]
 related: ["presenting-surely-placed", "discussing-investment", "candidate-qualification"]
@@ -17,106 +17,208 @@ related: ["presenting-surely-placed", "discussing-investment", "candidate-qualif
 
 # Explaining the Process
 
-> **Note on specifics:** This article teaches the skill of explaining a process clearly and honestly. The stage names used in the examples below are illustrative and general to how placement-style programs are typically structured — they are not a substitute for the current, official program steps. Always confirm exact current stages, sequencing, and requirements against the authoritative internal program resource before describing them to a candidate as fact. Never state a specific step, timeline, or requirement from memory if you're not certain it's current.
+> **Note on specifics:** The stage names in this lesson's examples are illustrative, not the current official program steps. Always confirm exact current stages, sequencing, and requirements against the authoritative internal resource before stating them to a candidate as fact. Never state a specific step, timeline, or requirement from memory if you're not certain it's current.
 
-## Purpose
+"Okay, so what would actually happen" is the natural next question once a recommendation lands. Answer it clearly, honestly, and with what's expected of the candidate — not just what they receive.
 
-Once a candidate understands what's being recommended and why, the natural next question is "okay, so what would actually happen." This article covers how to answer that well — clearly, honestly, and in a sequence a candidate can actually follow, without glossing over the parts that require real effort from them. A process explained vaguely creates anxiety later; a process explained clearly, including its demands, builds confidence even when parts of it sound like real work.
+## Lesson Objective
 
-## Learning Objectives
+- Explain the process so a candidate could repeat it back accurately
+- State plainly what's expected of the candidate, not just what's provided
+- Recognize when a process question is really a disguised question about timeline or outcome
 
-- Explain a multi-stage process in a way a candidate can repeat back accurately afterward
-- Be direct about what the process requires from the candidate, not just what Surely Placed provides
-- Distinguish between explaining a process honestly and either oversimplifying it or overwhelming a candidate with detail
-- Recognize when a candidate's question about process is really a disguised question about outcome, and respond to the real question
-- Avoid stating any specific step, timeline, or requirement that hasn't been confirmed as currently accurate
+<EstimatedTime readingMinutes={9} practiceMinutes={12} />
 
-## Candidate Psychology
+<ConversationTimeline currentStage="Presentation" />
 
-Candidates ask about process for a few different reasons, and it's worth telling them apart. Some are genuinely trying to plan — they want to know how this fits around a job, a visa timeline, or a family schedule. Some are testing whether the advisor can describe the process specifically, as a way of judging whether the whole thing is legitimate or vague enough to be a red flag. And some are really asking a different question entirely underneath the process one: "how much of this actually depends on me, versus how much is done for me."
+## Full Conversation Viewer
 
-That third pattern is worth watching for closely. A candidate who's been burned before by something that overpromised often listens to a process explanation specifically for how much effort is expected of them. If the answer sounds like "we do everything, you just show up," that can actually decrease trust rather than increase it — it doesn't match what candidates instinctively know about how a real job search works, and an answer that sounds too easy reads as too good to be true.
+Neha's recommendation landed. Her H4 EAD situation makes timeline the thing she's actually anxious about — Aayush needs to hear that underneath her question.
 
-There's also real anxiety, for many candidates, in not knowing what's coming next. A vague process description leaves a candidate to fill in the blanks themselves, usually with a more stressful version than reality. A specific, honest one — even when it includes real demands on their time and effort — tends to reduce anxiety, not increase it, because uncertainty is often more stressful than a clear picture of real work ahead.
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="phone"
+  callDuration="16:20"
+  visaStatus="H4 EAD"
+  leadSource="Referral"
+  difficulty="Advanced"
+  expectedOutcome="Candidate's real underlying concern (dependency on husband's timeline) is surfaced and addressed honestly"
+  messages={[
+    { sender: "rep", text: "So broadly, this moves through a few stages — getting you set up and assessed, technical and interview readiness, then active engagement with employers, then ongoing support once you're in process with someone specific." },
+    { sender: "rep", text: "I want to be upfront — each of those stages involves real work on your end. Want the full walkthrough, or the headline version for now?" },
+    { sender: "candidate", text: "Actually — how long does the whole thing usually take?", mood: "hesitant" },
+  ]}
+/>
 
-## Advisor Objective
+<DecisionPoint
+  context="Neha's timeline question isn't really about logistics — her whole H4 EAD anxiety is about things being tied to someone else's timeline she doesn't control."
+  prompt="What should Aayush say next?"
+  bestAnswer="I want to give you an honest answer — it depends on a few things specific to you, so I don't want to hand you a made-up number. Is timeline the main thing you're planning around, or is there something more specific underneath that?"
+/>
 
-Give the candidate an accurate, sequential picture of what participating in the program would actually involve — including what's expected of them, not just what's provided — using only current, confirmed information, and clearly separating anything illustrative from anything the candidate should treat as fact.
+<ManagerTip from="Aayush" priority="important">
+"How long does this take" from a candidate whose entire situation is defined by someone else's timeline is almost never a logistics question. Ask what's underneath it before answering the surface version.
+</ManagerTip>
 
-## When To Use
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Neha"
+  appearance="phone"
+  candidateMood="hesitant"
+  highlightUpTo={2}
+  messages={[
+    { sender: "rep", text: "Is timeline the main thing you're planning around, or is there something more specific underneath that?" },
+    { sender: "candidate", text: "Honestly... my husband's H1B renewal is coming up in eight months. If that doesn't go through, none of this matters anyway." },
+    { sender: "rep", text: "That's a real, specific thing to plan around — not a vague worry. Let's actually build the process timeline against that eight-month window, not a generic estimate that ignores it.", annotation: "Names her real constraint instead of giving a generic answer" },
+  ]}
+/>
 
-- Immediately after a confirmed recommendation, as the third stage of a structured discussion call (see [Structuring the Discussion Call](/docs/discussion/structuring-the-discussion-call))
-- When a candidate asks directly what happens after they enroll, or how the program actually works day to day
-- When a candidate's discovery conversation revealed a real constraint (a tight timeline, a demanding current job) that makes understanding the time commitment especially important before they decide anything
+## Coaching Notes
 
-## Discussion Flow
+<CoachingNotes title="Coaching Notes">
+Don't rush past "none of this matters anyway" — that's the real sentence in this whole conversation. Let it land before moving to solutions.
+</CoachingNotes>
 
-Start with the shape of the process at a high level — how many broad stages there are and roughly how they connect — before drilling into detail. Candidates absorb sequence better when they have the outline first.
-
-Move through each stage in order, and for each one, state plainly two things: what Surely Placed provides at that stage, and what's expected of the candidate. Don't let one side of that always dominate — a process description that only lists what the candidate receives, without naming what they need to bring to it, sets an inaccurate expectation.
-
-Pause after the outline to check whether the level of detail is right — some candidates want the full picture immediately, others want the headline version now and details later. Ask, rather than assuming.
-
-Close by asking directly whether anything about the process raises a concern, especially around time commitment or sequencing — this is the natural point for a constraint that didn't fully surface in discovery to come up.
-
-## Conversation Examples
-
-**Clear, honest process walkthrough:**
-
-> **Advisor:** "So broadly, this moves through a few stages — getting you properly set up and assessed, working on interview and technical readiness, then active engagement with employers, and ongoing support once you're in the process with a specific employer. I want to be upfront: each of those stages involves real work on your end, not just something that happens to you. Want me to walk through each one, or would the headline version work better for now?"
-> **Candidate:** "Let's do the full version, I want to actually understand this."
-> **Advisor:** "Good — let's start with the first stage, and I'll be specific about what's on us and what's on you at each point."
-
-**Handling a disguised outcome question:**
-
-> **Candidate:** "So how long does the whole process usually take?"
-> **Advisor:** "I want to give you an honest answer, and the honest answer is that it depends on a few things specific to you — like your current experience level and how the technical readiness stage goes — so I don't want to hand you a made-up number just to give you something concrete. What I can tell you clearly is the sequence, and what depends on your own pace versus what's more fixed. Is timeline actually the main thing you're trying to plan around, or is there something more specific underneath that?"
-> **Candidate:** "Honestly, yeah — I need to know if this fits before my current lease is up."
-> **Advisor:** "That's a real, specific constraint, and it's worth being precise about rather than guessing. Let's talk about that directly instead of me giving you a general estimate that might not actually hold for your situation."
-
-## Decision Points
-
-- IF the candidate wants the full detailed walkthrough →
-  THEN go stage by stage, being explicit about both what's provided and what's expected at each one.
-- IF the candidate seems to want only the headline version →
-  THEN give the high-level sequence and offer to go deeper on any specific stage, rather than delivering full detail regardless of what was actually asked for.
-- IF a process question turns out to be a disguised timeline or outcome question →
-  THEN address the real underlying question directly, and be honest when a firm answer isn't possible without more specific information.
-- IF you are not certain a specific step, timeline, or requirement is currently accurate →
-  THEN say so directly and commit to confirming it, rather than stating it as fact from memory.
-- IF a candidate reacts with surprise or concern about the effort required at a given stage →
-  THEN don't minimize it to keep the conversation comfortable — acknowledge it honestly and discuss what that effort would realistically look like for their specific situation.
+<CoachingNotes title="Why This Worked">
+Refusing to give a made-up number, then asking what's underneath the question, surfaced the real constraint (the husband's H1B renewal) instead of Aayush guessing at anxiety he couldn't see.
+</CoachingNotes>
 
 ## Common Mistakes
 
-- Describing only what Surely Placed provides at each stage, without being equally clear about what's expected of the candidate
-- Making up a specific number (a timeline, a step count) to sound more concrete, instead of confirming what's actually current
-- Delivering the full, detailed process to a candidate who only wanted the headline version, overwhelming them unnecessarily
-- Treating a "how long does this take" question as answerable with a single confident number when it genuinely depends on individual factors
-- Glossing over a stage that requires real candidate effort because it's a less comfortable part of the conversation
+<MistakesPanel
+  title="Common Mistakes"
+  mistakes={[
+    { title: "Making up a timeline to sound concrete", description: "Inventing a step count or number to avoid saying 'it depends' erodes trust the moment it turns out to be wrong.", correction: "Say plainly you don't want to guess, and confirm what's actually current." },
+    { title: "Only describing what SurelyPlaced provides", description: "A process description that never names what's expected of the candidate sets an inaccurate expectation.", correction: "State both sides at every stage — what's provided, what's expected." },
+    { title: "Treating 'how long does this take' as answerable with one number", description: "It genuinely depends on individual factors — a confident single number is usually a guess dressed up.", correction: "Ask what's actually driving the timeline question before answering it." },
+    { title: "Delivering full detail to someone who wanted the headline", description: "Overwhelms a candidate who just wanted the outline.", correction: "Ask which depth they want — don't assume." },
+  ]}
+/>
 
-## Things Never To Say
+## Roleplay
 
-- Any specific timeline, step, or requirement you are not certain is currently accurate — confirm first, or say plainly that you'll confirm and follow up.
-- "You don't really have to do much — we handle it." (Inaccurate for almost any real placement process, and it sets an expectation that will likely be disappointed later.)
-- Any invented policy detail presented as official ("we guarantee three employer introductions," for example) that hasn't been confirmed against the actual, current program structure.
+### Easy
 
-## Advanced Advisor Tips
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Emily"
+  appearance="phone"
+  visaStatus="US Citizen"
+  candidateMood="positive"
+  messages={[
+    { sender: "rep", text: "Want the full stage-by-stage walkthrough, or the headline version?" },
+    { sender: "candidate", text: "Headline's fine, I trust you'll tell me more if I need it." },
+  ]}
+/>
 
-Experienced advisors get comfortable saying "let me confirm that specific detail rather than guess" in the middle of a process explanation, without it undermining the rest of the conversation. Candidates generally respond well to this — it reads as care about accuracy, not as a gap in competence — as long as it's not happening on every single detail, which would suggest the advisor doesn't know the process at all.
+<RoleplayCard
+  scenario="Candidate explicitly wants the short version"
+  difficulty="Foundational"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Emily — wants the headline version, trusts the advisor"
+  objective="Give an accurate high-level sequence without over-delivering detail she didn't ask for"
+  successCriteria="Advisor gives the outline and offers — doesn't force — deeper detail on any stage"
+  hints={["Respect the stated preference", "Leave the door open without forcing it"]}
+  recommendedAnswer="Sure — broadly, it's setup and assessment, readiness work, employer engagement, then ongoing support. Tell me if you want to go deeper on any one of those."
+/>
 
-It's also worth learning to read whether a candidate's process question is really about logistics or really about reassurance. A candidate asking "what happens if it doesn't work out at some stage" is rarely asking for a procedural answer — they're asking to be told the process accounts for setbacks, not just success. Answering the literal question without addressing the real one underneath it leaves the actual concern unresolved.
+### Medium
 
-## Summary
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Rahul"
+  appearance="phone"
+  visaStatus="F1 OPT"
+  candidateMood="hesitant"
+  messages={[
+    { sender: "rep", text: "So that's the four stages. Anything about that raise a concern?" },
+    { sender: "candidate", text: "I mean... it sounds like a lot of it depends on me? I thought this would be more done-for-me, honestly." },
+  ]}
+/>
 
-Explaining the process well means giving a candidate an honest, sequential picture that includes what's expected of them, not just what they receive — and being disciplined about only stating specifics that are actually current, rather than filling gaps with invented detail. Match the depth of explanation to what the candidate actually wants, and when a process question is really a disguised question about timeline or outcome, address the real question directly.
+<RoleplayCard
+  scenario="Candidate expected a more passive, done-for-you process"
+  difficulty="Intermediate"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Rahul — surprised by how much effort is expected of him"
+  objective="Don't minimize the real effort required just to keep the mood comfortable"
+  successCriteria="Advisor acknowledges the surprise honestly and doesn't overcorrect into false reassurance"
+  hints={["Don't say 'don't worry, we handle most of it' if that's not true", "Acknowledging the surprise builds more trust than smoothing over it"]}
+  recommendedAnswer="Fair reaction, and I'd rather you know that now than be surprised later. This does require real work on your side — that's true for any process that actually works, honestly."
+/>
 
-## Related Articles
+### Difficult
 
-- [Presenting Surely Placed](/docs/discussion/presenting-surely-placed) — the recommendation this process explanation follows and supports
-- [Discussing Investment](/docs/discussion/discussing-investment) — the natural next stage once the candidate understands what the process actually involves
-- [Candidate Qualification](/docs/discovery/candidate-qualification) — the discovery-stage constraints (timeline, authorization) that often resurface here and need to be checked against the real process
+<ConversationViewer
+  repName="Aayush"
+  candidateName="Akash"
+  appearance="phone"
+  visaStatus="Laid Off — no visa complexity"
+  candidateMood="resistant"
+  messages={[
+    { sender: "rep", text: "So that's the sequence. Any concerns before we move on?" },
+    { sender: "candidate", text: "Look, I need something fast. I've got maybe two months of savings left. If this takes six months I honestly can't do it." },
+  ]}
+/>
 
-## Tags
+<RoleplayCard
+  scenario="Candidate has real, urgent financial pressure against the timeline"
+  difficulty="Expert"
+  yourRole="Sales Executive (Aayush)"
+  theirRole="Akash — recently laid off, two months of runway, urgent"
+  objective="Take real financial urgency seriously without inventing a timeline to make him feel better"
+  context="This is not a moment for reassurance — it's a moment for honesty about what's realistic."
+  successCriteria="Advisor doesn't promise a timeline that isn't confirmed, and treats the constraint as a real planning input, not an objection to overcome"
+  hints={["Don't say 'don't worry, most people finish faster'", "Naming the real constraint out loud is more respectful than smoothing it over"]}
+  recommendedAnswer="I hear that, and I'm not going to give you a number just to make this feel less scary. Let's actually talk about what two months means for what's realistic here — honestly, that might change what I recommend."
+  managerTip="A candidate with two months of runway needs truth, not comfort. If the honest answer is that timing is genuinely tight, say that — don't paper over it to close the call smoothly."
+/>
 
-`discussion` · `process` · `expectations` · `onboarding`
+## Practice Exercise
+
+<PracticeBox
+  prompt="A candidate asks how long the process takes. Write a response that doesn't invent a number."
+  recommendedAnswer="Honestly, it depends on a few things specific to you, so I don't want to hand you a made-up number. What's actually driving the timeline question for you?"
+/>
+
+<PracticeBox
+  prompt="Candidate says: 'You don't really have to do much, right? You guys handle it?' Write your correction."
+  recommendedAnswer="I want to be straight with you — no, this isn't done-for-you. There's real work on your side at every stage. I'd rather you know that now than be surprised later."
+/>
+
+<PracticeBox
+  prompt="Candidate reveals a real financial deadline mid-explanation. Write your next 2 lines."
+  recommendedAnswer="That's a real, specific thing to plan around — thank you for telling me directly. Let's talk about what that actually means for what's realistic here, honestly."
+/>
+
+## Manager Review Scorecard
+
+<CallScorecard
+  title="Explaining the Process — Scorecard"
+  criteria={[
+    { criterion: "Gave the high-level outline before drilling into detail", score: "na", weight: 2, category: "Structure" },
+    { criterion: "Named what's expected of the candidate at each stage", score: "na", weight: 3, category: "Honesty" },
+    { criterion: "No invented timeline or step count", score: "na", weight: 3, category: "Honesty" },
+    { criterion: "Asked what was underneath a timeline question", score: "na", weight: 3, category: "Diagnosis" },
+    { criterion: "Took a real constraint seriously, not as an objection", score: "na", weight: 2, category: "Empathy" },
+  ]}
+  summary="'na' means not yet evaluated. Score against the actual call, not the ideal version of it."
+/>
+
+## Quick Reference Cheat Sheet
+
+<QuickReferencePanel
+  title="Explaining the Process"
+  items={[
+    { label: "Start with", value: "The high-level outline before any detail" },
+    { label: "At every stage, state", value: "What's provided AND what's expected" },
+    { label: "Timeline question?", value: "Ask what's underneath it — rarely just logistics" },
+    { label: "Never invent", value: "A specific step, number, or timeline you aren't sure is current" },
+    { label: "If unsure", value: "Say so, and commit to confirming and following up" },
+  ]}
+/>
+
+## Module Completion
+
+<ModuleCompletion />
