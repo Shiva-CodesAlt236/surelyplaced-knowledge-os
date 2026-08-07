@@ -12,6 +12,7 @@ export const ROUTES = {
   // "/" (app/page.tsx). Header's logo link and TopNavigation's
   // "Dashboard" item both used this constant and both 404'd.
   dashboard: '/',
+  scripts: '/docs/scripts',
 
   learning: {
     index: '/learning',

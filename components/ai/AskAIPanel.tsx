@@ -79,17 +79,21 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     setAnalysisError(null)
   }
 
-  const handleSaveOutcome = (outcome: OutcomeStatus, reason?: LostReason) => {
+  const handleSaveOutcome = async (outcome: OutcomeStatus, reason?: LostReason) => {
     try {
       const provider = getCopilotAIProvider()
-      provider.recordOutcome({
+      const res = await provider.recordOutcome({
         exchangeId: copilotResponse?.exchangeId,
         outcome,
         reason,
         recordedAt: new Date().toISOString(),
       })
+      if (res && res.success === false) {
+        throw new Error("Failed to record outcome")
+      }
     } catch (err) {
       console.error("[Sales Copilot] Outcome save error:", err)
+      throw err
     }
   }
 

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useProgressStore } from '@/lib/stores/useProgressStore'
 import { ACADEMY_LESSON_SEQUENCE } from '@/lib/academy-sequence'
+import { ROUTES } from '@/lib/routes'
 import {
   BookOpen, FileText, Shield, LayoutTemplate,
   Target, Bot, BarChart2, Award
@@ -30,7 +31,7 @@ const SIDEBAR_CATEGORIES: SidebarCategory[] = [
   {
     label: 'EXECUTE',
     items: [
-      { href: '/docs/scripts', label: 'Scripts Library', icon: FileText, enabled: true },
+      { href: ROUTES.scripts, label: 'Scripts Library', icon: FileText, enabled: true },
       { href: '#', label: 'Objection Library', icon: Shield, enabled: false },
       { href: '#', label: 'Playbooks', icon: LayoutTemplate, enabled: false },
     ],
