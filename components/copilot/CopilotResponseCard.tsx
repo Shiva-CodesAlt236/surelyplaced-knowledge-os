@@ -16,6 +16,7 @@ import {
   ShieldAlert,
   Layers,
   ArrowRight,
+  Link2,
 } from "lucide-react"
 
 export interface CopilotResponseCardProps {
@@ -64,6 +65,8 @@ export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
   // Get active text based on selected level option
   const activeLevelOption = response.levelOptions?.find((opt) => opt.level === selectedLevel)
   const activeResponseText = activeLevelOption ? activeLevelOption.response : response.recommendedResponse
+  const activeScriptId = activeLevelOption?.matchedScriptId || response.matchedScriptId
+  const activeDifficulty = activeLevelOption?.difficulty || (selectedLevel === 1 ? "Foundational" : "Intermediate")
 
   const confidenceBadgeVariant =
     response.confidence === "high"
@@ -71,6 +74,8 @@ export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
       : response.confidence === "medium"
       ? "secondary"
       : "outline"
+
+  const lessonUrl = response.objectionId ? `/docs/objections/${response.objectionId}` : "/docs/scripts"
 
   return (
     <div className="space-y-4 rounded-xl border border-border bg-card p-4 shadow-sm">
@@ -193,6 +198,29 @@ export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
           </ul>
         </div>
       )}
+
+      {/* Traceability Footer */}
+      <div className="pt-2 border-t border-border/60 flex flex-wrap items-center justify-between text-[10px] text-muted-foreground gap-2">
+        <div className="flex items-center gap-1.5 font-mono">
+          <Link2 className="h-3 w-3 text-indigo-500 shrink-0" />
+          <span className="truncate max-w-[200px]" title={activeScriptId || "SCRIPTS_REGISTRY"}>
+            Ref: {activeScriptId || "Objection Handling"}
+          </span>
+          {activeDifficulty && (
+            <Badge variant="outline" className="text-[9px] px-1 py-0 font-mono">
+              {activeDifficulty}
+            </Badge>
+          )}
+        </div>
+
+        <Link
+          href={lessonUrl}
+          className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-0.5"
+        >
+          View Lesson
+          <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
     </div>
   )
 }

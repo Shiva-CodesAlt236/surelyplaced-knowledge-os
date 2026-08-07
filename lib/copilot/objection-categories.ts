@@ -60,6 +60,8 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
     description: 'Candidate questions program legitimacy, placement statistics, or company credibility.',
     examplePhrases: [
       'How do I know this isn\'t a scam?',
+      'How do I know your company is real?',
+      'Is your company legit?',
       'Can you guarantee me a job?',
       'How many students actually get hired?',
       'Is there proof your placement rate is real?',

@@ -135,7 +135,18 @@ export function findMatchingObjectionCategory(inputText: string): {
   } else if (text.includes('apply') || text.includes('myself') || text.includes('own') || text.includes('linkedin')) {
     matchedCategoryKey = 'already-applying-myself'
     confidence = 'medium'
-  } else if (text.includes('trust') || text.includes('scam') || text.includes('guarantee') || text.includes('proof')) {
+  } else if (
+    text.includes('trust') ||
+    text.includes('scam') ||
+    text.includes('guarantee') ||
+    text.includes('proof') ||
+    text.includes('real') ||
+    text.includes('legit') ||
+    text.includes('company') ||
+    text.includes('fake') ||
+    text.includes('reviews') ||
+    text.includes('reputation')
+  ) {
     matchedCategoryKey = 'trust-and-credibility'
     confidence = 'high'
   } else {

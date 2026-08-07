@@ -3,10 +3,10 @@
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import type { OutcomeStatus, LostReason } from "@/lib/copilot/types"
-import { CheckCircle2, Clock, XCircle, ThumbsUp, ThumbsDown, Minus } from "lucide-react"
+import { CheckCircle2, Clock, XCircle, ThumbsUp, ThumbsDown, Minus, AlertCircle } from "lucide-react"
 
 export interface OutcomeRecorderProps {
-  onSaveOutcome: (outcome: OutcomeStatus, reason?: LostReason) => void
+  onSaveOutcome: (outcome: OutcomeStatus, reason?: LostReason) => Promise<void> | void
   onFeedback?: (rating: "thumbs-up" | "neutral" | "thumbs-down") => void
 }
 
@@ -15,17 +15,32 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
   const [lostReason, setLostReason] = useState<LostReason>("price")
   const [feedbackRating, setFeedbackRating] = useState<"thumbs-up" | "neutral" | "thumbs-down" | null>(null)
   const [saved, setSaved] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
-  const handleOutcomeSelect = (outcome: OutcomeStatus) => {
+  const handleOutcomeSelect = async (outcome: OutcomeStatus) => {
     setSelectedOutcome(outcome)
-    setSaved(true)
-    onSaveOutcome(outcome, outcome === "lost" ? lostReason : undefined)
+    setSaveError(null)
+    try {
+      await onSaveOutcome(outcome, outcome === "lost" ? lostReason : undefined)
+      setSaved(true)
+    } catch (err) {
+      console.error("[OutcomeRecorder] Error saving outcome:", err)
+      setSaveError("Failed to record outcome. Please try again.")
+      setSaved(false)
+    }
   }
 
-  const handleReasonChange = (reason: LostReason) => {
+  const handleReasonChange = async (reason: LostReason) => {
     setLostReason(reason)
+    setSaveError(null)
     if (selectedOutcome === "lost") {
-      onSaveOutcome("lost", reason)
+      try {
+        await onSaveOutcome("lost", reason)
+        setSaved(true)
+      } catch (err) {
+        console.error("[OutcomeRecorder] Error saving outcome reason:", err)
+        setSaveError("Failed to update loss reason.")
+      }
     }
   }
 
@@ -38,12 +53,19 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
     <div className="space-y-3.5 rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <span className="text-xs font-bold text-foreground">Student Outcome Tracking</span>
-        {saved && (
+        {saved && !saveError && (
           <span className="text-[10px] font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
             Recorded
           </span>
         )}
       </div>
+
+      {saveError && (
+        <div className="flex items-center gap-1.5 p-2 text-xs text-rose-600 bg-rose-500/10 rounded border border-rose-500/20">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+          <span>{saveError}</span>
+        </div>
+      )}
 
       {/* Outcome Selector Buttons */}
       <div className="grid grid-cols-3 gap-2">
