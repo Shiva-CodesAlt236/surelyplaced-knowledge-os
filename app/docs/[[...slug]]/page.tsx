@@ -9,6 +9,8 @@ import { notFound } from 'next/navigation';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { Metadata } from 'next';
 import { LessonViewer } from '@/components/learning/LessonViewer';
+import { getLessonDuration } from '@/lib/academy-duration';
+import { ACADEMY_LESSON_SEQUENCE } from '@/lib/academy-sequence';
 
 /* ── Interactive Learning Widgets (Milestone 5) ────────────────── */
 import { ConversationViewer } from '@/components/learning/ConversationViewer';
@@ -26,6 +28,7 @@ import { ManagerTip } from '@/components/learning/ManagerTip';
 import { DecisionTree } from '@/components/learning/DecisionTree';
 import { AcademyHomeHeader } from '@/components/learning/AcademyHomeHeader';
 import { LearningJourneyStepper } from '@/components/learning/LearningJourneyStepper';
+import { ModuleProgressSummary } from '@/components/learning/ModuleProgressSummary';
 
 /**
  * MDX-available interactive learning components.
@@ -47,6 +50,7 @@ const learningComponents = {
   DecisionTree,
   AcademyHomeHeader,
   LearningJourneyStepper,
+  ModuleProgressSummary,
 };
 
 interface PageProps {
@@ -60,15 +64,47 @@ function titleCase(slug: string): string {
     .join(' ');
 }
 
+/**
+ * Reference heuristic for lesson difficulty bucketing by stepNumber.
+ * Retained uninvoked per Fix 3 specification until an explicit per-lesson
+ * difficulty taxonomy is product-approved.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function getDifficultyForLesson(slug: string): "Foundational" | "Intermediate" | "Advanced" | "Expert" {
+  const item = ACADEMY_LESSON_SEQUENCE.find((i) => i.slug === slug);
+  if (!item) return "Intermediate";
+  if (item.stepNumber <= 1) return "Foundational";
+  if (item.stepNumber <= 3) return "Intermediate";
+  if (item.stepNumber <= 5) return "Advanced";
+  return "Expert";
+}
+
 export default async function Page(props: PageProps) {
   const params = await props.params;
-  const page = source.getPage(params.slug);
+  let page = source.getPage(params.slug);
+  if (!page && params.slug && params.slug.length > 0) {
+    // Attempt fallback to overview or index page when requesting a module directory
+    page = source.getPage([...params.slug, 'overview']);
+    if (!page) {
+      const folderKey = params.slug.join('/');
+      const fallbacks: Record<string, string[]> = {
+        'candidate-intelligence': ['business-analysis', 'overview'],
+        'industry-playbooks': ['industry-discovery-framework'],
+        'sales-operations': ['sales-workflow-overview'],
+        'visa-playbooks': ['visa-discovery-framework'],
+      };
+      if (fallbacks[folderKey]) {
+        page = source.getPage(fallbacks[folderKey]);
+      }
+    }
+  }
   if (!page) notFound();
 
   const MDX = page.data.body;
   const segments = params.slug ?? [];
   const articleSlug = `/docs${segments.length > 0 ? `/${segments.join('/')}` : ''}`;
   const moduleName = segments[0] ? titleCase(segments[0]) : undefined;
+  const readingTimeMinutes = getLessonDuration(articleSlug);
 
   return (
     <DocsPage toc={page.data.toc}>
@@ -76,8 +112,10 @@ export default async function Page(props: PageProps) {
       <DocsDescription>{page.data.description}</DocsDescription>
       <LessonViewer
         title={page.data.title}
+        description={page.data.description}
         articleSlug={articleSlug}
         moduleName={moduleName}
+        readingTimeMinutes={readingTimeMinutes}
         showTitle={false}
       >
         <DocsBody>

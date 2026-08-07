@@ -29,9 +29,15 @@ export const ROUTES = {
   // new functionality outside this stabilization sprint's scope.
   browse: {
     index: '/docs',
-    module: (moduleId: string) => `/docs/${moduleId}`,
-    candidateIntelligence: '/docs/candidate-intelligence',
-    roleCollection: (collectionId: string) => `/docs/candidate-intelligence/${collectionId}`,
+    module: (moduleId: string) => {
+      if (moduleId === 'candidate-intelligence') return '/docs/candidate-intelligence/business-analysis/overview';
+      if (moduleId === 'industry-playbooks') return '/docs/industry-playbooks/industry-discovery-framework';
+      if (moduleId === 'sales-operations') return '/docs/sales-operations/sales-workflow-overview';
+      if (moduleId === 'visa-playbooks') return '/docs/visa-playbooks/visa-discovery-framework';
+      return `/docs/${moduleId}/overview`;
+    },
+    candidateIntelligence: '/docs/candidate-intelligence/business-analysis/overview',
+    roleCollection: (collectionId: string) => `/docs/candidate-intelligence/${collectionId}/overview`,
     article: (moduleId: string, articleSlug: string) => `/docs/${moduleId}/${articleSlug}`,
     roleCollectionArticle: (collectionId: string, articleSlug: string) =>
       `/docs/candidate-intelligence/${collectionId}/${articleSlug}`,
