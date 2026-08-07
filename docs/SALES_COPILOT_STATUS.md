@@ -2,7 +2,7 @@
 
 **Repository**: `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **Active Branch**: `feature/sales-copilot-mvp`  
-**Current Phase**: Phase 0 Complete — Phase 1 In Progress  
+**Current Phase**: Phase 1 Complete — Phase 2 In Progress  
 
 ---
 
@@ -22,9 +22,9 @@
 
 | Phase | Description | Status | Commit / Notes |
 |---|---|---|---|
-| **Phase 0** | Git Branch Isolation & Status Tracking | ✅ **COMPLETE** | Isolated on `feature/sales-copilot-mvp` |
-| **Phase 1** | UI Shell & Mock Provider | ⏳ **IN PROGRESS** | Building `CopilotResponseCard`, `OutcomeRecorder`, `CopilotInput`, and mock provider |
-| **Phase 2** | Knowledge OS Content Connection | ⏹️ Pending | `lib/copilot/scripts-library-adapter.ts` |
+| **Phase 0** | Git Branch Isolation & Status Tracking | ✅ **COMPLETE** | `9b2b38a` — Isolated on `feature/sales-copilot-mvp` |
+| **Phase 1** | UI Shell & Mock Provider | ✅ **COMPLETE** | `CopilotResponseCard`, `OutcomeRecorder`, `CopilotInput`, `AskAIPanel` integration, and `mock` provider |
+| **Phase 2** | Knowledge OS Content Connection | ⏳ **IN PROGRESS** | `lib/copilot/objection-categories.ts` & `lib/copilot/scripts-library-adapter.ts` |
 | **Phase 3** | Six-Step AI Reasoning Pipeline | ⏹️ Pending | Classification, confidence, scanner, route |
 | **Phase 4** | Postgres + Drizzle Persistence | ⏹️ Pending | Sessions, exchanges, feedback |
 | **Phase 5** | Production QA & Review | ⏹️ Pending | Verification suite & manual testing |
@@ -32,6 +32,5 @@
 ---
 
 ## 3. Pending Work Items
-- Complete `components/copilot/CopilotResponseCard.tsx`, `OutcomeRecorder.tsx`, `CopilotInput.tsx`.
-- Connect mock provider in `lib/copilot/providers/mock.ts`.
-- Integrate Copilot UI view into `components/ai/AskAIPanel.tsx`.
+- Create `lib/copilot/objection-categories.ts` and `lib/copilot/scripts-library-adapter.ts` in Phase 2.
+- Verify coverage across all 5 objection categories in `lib/scripts-registry.ts`.
