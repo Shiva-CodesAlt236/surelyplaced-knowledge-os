@@ -1,5 +1,6 @@
-import type { CopilotResponse } from '../types'
+import type { CopilotResponse, OutcomePayload } from '../types'
 
-export interface CopilotAIProvider {
-  analyzeObjection(input: string, candidateName?: string): Promise<CopilotResponse>
+export interface ICopilotAIProvider {
+  analyzeObjection(input: string): Promise<CopilotResponse>
+  recordOutcome(payload: OutcomePayload): Promise<{ success: boolean }>
 }

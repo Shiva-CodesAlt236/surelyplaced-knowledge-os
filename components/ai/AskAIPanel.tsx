@@ -16,7 +16,16 @@ import { CopilotResponseCard } from "@/components/copilot/CopilotResponseCard"
 import { OutcomeRecorder } from "@/components/copilot/OutcomeRecorder"
 import { getCopilotAIProvider } from "@/lib/copilot/providers"
 import type { CopilotResponse, OutcomeStatus, LostReason } from "@/lib/copilot/types"
-import { Sparkles, Send, Bot, User, ShieldAlert, Loader2, MessageSquare, Headphones } from "lucide-react"
+import {
+  Sparkles,
+  Send,
+  Bot,
+  User,
+  ShieldAlert,
+  Loader2,
+  MessageSquare,
+  Headphones,
+} from "lucide-react"
 
 export interface AskAIPanelProps {
   open: boolean
@@ -24,8 +33,8 @@ export interface AskAIPanelProps {
 }
 
 export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
-  // Mode selection: 'copilot' (Sales Copilot MVP) | 'qa' (General Q&A)
-  const [mode, setMode] = useState<'copilot' | 'qa'>('copilot')
+  // Mode selection: 'copilot' (Sales Copilot MVP) | 'qa' (General Knowledge Assistant)
+  const [mode, setMode] = useState<"copilot" | "qa">("copilot")
 
   // General Q&A state from useAIStore
   const messages = useAIStore((state) => state.messages)
@@ -50,7 +59,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
       const result = await provider.analyzeObjection(input)
       setCopilotResponse(result)
     } catch (err) {
-      console.error("Copilot analysis error:", err)
+      console.error("[Sales Copilot] Analysis error:", err)
     } finally {
       setIsAnalyzing(false)
     }
@@ -61,8 +70,13 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   }
 
   const handleSaveOutcome = (outcome: OutcomeStatus, reason?: LostReason) => {
-    // Record outcome event (will persist via Postgres in Phase 4)
-    console.log("[Sales Copilot] Outcome recorded:", { outcome, reason, exchangeId: copilotResponse?.exchangeId })
+    const provider = getCopilotAIProvider()
+    provider.recordOutcome({
+      exchangeId: copilotResponse?.exchangeId,
+      outcome,
+      reason,
+      recordedAt: new Date().toISOString(),
+    })
   }
 
   return (
@@ -77,7 +91,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
               </div>
               <div>
                 <SheetTitle className="text-base font-bold">AI Sales Assistant</SheetTitle>
-                <p className="text-xs text-muted-foreground">Knowledge OS Intelligence</p>
+                <p className="text-xs text-muted-foreground">SurelyPlaced Knowledge OS</p>
               </div>
             </div>
 
@@ -90,11 +104,11 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
           <div className="flex rounded-md bg-muted p-1 gap-1">
             <button
               type="button"
-              onClick={() => setMode('copilot')}
+              onClick={() => setMode("copilot")}
               className={`flex-1 text-xs font-bold py-1.5 px-3 rounded-sm flex items-center justify-center gap-1.5 transition-all ${
-                mode === 'copilot'
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                mode === "copilot"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Headphones className="h-3.5 w-3.5" />
@@ -103,11 +117,11 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
 
             <button
               type="button"
-              onClick={() => setMode('qa')}
+              onClick={() => setMode("qa")}
               className={`flex-1 text-xs font-bold py-1.5 px-3 rounded-sm flex items-center justify-center gap-1.5 transition-all ${
-                mode === 'qa'
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                mode === "qa"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <MessageSquare className="h-3.5 w-3.5" />
@@ -117,9 +131,9 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
         </SheetHeader>
 
         {/* Panel Body */}
-        {mode === 'copilot' ? (
+        {mode === "copilot" ? (
           /* ===================================================================
-             SALES COPILOT MVP MODE
+             SALES COPILOT MVP MODE (Guided Decision-Support Tool)
              =================================================================== */
           <div className="flex-1 overflow-y-auto p-4 space-y-4" aria-live="polite">
             <CopilotInput
@@ -146,7 +160,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
           </div>
         ) : (
           /* ===================================================================
-             GENERAL Q&A MODE (Original AskAIPanel System)
+             GENERAL Q&A MODE (General Knowledge Assistant)
              =================================================================== */
           <>
             <div className="flex-1 overflow-y-auto p-4 space-y-4" aria-live="polite">

@@ -1,17 +1,18 @@
-import type { CopilotAIProvider } from './types'
-import type { CopilotResponse } from '../types'
-import { mockProvider } from './mock'
+import type { ICopilotAIProvider } from './types'
+import type { CopilotResponse, OutcomePayload } from '../types'
 
 /**
- * Production Copilot Provider Placeholder.
- * Shares exact interface with MockCopilotProvider.
- * Falls back gracefully to mockProvider until production vendor credentials are wired.
+ * Production Copilot AI Provider Placeholder
+ *
+ * Interface placeholder for LLM integration. Will be connected once an
+ * AI SDK vendor & credentials are environment configured.
  */
-export class ProductionCopilotProvider implements CopilotAIProvider {
-  async analyzeObjection(input: string, candidateName?: string): Promise<CopilotResponse> {
-    // Production LLM vendor implementation placeholder
-    return mockProvider.analyzeObjection(input, candidateName)
+export class ProductionCopilotProvider implements ICopilotAIProvider {
+  async analyzeObjection(_input: string): Promise<CopilotResponse> {
+    throw new Error('Production Copilot AI provider is not yet wired to a live LLM vendor credentials.')
+  }
+
+  async recordOutcome(_payload: OutcomePayload): Promise<{ success: boolean }> {
+    throw new Error('Production Copilot persistence not yet connected.')
   }
 }
-
-export const productionProvider = new ProductionCopilotProvider()

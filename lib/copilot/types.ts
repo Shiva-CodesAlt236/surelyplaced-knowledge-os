@@ -1,37 +1,39 @@
-export type ConfidenceLevel = 'High' | 'Medium' | 'Low'
+/**
+ * Sales Copilot MVP — Data Contracts & Interfaces
+ *
+ * Defines request, response, confidence levels, outcome statuses,
+ * and loss reasons for the guided sales assistant workflow.
+ */
 
-export type OutcomeStatus = 'pending' | 'enrolled' | 'follow_up' | 'lost'
+export type ConfidenceLevel = 'high' | 'medium' | 'low'
+
+export type OutcomeStatus = 'enrolled' | 'follow-up' | 'lost'
 
 export type LostReason = 'price' | 'trust' | 'timing' | 'competitor' | 'other'
+
+export interface CopilotRequest {
+  objectionText: string
+  contextModuleId?: string
+  advisorId?: string
+}
 
 export interface CopilotResponse {
   exchangeId: string
   objectionId: string
-  detectedObjection: string
-  category: string
-  confidenceLevel: ConfidenceLevel
-  confidenceScore: number
+  objectionTitle: string
+  confidence: ConfidenceLevel
   recommendedResponse: string
-  whyThisWorks: string
+  whyItWorks: string
   nextQuestion: string
-  avoidSaying: string
-  scriptId?: string
-  isLowConfidence: boolean
-  hasMatch: boolean
+  avoidSaying: string[]
+  matchedScriptId?: string
 }
 
-export interface CopilotSession {
-  sessionId: string
-  candidateId?: string
-  advisorId?: string
-  outcomeStatus: OutcomeStatus
-  outcomeReason?: LostReason
+export interface OutcomePayload {
+  exchangeId?: string
+  sessionId?: string
+  outcome: OutcomeStatus
+  reason?: LostReason
+  feedback?: 'thumbs-up' | 'neutral' | 'thumbs-down'
   recordedAt?: string
-  exchanges: CopilotResponse[]
-}
-
-export interface CopilotFeedbackPayload {
-  exchangeId: string
-  objectionId: string
-  rating: 'HELPFUL' | 'NEUTRAL' | 'UNHELPFUL'
 }

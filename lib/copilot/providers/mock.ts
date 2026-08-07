@@ -1,141 +1,120 @@
-import type { CopilotAIProvider } from './types'
-import type { CopilotResponse } from '../types'
+import type { ICopilotAIProvider } from './types'
+import type { CopilotResponse, OutcomePayload } from '../types'
 
-interface TaxonomyItem {
-  objectionId: string
-  title: string
-  category: string
-  keywords: string[]
-  template: string
-  whyThisWorks: string
-  nextQuestion: string
-  avoidSaying: string
-}
+/**
+ * Mock Copilot AI Provider
+ *
+ * Implements realistic keyword-matching classification and synthesizes
+ * approved response fields for sales objections during Phase 1 testing.
+ */
+export class MockCopilotProvider implements ICopilotAIProvider {
+  async analyzeObjection(input: string): Promise<CopilotResponse> {
+    const text = input.toLowerCase()
 
-const MOCK_TAXONOMY: TaxonomyItem[] = [
-  {
-    objectionId: 'OBJ_THINK_ABOUT_IT',
-    title: 'Need Time To Think / Delayed Decision',
-    category: 'Timing / Decision Delay',
-    keywords: ['think about it', 'think it over', 'decide tomorrow', 'sleep on it', 'need time', 'not ready yet', 'think about this', 'let you know later', 'hold off'],
-    template: 'I completely understand wanting to take time to make the right decision for your career transition. To make sure you have everything you need to evaluate this, what specific questions or details can I clarify for you right now before we finish our call?',
-    whyThisWorks: 'Reframes a passive delay into an active discovery conversation. Respects the candidate\'s process while uncovering hidden doubts or unspoken objections before ending the call.',
-    nextQuestion: 'What specific information or reassurance do you need between now and tomorrow to make a confident decision?',
-    avoidSaying: 'Avoid saying: "What is there to think about?" or pushing aggressively for immediate payment on the spot.'
-  },
-  {
-    objectionId: 'OBJ_TOO_EXPENSIVE',
-    title: 'Price / Budget Concern',
-    category: 'Price / Investment',
-    keywords: ['too expensive', "can't afford", 'costs too much', 'high price', 'no money', 'budget issue', 'price is high', 'out of my budget', 'expensive', 'cost is high'],
-    template: 'I hear you, and investing in your career transition is a significant decision. When candidates evaluate our program, they compare the enrollment cost to the cost of months of unemployment or missed interview opportunities. Let\'s look at how our payment structure aligns with your current cash flow.',
-    whyThisWorks: 'Shifts focus from immediate expense to long-term ROI and the high opportunity cost of delayed placement. Re-anchors value on interview velocity.',
-    nextQuestion: 'If we could structure the investment to fit your current monthly cash flow, would you be ready to move forward with the placement push?',
-    avoidSaying: 'Avoid making unauthorized discounts, altering fee structures, or guaranteeing specific salary figures.'
-  },
-  {
-    objectionId: 'OBJ_JOB_GUARANTEE',
-    title: 'Trust / Placement Guarantee Concern',
-    category: 'Trust / Guarantee',
-    keywords: ['guarantee a job', 'guarantee placement', 'job guarantee', "what if i don't get a job", 'is it guaranteed', 'promise a job', 'can you promise', 'guarantee', 'how do i know this works'],
-    template: 'That is a crucial question. While no organization can legally guarantee hiring decisions made by third-party employers, our team guarantees dedicated 1-on-1 career support, resume optimization, and aggressive interview scheduling until you land an offer.',
-    whyThisWorks: 'Builds credibility by being honest about third-party hiring boundaries while offering 100% commitment to the advisor process and placement support resources.',
-    nextQuestion: 'Besides the placement process itself, what is the biggest milestone you want to achieve in your first 90 days?',
-    avoidSaying: 'Never guarantee job placement, specific employer offers, or income figures. Adhere strictly to compliant admissions guidelines.'
-  },
-  {
-    objectionId: 'OBJ_TALK_TO_PARENTS',
-    title: 'Family / Spouse / Advisor Consultation',
-    category: 'Family / Decision Partner',
-    keywords: ['talk to my parents', 'discuss with my spouse', 'ask my husband', 'ask my wife', 'consult my family', 'talk to my family', 'parents approval', 'discuss with parents', 'talk to my dad', 'talk to my mom'],
-    template: 'That makes total sense. Having your family aligned is important for your support system during your job search. Would it be helpful if I shared an overview summary with key program highlights so you can review it together with them?',
-    whyThisWorks: 'Validates the decision partner\'s role and equips the candidate with clear facts to advocate for the program at home.',
-    nextQuestion: 'What is the main question or concern you think your family will have about your career transition?',
-    avoidSaying: 'Avoid dismissing the family member\'s role or pressuring the student to bypass their family.'
-  },
-  {
-    objectionId: 'OBJ_SELF_STUDY',
-    title: 'DIY / Self-Study Alternative',
-    category: 'DIY / Alternative Option',
-    keywords: ['apply on my own', 'do it myself', 'free resources', 'self study', "don't need help", 'youtube tutorials', 'apply directly', 'on my own', 'myself'],
-    template: 'You definitely can apply independently, and many candidates try that first. The challenge is navigating applicant tracking systems (ATS) and interview loops alone, which often takes 6 to 12 months. Our program streamlines that timeline to get you hired significantly faster.',
-    whyThisWorks: 'Respects self-reliance while contrasting the slow trial-and-error approach against a structured, accelerated recruitment pipeline.',
-    nextQuestion: 'How many weeks or months have you been applying on your own so far, and how many hiring manager interviews have you landed?',
-    avoidSaying: 'Avoid putting down the candidate\'s self-study efforts or implying they cannot succeed on their own.'
-  }
-]
-
-const FALLBACK_MATCH: TaxonomyItem = {
-  objectionId: 'OBJ_GENERAL_FALLBACK',
-  title: 'General Objection / Needs Clarification',
-  category: 'General Discovery',
-  keywords: [],
-  template: "I appreciate you sharing that concern with me. Every candidate's situation is unique, and we want to ensure all your questions are answered clearly so you feel confident in your next steps.",
-  whyThisWorks: "Acknowledges the candidate's sentiment, maintains rapport, and opens the door for deeper diagnostic discovery.",
-  nextQuestion: 'Could you tell me a bit more about what would make this the right time and program for your career goals?',
-  avoidSaying: 'Avoid guessing or making unapproved claims. Focus on active listening and clarifying candidate needs.'
-}
-
-export class MockCopilotProvider implements CopilotAIProvider {
-  async analyzeObjection(input: string, candidateName?: string): Promise<CopilotResponse> {
-    const cleanInput = input.trim()
-    const lowerInput = cleanInput.toLowerCase()
-
-    let bestMatch: TaxonomyItem | null = null
-    let bestScore = 0
-
-    MOCK_TAXONOMY.forEach((item) => {
-      let score = 0
-      item.keywords.forEach((kw) => {
-        if (lowerInput.includes(kw)) {
-          score += kw.length > 8 ? 3 : 2
-        }
-      })
-      if (score > bestScore) {
-        bestScore = score
-        bestMatch = item
-      }
-    })
-
-    const hasMatch = bestMatch !== null && bestScore > 0
-    const matched = hasMatch ? bestMatch : FALLBACK_MATCH
-
-    let confidenceLevel: 'High' | 'Medium' | 'Low' = 'Low'
-    let confidenceScore = 40
-
-    if (hasMatch) {
-      if (bestScore >= 5) {
-        confidenceLevel = 'High'
-        confidenceScore = 92
-      } else if (bestScore >= 2) {
-        confidenceLevel = 'Medium'
-        confidenceScore = 74
+    if (text.includes('think') || text.includes('time') || text.includes('decide') || text.includes('call back')) {
+      return {
+        exchangeId: `ex-${Date.now()}`,
+        objectionId: 'need-time-to-think',
+        objectionTitle: 'Need Time To Think',
+        confidence: 'high',
+        recommendedResponse:
+          "I completely respect that you want to take time to make the right decision. To help you evaluate clearly, what specific part of the program would you like to reflect on — the curriculum depth, the placement support structure, or how it fits your daily routine?",
+        whyItWorks:
+          "Acknowledges the candidate's process respectfully while immediately isolating whether 'thinking about it' is genuine reflection or a mask for hidden price or trust concerns.",
+        nextQuestion:
+          "When you think about taking this step, what is the single biggest question still on your mind?",
+        avoidSaying: [
+          "Don't push artificial urgency or pretend spots are closing today.",
+          "Don't ask 'Why do you need time?' in a confrontational tone.",
+          "Don't drop discount promises to force an instant decision.",
+        ],
+        matchedScriptId: 'objections/need-time-to-think#roleplay-1',
       }
     }
 
-    let finalResponse = matched.template
-    if (candidateName) {
-      finalResponse = `Hi ${candidateName}, ${finalResponse}`
+    if (text.includes('expensive') || text.includes('cost') || text.includes('price') || text.includes('budget') || text.includes('money')) {
+      return {
+        exchangeId: `ex-${Date.now()}`,
+        objectionId: 'price-objection',
+        objectionTitle: 'Price & Investment Concern',
+        confidence: 'high',
+        recommendedResponse:
+          "I understand that investment level is a major factor. Let's look at the financial return: our graduates typically see a $25k–$40k salary increase within 6 months. Compared to staying in an unaligned role, the return on this career pivot far outweighs the initial program cost.",
+        whyItWorks:
+          "Reframes program fee from a sunk expense into an asset-backed career investment with measurable ROI timelines.",
+        nextQuestion:
+          "If budget wasn't a constraint, do you feel this is the exact skill transformation you need right now?",
+        avoidSaying: [
+          "Don't apologize for our pricing structure.",
+          "Don't offer unapproved discounts or payment plan concessions without manager approval.",
+          "Don't compare us to low-cost video tutorial courses.",
+        ],
+        matchedScriptId: 'objections/price-objection#roleplay-1',
+      }
     }
 
-    // Simulate async network delay
-    await new Promise((resolve) => setTimeout(resolve, 250))
+    if (text.includes('parent') || text.includes('spouse') || text.includes('family') || text.includes('husband') || text.includes('wife')) {
+      return {
+        exchangeId: `ex-${Date.now()}`,
+        objectionId: 'parents-spouse-approval',
+        objectionTitle: 'Family & Advisor Approval Needed',
+        confidence: 'high',
+        recommendedResponse:
+          "That makes total sense — key career decisions impact your whole family. I'd love to share our placement breakdown and candidate outcome report so you can review the exact data together with them.",
+        whyItWorks:
+          "Validates family involvement and arms the candidate with verified, objective documentation to present confidently to decision-makers.",
+        nextQuestion:
+          "What is the main outcome or reassurance your family will be looking for when you discuss this?",
+        avoidSaying: [
+          "Don't tell the student 'You're an adult, it's your decision.'",
+          "Don't dismiss their family's concerns.",
+        ],
+        matchedScriptId: 'objections/parents-spouse-approval#roleplay-1',
+      }
+    }
 
+    if (text.includes('apply') || text.includes('myself') || text.includes('own') || text.includes('linkedin')) {
+      return {
+        exchangeId: `ex-${Date.now()}`,
+        objectionId: 'already-applying-myself',
+        objectionTitle: 'Applying On My Own',
+        confidence: 'medium',
+        recommendedResponse:
+          "Applying directly is great practice, but cold applications through job portals yield under 3% interview response rates for competitive tech roles. Our career pipeline connects you directly with hiring partners and internal referrals.",
+        whyItWorks:
+          "Contrasts low-yield direct applicant portals against structured candidate intelligence and direct hiring partner referrals.",
+        nextQuestion:
+          "Out of your recent applications, how many hiring manager interviews have you secured so far?",
+        avoidSaying: [
+          "Don't insult their resume or application strategy.",
+          "Don't claim direct applications never work.",
+        ],
+        matchedScriptId: 'objections/already-applying-myself#roleplay-1',
+      }
+    }
+
+    // Default Fallback
     return {
-      exchangeId: `exch_mock_${Date.now()}`,
-      objectionId: matched.objectionId,
-      detectedObjection: matched.title,
-      category: matched.category,
-      confidenceLevel,
-      confidenceScore,
-      recommendedResponse: finalResponse,
-      whyThisWorks: matched.whyThisWorks,
-      nextQuestion: matched.nextQuestion,
-      avoidSaying: matched.avoidSaying,
-      isLowConfidence: confidenceLevel === 'Low',
-      hasMatch,
+      exchangeId: `ex-${Date.now()}`,
+      objectionId: 'trust-and-credibility',
+      objectionTitle: 'Trust & Program Clarity',
+      confidence: 'medium',
+      recommendedResponse:
+        "I understand you want complete clarity before committing. Our program is built on transparent, candidate-first principles with verified placement tracking and hands-on skill development.",
+      whyItWorks:
+        "Establishes credibility by placing candidate outcomes and verified program structure first.",
+      nextQuestion:
+        "What specific detail about our mentorship or job-search process would be most helpful to review?",
+      avoidSaying: [
+        "Don't make unverified placement guarantees.",
+        "Don't rush the candidate past their doubts.",
+      ],
+      matchedScriptId: 'objections/trust-and-credibility#roleplay-1',
     }
   }
-}
 
-export const mockProvider = new MockCopilotProvider()
+  async recordOutcome(payload: OutcomePayload): Promise<{ success: boolean }> {
+    console.log('[MockCopilotProvider] Outcome recorded:', payload)
+    return { success: true }
+  }
+}
