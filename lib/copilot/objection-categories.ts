@@ -1,150 +1,153 @@
-export interface ObjectionCategoryDefinition {
+/**
+ * Sales Copilot — Objection Taxonomy & Category Metadata
+ *
+ * Grounded in docs/OBJECTION_INTELLIGENCE_LIBRARY.md and content/docs/objections/.
+ *
+ * NOTE: This file stores TAXONOMY METADATA ONLY (definitions, common phrases,
+ * hidden concern signals, prohibited patterns, script ID mapping hints).
+ *
+ * It DOES NOT store advisor response text or sales scripts. All script responses
+ * are read live from `lib/scripts-registry.ts` via `lib/copilot/scripts-library-adapter.ts`.
+ */
+
+export interface ObjectionCategoryMetadata {
   id: string
   name: string
   description: string
-  keywords: string[]
-  prohibitedPatterns: string[]
-  hiddenConcernSignals: string[]
-  scriptTags: string[]
-  defaultLessonSlug?: string
+  examplePhrases: string[]
+  hiddenConcernPatterns: string[]
+  prohibitedResponsePatterns: string[]
+  mappingScriptIds: string[]
 }
 
-export const OBJECTION_CATEGORIES: ObjectionCategoryDefinition[] = [
-  {
-    id: 'OBJ_THINK_ABOUT_IT',
-    name: 'Need Time To Think / Delayed Decision',
-    description: 'Candidate hesitates to commit immediately, expressing a desire to ponder or delay.',
-    keywords: [
-      'think about it',
-      'think it over',
-      'decide tomorrow',
-      'sleep on it',
-      'need time',
-      'not ready yet',
-      'let you know later',
-      'hold off',
-      'give me a day'
+export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetadata> = {
+  'price-objection': {
+    id: 'price-objection',
+    name: 'Price / Investment Concern',
+    description: 'Candidate hesitates over program fees, payment structure, or upfront investment requirement.',
+    examplePhrases: [
+      "It's too expensive",
+      "I don't have the budget right now",
+      "The fee is higher than I expected",
+      "Can I get a discount?",
     ],
-    prohibitedPatterns: [
-      'What is there to think about?',
-      'Why wait when you can start now?',
-      'If you leave today the offer expires.'
+    hiddenConcernPatterns: [
+      'Fear of unrecovered investment',
+      'Unsure if career salary lift offsets program fee',
+      'Comparing program to low-cost self-serve courses',
     ],
-    hiddenConcernSignals: [
-      'Fear of failure',
-      'Unspoken price objection',
-      'Lack of internal conviction'
+    prohibitedResponsePatterns: [
+      "Don't offer unauthorized discounts or price concessions.",
+      "Don't apologize for our program pricing.",
+      "Don't make unverified placement refund promises.",
     ],
-    scriptTags: ['thinking-over', 'decision-delay', 'objections'],
-    defaultLessonSlug: '/docs/objections/overview'
+    mappingScriptIds: [
+      '/docs/objections/price-objection#roleplay-1',
+      '/docs/objections/price-objection#roleplay-2',
+      '/docs/objections/price-objection#roleplay-3',
+    ],
   },
-  {
-    id: 'OBJ_TOO_EXPENSIVE',
-    name: 'Price / Budget Concern',
-    description: 'Candidate expresses hesitation over program fees or upfront investment.',
-    keywords: [
-      'too expensive',
-      "can't afford",
-      'costs too much',
-      'high price',
-      'no money',
-      'budget issue',
-      'out of my budget',
-      'price is high'
-    ],
-    prohibitedPatterns: [
-      'I can give you a 50% discount right now.',
-      'We are cheaper than any competitor.',
-      'Money shouldn\'t matter for your career.'
-    ],
-    hiddenConcernSignals: [
-      'Unsure of ROI',
-      'Risk aversion',
-      'Cash flow limitations'
-    ],
-    scriptTags: ['price', 'pricing', 'roi', 'budget'],
-    defaultLessonSlug: '/docs/pricing/overview'
-  },
-  {
-    id: 'OBJ_JOB_GUARANTEE',
-    name: 'Trust / Placement Guarantee Concern',
-    description: 'Candidate demands job guarantees or questions organizational legitimacy.',
-    keywords: [
-      'guarantee a job',
-      'guarantee placement',
-      'job guarantee',
-      "what if i don't get a job",
-      'is it guaranteed',
-      'promise a job',
-      'how do i know this works'
-    ],
-    prohibitedPatterns: [
-      '100% placement guaranteed.',
-      'We guarantee you will be hired in 30 days.',
-      'No one ever fails our program.'
-    ],
-    hiddenConcernSignals: [
-      'Past bad experience with consultancies',
-      'Skepticism of placement promises',
-      'Need for accountability'
-    ],
-    scriptTags: ['trust', 'guarantee', 'proof', 'results'],
-    defaultLessonSlug: '/docs/objections/overview'
-  },
-  {
-    id: 'OBJ_TALK_TO_PARENTS',
-    name: 'Family / Spouse / Advisor Approval',
-    description: 'Candidate requires external approval from parents, spouse, or family members.',
-    keywords: [
-      'talk to my parents',
-      'discuss with my spouse',
-      'ask my husband',
-      'ask my wife',
-      'consult my family',
-      'parents approval',
-      'discuss with parents'
-    ],
-    prohibitedPatterns: [
-      'You are an adult, why do you need your parents\' permission?',
-      'Don\'t tell them until after you enroll.',
-      'They don\'t understand tech anyway.'
-    ],
-    hiddenConcernSignals: [
-      'Financial dependence',
-      'Fear of family disapproval',
-      'Shared decision-making structure'
-    ],
-    scriptTags: ['family', 'spouse', 'parents', 'decision-maker'],
-    defaultLessonSlug: '/docs/objections/overview'
-  },
-  {
-    id: 'OBJ_SELF_STUDY',
-    name: 'DIY / Self-Study Alternative',
-    description: 'Candidate believes they can achieve placement independently via free resources.',
-    keywords: [
-      'apply on my own',
-      'do it myself',
-      'free resources',
-      'self study',
-      "don't need help",
-      'youtube tutorials',
-      'apply directly'
-    ],
-    prohibitedPatterns: [
-      'Self-study never works.',
-      'You will fail on your own.',
-      'YouTube is useless.'
-    ],
-    hiddenConcernSignals: [
-      'Underestimating hiring difficulty',
-      'Pride in independence',
-      'Reluctance to invest'
-    ],
-    scriptTags: ['self-study', 'diy', 'applying-myself', 'independent'],
-    defaultLessonSlug: '/docs/objections/overview'
-  }
-]
 
-export function getCategoryById(id: string): ObjectionCategoryDefinition | undefined {
-  return OBJECTION_CATEGORIES.find((cat) => cat.id === id)
+  'trust-and-credibility': {
+    id: 'trust-and-credibility',
+    name: 'Trust / Program Clarity',
+    description: 'Candidate questions program legitimacy, placement statistics, or company credibility.',
+    examplePhrases: [
+      'How do I know this isn\'t a scam?',
+      'Can you guarantee me a job?',
+      'How many students actually get hired?',
+      'Is there proof your placement rate is real?',
+    ],
+    hiddenConcernPatterns: [
+      'Prior bad experience with recruitment consultancies',
+      'Fear of false guarantees or fake promises',
+      'Need for verified candidate testimonials and placement proof',
+    ],
+    prohibitedResponsePatterns: [
+      "Don't make 100% placement guarantees or timeframe promises.",
+      "Don't invent success statistics or fake client claims.",
+      "Don't give legal or visa guarantees.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/trust-and-credibility#roleplay-1',
+      '/docs/objections/trust-and-credibility#roleplay-2',
+      '/docs/objections/trust-and-credibility#roleplay-3',
+      '/docs/objections/no-guarantee-concern#roleplay-1',
+    ],
+  },
+
+  'need-time-to-think': {
+    id: 'need-time-to-think',
+    name: 'Need Time To Think',
+    description: 'Candidate defers decision, asking for time to think about it before enrolling.',
+    examplePhrases: [
+      'I want to think about it',
+      'Let me call you back tomorrow',
+      'I need a few days to decide',
+      'I\'m not ready to make a payment today',
+    ],
+    hiddenConcernPatterns: [
+      'Unresolved hidden objection (price, spouse approval, or timing)',
+      'Hesitation to commit without isolating the real blocker',
+      'Fear of making a hasty career decision',
+    ],
+    prohibitedResponsePatterns: [
+      "Don't manufacture fake urgency or claim seats close today.",
+      "Don't badger or pressure the candidate aggressively.",
+      "Don't ignore their request for reflection.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/need-time-to-think#roleplay-1',
+      '/docs/objections/need-time-to-think#roleplay-2',
+      '/docs/objections/need-time-to-think#roleplay-3',
+    ],
+  },
+
+  'already-applying-myself': {
+    id: 'already-applying-myself',
+    name: 'Already Applying Myself',
+    description: 'Candidate believes cold applying on job portals is sufficient to land interviews.',
+    examplePhrases: [
+      'I\'m already applying on LinkedIn myself',
+      'I get plenty of responses on my own',
+      'Why do I need a consultancy if I can apply online?',
+    ],
+    hiddenConcernPatterns: [
+      'Underestimating low applicant portal callback rates (<3%)',
+      'Unaware of hiring manager referral networks vs cold portal applications',
+    ],
+    prohibitedResponsePatterns: [
+      "Don't insult their current job hunt effort or resume.",
+      "Don't claim cold applying never works.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/already-applying-myself#roleplay-1',
+      '/docs/objections/already-applying-myself#roleplay-2',
+      '/docs/objections/already-applying-myself#roleplay-3',
+    ],
+  },
+
+  'parents-spouse-approval': {
+    id: 'parents-spouse-approval',
+    name: 'Parent / Spouse Approval',
+    description: 'Candidate needs clearance or agreement from family or financial decision-makers.',
+    examplePhrases: [
+      'I need to talk to my parents first',
+      'My spouse handles our financial decisions',
+      'I can\'t enroll until my family agrees',
+    ],
+    hiddenConcernPatterns: [
+      'Family risk aversion regarding career investments',
+      'Candidate needs structured data to present to family decision-maker',
+    ],
+    prohibitedResponsePatterns: [
+      "Don't tell the candidate 'You are an adult, decide for yourself'.",
+      "Don't dismiss the role of family in career decisions.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/parents-spouse-approval#roleplay-1',
+      '/docs/objections/parents-spouse-approval#roleplay-2',
+      '/docs/objections/parents-spouse-approval#roleplay-3',
+    ],
+  },
 }
