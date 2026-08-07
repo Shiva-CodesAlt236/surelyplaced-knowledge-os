@@ -25,6 +25,8 @@ import {
   Loader2,
   MessageSquare,
   Headphones,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react"
 
 export interface AskAIPanelProps {
@@ -45,6 +47,8 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   // Sales Copilot State
   const [copilotResponse, setCopilotResponse] = useState<CopilotResponse | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analysisError, setAnalysisError] = useState<string | null>(null)
+  const [lastInput, setLastInput] = useState<string>("")
 
   const handleSendQA = () => {
     if (!qaInput.trim() || isResponding) return
@@ -54,12 +58,17 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
 
   const handleAnalyzeObjection = async (input: string) => {
     setIsAnalyzing(true)
+    setAnalysisError(null)
+    setLastInput(input)
+
     try {
       const provider = getCopilotAIProvider()
       const result = await provider.analyzeObjection(input)
       setCopilotResponse(result)
     } catch (err) {
       console.error("[Sales Copilot] Analysis error:", err)
+      setAnalysisError("Unable to analyze objection at this moment. Please check your input or try again.")
+      setCopilotResponse(null)
     } finally {
       setIsAnalyzing(false)
     }
@@ -67,16 +76,21 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
 
   const handleClearCopilot = () => {
     setCopilotResponse(null)
+    setAnalysisError(null)
   }
 
   const handleSaveOutcome = (outcome: OutcomeStatus, reason?: LostReason) => {
-    const provider = getCopilotAIProvider()
-    provider.recordOutcome({
-      exchangeId: copilotResponse?.exchangeId,
-      outcome,
-      reason,
-      recordedAt: new Date().toISOString(),
-    })
+    try {
+      const provider = getCopilotAIProvider()
+      provider.recordOutcome({
+        exchangeId: copilotResponse?.exchangeId,
+        outcome,
+        reason,
+        recordedAt: new Date().toISOString(),
+      })
+    } catch (err) {
+      console.error("[Sales Copilot] Outcome save error:", err)
+    }
   }
 
   return (
@@ -151,10 +165,35 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
               </div>
             )}
 
+            {/* Error State Banner */}
+            {analysisError && !isAnalyzing && (
+              <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3.5 space-y-2">
+                <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold text-xs">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>Analysis Error</span>
+                </div>
+                <p className="text-xs text-foreground">{analysisError}</p>
+                {lastInput && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleAnalyzeObjection(lastInput)}
+                    className="h-7 text-xs font-bold gap-1 mt-1"
+                  >
+                    <RefreshCw className="h-3 w-3" />
+                    Retry Analysis
+                  </Button>
+                )}
+              </div>
+            )}
+
             {copilotResponse && !isAnalyzing && (
               <div className="space-y-4 animate-in fade-in duration-200">
                 <CopilotResponseCard response={copilotResponse} />
-                <OutcomeRecorder onSaveOutcome={handleSaveOutcome} />
+                {!copilotResponse.isRefusal && (
+                  <OutcomeRecorder onSaveOutcome={handleSaveOutcome} />
+                )}
               </div>
             )}
           </div>

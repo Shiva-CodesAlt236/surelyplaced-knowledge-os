@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { CopilotResponse } from "@/lib/copilot/types"
@@ -12,6 +13,9 @@ import {
   HelpCircle,
   AlertTriangle,
   BookOpen,
+  ShieldAlert,
+  Layers,
+  ArrowRight,
 } from "lucide-react"
 
 export interface CopilotResponseCardProps {
@@ -20,17 +24,46 @@ export interface CopilotResponseCardProps {
 
 export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
   const [copied, setCopied] = useState(false)
+  const [selectedLevel, setSelectedLevel] = useState<number>(response.selectedLevel || 1)
 
-  const handleCopy = async () => {
+  // Handle Refusal State
+  if (response.isRefusal) {
+    return (
+      <div className="space-y-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs">
+          <ShieldAlert className="h-4 w-4 shrink-0" />
+          <span>Classification Deferred (Low Confidence)</span>
+        </div>
+        <p className="text-xs text-foreground leading-relaxed">
+          {response.refusalReason ||
+            "I am unable to confidently classify this statement against approved Sales Academy objection categories."}
+        </p>
+        <div className="pt-2 border-t border-amber-500/20 flex justify-end">
+          <Link
+            href="/docs/scripts"
+            className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+          >
+            Browse Scripts Library manually
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const handleCopy = async (textToCopy: string) => {
     try {
-      await navigator.clipboard.writeText(response.recommendedResponse)
+      await navigator.clipboard.writeText(textToCopy)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Fallback if clipboard API unavailable
       setCopied(false)
     }
   }
+
+  // Get active text based on selected level option
+  const activeLevelOption = response.levelOptions?.find((opt) => opt.level === selectedLevel)
+  const activeResponseText = activeLevelOption ? activeLevelOption.response : response.recommendedResponse
 
   const confidenceBadgeVariant =
     response.confidence === "high"
@@ -58,18 +91,47 @@ export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
         </Badge>
       </div>
 
+      {/* Response Level Selector (Level 1 Foundational vs Level 2 Experienced) */}
+      {response.levelOptions && response.levelOptions.length > 1 && (
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            <Layers className="h-3.5 w-3.5 text-indigo-500" />
+            Response Ladder Level:
+          </div>
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-muted rounded-lg border border-border/60">
+            {response.levelOptions.map((opt) => {
+              const isSelected = opt.level === selectedLevel
+              return (
+                <button
+                  key={opt.level}
+                  type="button"
+                  onClick={() => setSelectedLevel(opt.level)}
+                  className={`text-[11px] font-bold py-1.5 px-2 rounded-md transition-all text-center ${
+                    isSelected
+                      ? "bg-card text-foreground shadow-xs border border-border"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {opt.level === 1 ? "Level 1: Foundational" : "Level 2: Experienced"}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Recommended Response Box */}
       <div className="space-y-2 rounded-lg bg-primary/5 border border-primary/20 p-3.5">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-primary flex items-center gap-1.5">
             <BookOpen className="h-3.5 w-3.5" />
-            Approved Response
+            Approved Response ({selectedLevel === 1 ? "Level 1" : "Level 2"})
           </span>
           <Button
             type="button"
             size="sm"
             variant="outline"
-            onClick={handleCopy}
+            onClick={() => handleCopy(activeResponseText)}
             className="h-7 px-2.5 text-[11px] font-bold gap-1 bg-card hover:bg-accent"
           >
             {copied ? (
@@ -87,31 +149,35 @@ export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
         </div>
 
         <p className="text-xs text-foreground leading-relaxed font-medium">
-          "{response.recommendedResponse}"
+          "{activeResponseText}"
         </p>
       </div>
 
       {/* Why This Works */}
-      <div className="space-y-1.5 rounded-md bg-secondary/50 p-3 border border-border/60">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-          <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
-          Why This Works
+      {response.whyItWorks && (
+        <div className="space-y-1.5 rounded-md bg-secondary/50 p-3 border border-border/60">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+            <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
+            Why This Works
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            {response.whyItWorks}
+          </p>
         </div>
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
-          {response.whyItWorks}
-        </p>
-      </div>
+      )}
 
       {/* Next Question To Ask */}
-      <div className="space-y-1.5 rounded-md bg-indigo-500/5 p-3 border border-indigo-500/15">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400">
-          <HelpCircle className="h-3.5 w-3.5" />
-          Next Question To Ask
+      {response.nextQuestion && (
+        <div className="space-y-1.5 rounded-md bg-indigo-500/5 p-3 border border-indigo-500/15">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+            <HelpCircle className="h-3.5 w-3.5" />
+            Next Question To Ask
+          </div>
+          <p className="text-[11px] text-foreground italic font-medium">
+            "{response.nextQuestion}"
+          </p>
         </div>
-        <p className="text-[11px] text-foreground italic font-medium">
-          "{response.nextQuestion}"
-        </p>
-      </div>
+      )}
 
       {/* Avoid Saying */}
       {response.avoidSaying && response.avoidSaying.length > 0 && (

@@ -4,7 +4,7 @@
  * Grounded in docs/OBJECTION_INTELLIGENCE_LIBRARY.md and content/docs/objections/.
  *
  * NOTE: This file stores TAXONOMY METADATA ONLY (definitions, common phrases,
- * hidden concern signals, prohibited patterns, script ID mapping hints).
+ * hidden concern patterns, prohibited patterns, strategy explanations, and next questions).
  *
  * It DOES NOT store advisor response text or sales scripts. All script responses
  * are read live from `lib/scripts-registry.ts` via `lib/copilot/scripts-library-adapter.ts`.
@@ -18,6 +18,8 @@ export interface ObjectionCategoryMetadata {
   hiddenConcernPatterns: string[]
   prohibitedResponsePatterns: string[]
   mappingScriptIds: string[]
+  whyItWorks: string
+  defaultNextQuestion: string
 }
 
 export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetadata> = {
@@ -46,6 +48,10 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       '/docs/objections/price-objection#roleplay-2',
       '/docs/objections/price-objection#roleplay-3',
     ],
+    whyItWorks:
+      'Reframes program fee from a sunk expense into an asset-backed career investment with measurable ROI timelines.',
+    defaultNextQuestion:
+      'If budget wasn\'t a constraint, do you feel this is the exact skill transformation you need right now?',
   },
 
   'trust-and-credibility': {
@@ -74,6 +80,10 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       '/docs/objections/trust-and-credibility#roleplay-3',
       '/docs/objections/no-guarantee-concern#roleplay-1',
     ],
+    whyItWorks:
+      'Establishes credibility by placing candidate outcomes, verified program structure, and transparent candidate-first values first.',
+    defaultNextQuestion:
+      'What specific detail about our mentorship or placement process would be most helpful to review together?',
   },
 
   'need-time-to-think': {
@@ -101,6 +111,10 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       '/docs/objections/need-time-to-think#roleplay-2',
       '/docs/objections/need-time-to-think#roleplay-3',
     ],
+    whyItWorks:
+      'Acknowledges the candidate\'s process respectfully while isolating whether "thinking about it" is genuine reflection or a mask for hidden concerns.',
+    defaultNextQuestion:
+      'When you think about taking this step, what is the single biggest question still on your mind?',
   },
 
   'already-applying-myself': {
@@ -125,6 +139,10 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       '/docs/objections/already-applying-myself#roleplay-2',
       '/docs/objections/already-applying-myself#roleplay-3',
     ],
+    whyItWorks:
+      'Contrasts low-yield direct applicant portals against structured candidate intelligence and direct hiring partner referrals.',
+    defaultNextQuestion:
+      'Out of your recent direct applications, how many hiring manager interviews have you secured so far?',
   },
 
   'parents-spouse-approval': {
@@ -149,5 +167,9 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       '/docs/objections/parents-spouse-approval#roleplay-2',
       '/docs/objections/parents-spouse-approval#roleplay-3',
     ],
+    whyItWorks:
+      'Validates family involvement and arms the candidate with verified, objective documentation to present confidently to decision-makers.',
+    defaultNextQuestion:
+      'What is the main outcome or reassurance your family will be looking for when you discuss this?',
   },
 }

@@ -4,9 +4,9 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartan-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 1 Complete → Preparing Phase 2  
+**Current Phase:** Phase 2.5 Reconciled → Ready for Phase 3  
 **Branch:** `feature/sales-copilot-mvp`  
-**Architecture Stance:** Guided decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate scripts or separate databases.
+**Architecture Stance:** Guided decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. Zero duplicate script databases or copied content.
 
 ---
 
@@ -22,9 +22,15 @@
   - Integrated mode switcher in `components/ai/AskAIPanel.tsx` (`General Assistant` vs `Sales Copilot`).
   - Passed all 9 UX QA test scenarios (`1dd7e19`).
 
-- [ ] **Phase 2 — Knowledge OS Content Connection**
-  - Implement `lib/copilot/objection-categories.ts` & `lib/copilot/scripts-library-adapter.ts`.
-  - Link 5 target objection categories to existing `SCRIPTS_REGISTRY` entries in `lib/scripts-registry.ts`.
+- [x] **Phase 2 — Knowledge OS Content Connection**
+  - Implemented `lib/copilot/objection-categories.ts` & `lib/copilot/scripts-library-adapter.ts`.
+  - Linked 5 target objection categories directly to `SCRIPTS_REGISTRY` entries (`f4a15c7`).
+
+- [x] **Phase 2.5 — Architecture Reconciliation & Feature Completion**
+  - Integrated Level 1 (Foundational) vs Level 2 (Experienced) response selection toggle in `CopilotResponseCard.tsx`.
+  - Implemented low-confidence refusal path notice (`isRefusal: true`) with manual `Scripts Library` link.
+  - Implemented explicit error state handling & retry trigger in `AskAIPanel.tsx`.
+  - Moved all coaching metadata out of `mock.ts` and into `lib/copilot/objection-categories.ts`.
 
 - [ ] **Phase 3 — Reasoning Pipeline & Safety Controls**
   - Implement 6-step reasoning pipeline (`classifier`, `adapter`, `coach`, `content-scanner`, `protected-spans`).

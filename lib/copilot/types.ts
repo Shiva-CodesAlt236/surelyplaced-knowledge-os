@@ -2,10 +2,12 @@
  * Sales Copilot MVP — Data Contracts & Interfaces
  *
  * Defines request, response, confidence levels, outcome statuses,
- * and loss reasons for the guided sales assistant workflow.
+ * response levels, and loss reasons for the guided sales assistant workflow.
  */
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low'
+
+export type ResponseLevel = 1 | 2
 
 export type OutcomeStatus = 'enrolled' | 'follow-up' | 'lost'
 
@@ -15,6 +17,14 @@ export interface CopilotRequest {
   objectionText: string
   contextModuleId?: string
   advisorId?: string
+}
+
+export interface CopilotResponseLevelOption {
+  level: ResponseLevel
+  levelLabel: string
+  response: string
+  difficulty: string | null
+  matchedScriptId?: string
 }
 
 export interface CopilotResponse {
@@ -27,6 +37,12 @@ export interface CopilotResponse {
   nextQuestion: string
   avoidSaying: string[]
   matchedScriptId?: string
+
+  // Phase 2.5 Reconciliation Additions
+  levelOptions?: CopilotResponseLevelOption[]
+  selectedLevel?: ResponseLevel
+  isRefusal?: boolean
+  refusalReason?: string
 }
 
 export interface OutcomePayload {
