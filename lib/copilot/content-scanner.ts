@@ -12,11 +12,12 @@ export interface ContentScanResult {
 
 const FORBIDDEN_CLAIMS = [
   { pattern: /100%\s*(placement|job|hired)/i, label: 'Unverified 100% placement guarantee' },
-  { pattern: /guaranteed\s*(job|role|placement|offer|sponsorship)/i, label: 'Illegal job placement guarantee' },
-  { pattern: /sponsorship\s*is\s*guaranteed/i, label: 'Illegal visa sponsorship guarantee' },
-  { pattern: /h1b\s*guarantee/i, label: 'Unverified visa guarantee' },
-  { pattern: /salary\s*guarantee/i, label: 'Unverified salary guarantee' },
-  { pattern: /money\s*back\s*guarantee/i, label: 'Unauthorized refund guarantee' },
+  { pattern: /guarantee(s|d)?\s*(.*)?(job|role|placement|offer|sponsorship|h1b)/i, label: 'Illegal job or visa placement guarantee' },
+  { pattern: /sponsorship\s*is\s*guarantee(s|d)?/i, label: 'Illegal visa sponsorship guarantee' },
+  { pattern: /h1b\s*guarantee(s|d)?/i, label: 'Unverified visa guarantee' },
+  { pattern: /\$\d+.*guarantee(s|d)?/i, label: 'Unverified salary guarantee' },
+  { pattern: /money\s*back\s*guarantee(s|d)?/i, label: 'Unauthorized refund guarantee' },
+  { pattern: /\bdiscount\b/i, label: 'Unauthorized discount promise' },
 ]
 
 export function scanContentSafety(text: string): ContentScanResult {

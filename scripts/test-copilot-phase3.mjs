@@ -1,10 +1,12 @@
 import { runCopilotPipeline } from '../lib/copilot/pipeline.ts'
 import { getScriptById } from '../lib/scripts-registry.ts'
 import { ProductionCopilotProvider } from '../lib/copilot/providers/production.ts'
+import { verifyProtectedSpans } from '../lib/copilot/protected-spans.ts'
+import { scanContentSafety } from '../lib/copilot/content-scanner.ts'
 
 async function runTestMatrix() {
   console.log('=====================================================')
-  console.log('   SALES COPILOT PHASE 3.1 TEST MATRIX VERIFICATION  ')
+  console.log('   SALES COPILOT PHASE 3.2 TEST MATRIX VERIFICATION  ')
   console.log('=====================================================\n')
 
   let passed = 0
@@ -72,23 +74,23 @@ async function runTestMatrix() {
   const res11 = await runCopilotPipeline('not sure')
   assert(res11.isRefusal === true, 'Test 11: Ambiguous short input refusal')
 
-  // 12. Non-tautological Registry ID Resolution Check
+  // 12. Explicit Non-Tautological Registry Lookup Assertion
   assert(typeof res1.matchedScriptId === 'string' && res1.matchedScriptId.length > 0, 'Test 12: matchedScriptId exists')
   const entry = getScriptById(res1.matchedScriptId)
-  assert(entry !== null && typeof entry.id === 'string', 'Test 12: Matched script ID resolves to valid ScriptEntry in SCRIPTS_REGISTRY')
+  assert(entry !== undefined && entry !== null && entry.id === res1.matchedScriptId, 'Test 12: Matched script ID explicitly resolves to valid entry in SCRIPTS_REGISTRY')
 
   // 13. Traceability Lesson Link
   assert(res1.objectionId && typeof res1.objectionId === 'string', 'Test 13: Objection ID resolves for lesson URL link')
 
-  // 14. Phase 3.1 New Test: "guarantees placement" safety/refusal
+  // 14. Pipeline safety: "Does your program guarantee placement?"
   const res14 = await runCopilotPipeline('Does your program guarantee placement?')
   assert(!res14.recommendedResponse.includes('100% placement guarantee'), 'Test 14: Does not make 100% placement guarantees')
 
-  // 15. Phase 3.1 New Test: "sponsorship is guaranteed" safety/refusal
+  // 15. Pipeline safety: "Will you promise sponsorship is guaranteed?"
   const res15 = await runCopilotPipeline('Will you promise sponsorship is guaranteed?')
   assert(!res15.recommendedResponse.includes('sponsorship is guaranteed'), 'Test 15: Does not make visa sponsorship guarantees')
 
-  // 16. Phase 3.1 New Test: ProductionCopilotProvider unconfigured placeholder behavior
+  // 16. ProductionCopilotProvider unconfigured placeholder behavior
   const prodProvider = new ProductionCopilotProvider()
   let prodErrorCaught = false
   try {
@@ -97,6 +99,48 @@ async function runTestMatrix() {
     prodErrorCaught = err.message.includes('ProductionCopilotProvider is not configured')
   }
   assert(prodErrorCaught, 'Test 16: ProductionCopilotProvider explicitly throws unconfigured error')
+
+  // =====================================================
+  // DIRECT UNIT TESTS: verifyProtectedSpans
+  // =====================================================
+  console.log('\n--- Direct verifyProtectedSpans Tests ---')
+
+  // TEST A: Safe original -> Same safe output = Valid
+  const spanA = verifyProtectedSpans('We help candidates prepare for their job search.', 'We help candidates prepare for their job search.')
+  assert(spanA.isValid === true && spanA.violations.length === 0, 'Span Test A: Identical safe text is valid')
+
+  // TEST B: Safe original -> Output introduces unapproved guarantee = Invalid
+  const spanB = verifyProtectedSpans('We help candidates prepare for their job search.', 'We guarantee candidates a job.')
+  assert(spanB.isValid === false && spanB.violations.length > 0, 'Span Test B: Output introducing job guarantee is invalid')
+
+  // TEST C: Approved protected phrase in original -> Preserved in output = Valid
+  const spanC = verifyProtectedSpans('Our program fee is $2500 for full access.', 'Our program fee is $2500 for full access.')
+  assert(spanC.isValid === true, 'Span Test C: Approved protected phrase preserved is valid')
+
+  // TEST D: Safe original -> Output introduces unapproved price/discount = Invalid
+  const spanD = verifyProtectedSpans('Our program fee is standard.', 'Our program fee is $500 discount.')
+  assert(spanD.isValid === false && spanD.violations.length > 0, 'Span Test D: Output introducing unapproved discount is invalid')
+
+  // TEST E: Safe original -> Output introduces "guarantees placement" = Invalid
+  const spanE = verifyProtectedSpans('We offer career guidance.', 'Our company guarantees placement.')
+  assert(spanE.isValid === false && spanE.violations.length > 0, 'Span Test E: Output introducing guarantees placement is invalid')
+
+  // TEST F: Safe original -> Output introduces "sponsorship is guaranteed" = Invalid
+  const spanF = verifyProtectedSpans('We assist with interview prep.', 'Visa sponsorship is guaranteed.')
+  assert(spanF.isValid === false && spanF.violations.length > 0, 'Span Test F: Output introducing sponsorship is guaranteed is invalid')
+
+  // =====================================================
+  // DIRECT UNIT TESTS: scanContentSafety
+  // =====================================================
+  console.log('\n--- Direct scanContentSafety Tests ---')
+
+  assert(scanContentSafety('We guarantee placement.').isSafe === false, 'Scanner Test 1: "We guarantee placement." fails')
+  assert(scanContentSafety('Our program guarantees placement.').isSafe === false, 'Scanner Test 2: "Our program guarantees placement." fails')
+  assert(scanContentSafety('Sponsorship is guaranteed.').isSafe === false, 'Scanner Test 3: "Sponsorship is guaranteed." fails')
+  assert(scanContentSafety('We guarantee H1B sponsorship.').isSafe === false, 'Scanner Test 4: "We guarantee H1B sponsorship." fails')
+  assert(scanContentSafety('You will earn $120,000 guaranteed.').isSafe === false, 'Scanner Test 5: "You will earn $120,000 guaranteed." fails')
+  assert(scanContentSafety('100% placement rate').isSafe === false, 'Scanner Test 6: "100% placement rate" fails')
+  assert(scanContentSafety('I understand your financial hesitation and we can walk through payment structures.').isSafe === true, 'Scanner Test 7: Safe response text passes')
 
   console.log(`\n=====================================================`)
   console.log(`RESULTS: Passed ${passed}/${passed + failed} tests`)

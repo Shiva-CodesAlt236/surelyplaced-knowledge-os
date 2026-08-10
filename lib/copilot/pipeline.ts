@@ -163,10 +163,10 @@ export async function runCopilotPipeline(
   let safetyFallback = false
   const isPersonalized = false // Personalization deferred to production LLM provider integration
 
-  const protectedVerification = verifyProtectedSpans(recommendedResponse, recommendedResponse)
+  // Direct final-output safety scan (verifyProtectedSpans remains a prepared differential verifier for future LLM adaptation)
   const contentSafety = scanContentSafety(recommendedResponse)
 
-  if (!protectedVerification.isValid || !contentSafety.isSafe) {
+  if (!contentSafety.isSafe) {
     safetyFallback = true
     if (primaryScript?.recommendedAnswer) {
       recommendedResponse = primaryScript.recommendedAnswer

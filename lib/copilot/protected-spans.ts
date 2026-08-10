@@ -4,9 +4,8 @@
  * Validates responses to ensure financial, legal, guarantee, and policy assertions
  * are never corrupted or introduced.
  *
- * Current Phase 3.1 Status:
- * Validates returned approved script responses for defense-in-depth safety,
- * and stands ready to verify LLM-adapted outputs when production personalization is enabled.
+ * Current Phase 3.2 Status:
+ * Prepared differential verifier primitive for future LLM-adapted outputs.
  */
 
 export interface ProtectedSpanViolation {
@@ -16,9 +15,9 @@ export interface ProtectedSpanViolation {
 }
 
 const GUARANTEE_PATTERNS = [
-  /guarantee\b/i,
+  /guarantee(s|d)?\b/i,
   /100%\s*(placement|job|hired)/i,
-  /guaranteed\s*(job|placement|hire|role|sponsorship)/i,
+  /guarantee(s|d)?\s*(job|placement|hire|role|sponsorship)/i,
   /promise\s*you\s*a\s*job/i,
   /money\s*back\s*guarantee/i,
 ]
@@ -32,10 +31,10 @@ const PRICE_DISCOUNT_PATTERNS = [
 ]
 
 const VISA_SALARY_PATTERNS = [
-  /\bh1b\s*guarantee\b/i,
-  /\bvisa\s*guarantee\b/i,
-  /\bsponsorship\s*is\s*guaranteed\b/i,
-  /\b\$\d{2,3}k\s*guaranteed\b/i,
+  /\bh1b\b/i,
+  /\bvisa\s*guarantee(s|d)?\b/i,
+  /\bsponsorship\s*is\s*guarantee(s|d)?\b/i,
+  /\b\$\d{2,3}k\b/i,
 ]
 
 /**
