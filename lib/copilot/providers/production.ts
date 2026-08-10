@@ -1,19 +1,22 @@
 import type { ICopilotAIProvider } from './types'
 import type { CopilotResponse, OutcomePayload } from '../types'
-import { runCopilotPipeline } from '../pipeline'
 
 /**
  * Production Copilot AI Provider Placeholder
  *
- * Delegates to the grounded reasoning pipeline while production model vendor selection is finalized.
+ * UNCONFIGURED PLACEHOLDER: Throws an explicit configuration error until
+ * a production LLM vendor (e.g. Gemini, OpenAI, Anthropic) is chosen and configured.
  */
 export class ProductionCopilotProvider implements ICopilotAIProvider {
-  async analyzeObjection(input: string): Promise<CopilotResponse> {
-    return await runCopilotPipeline(input)
+  async analyzeObjection(_input: string): Promise<CopilotResponse> {
+    throw new Error(
+      "ProductionCopilotProvider is not configured. Please set COPILOT_AI_PROVIDER=mock or configure a production model vendor."
+    )
   }
 
-  async recordOutcome(payload: OutcomePayload): Promise<{ success: boolean }> {
-    console.log('[ProductionCopilotProvider] Outcome recorded:', payload)
-    return { success: true }
+  async recordOutcome(_payload: OutcomePayload): Promise<{ success: boolean }> {
+    throw new Error(
+      "ProductionCopilotProvider is not configured. Please set COPILOT_AI_PROVIDER=mock or configure a production model vendor."
+    )
   }
 }

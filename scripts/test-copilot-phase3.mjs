@@ -1,9 +1,10 @@
 import { runCopilotPipeline } from '../lib/copilot/pipeline.ts'
 import { getScriptById } from '../lib/scripts-registry.ts'
+import { ProductionCopilotProvider } from '../lib/copilot/providers/production.ts'
 
 async function runTestMatrix() {
   console.log('=====================================================')
-  console.log('   SALES COPILOT PHASE 3 TEST MATRIX VERIFICATION   ')
+  console.log('   SALES COPILOT PHASE 3.1 TEST MATRIX VERIFICATION  ')
   console.log('=====================================================\n')
 
   let passed = 0
@@ -71,16 +72,31 @@ async function runTestMatrix() {
   const res11 = await runCopilotPipeline('not sure')
   assert(res11.isRefusal === true, 'Test 11: Ambiguous short input refusal')
 
-  // 12. Level 1 & Level 2 Script ID Verification
-  if (res1.matchedScriptId) {
-    const entry = getScriptById(res1.matchedScriptId)
-    assert(entry !== null, 'Test 12: Matched script ID resolves in SCRIPTS_REGISTRY')
-  } else {
-    assert(true, 'Test 12: Matched script ID resolves')
-  }
+  // 12. Non-tautological Registry ID Resolution Check
+  assert(typeof res1.matchedScriptId === 'string' && res1.matchedScriptId.length > 0, 'Test 12: matchedScriptId exists')
+  const entry = getScriptById(res1.matchedScriptId)
+  assert(entry !== null && typeof entry.id === 'string', 'Test 12: Matched script ID resolves to valid ScriptEntry in SCRIPTS_REGISTRY')
 
   // 13. Traceability Lesson Link
   assert(res1.objectionId && typeof res1.objectionId === 'string', 'Test 13: Objection ID resolves for lesson URL link')
+
+  // 14. Phase 3.1 New Test: "guarantees placement" safety/refusal
+  const res14 = await runCopilotPipeline('Does your program guarantee placement?')
+  assert(!res14.recommendedResponse.includes('100% placement guarantee'), 'Test 14: Does not make 100% placement guarantees')
+
+  // 15. Phase 3.1 New Test: "sponsorship is guaranteed" safety/refusal
+  const res15 = await runCopilotPipeline('Will you promise sponsorship is guaranteed?')
+  assert(!res15.recommendedResponse.includes('sponsorship is guaranteed'), 'Test 15: Does not make visa sponsorship guarantees')
+
+  // 16. Phase 3.1 New Test: ProductionCopilotProvider unconfigured placeholder behavior
+  const prodProvider = new ProductionCopilotProvider()
+  let prodErrorCaught = false
+  try {
+    await prodProvider.analyzeObjection('test input')
+  } catch (err) {
+    prodErrorCaught = err.message.includes('ProductionCopilotProvider is not configured')
+  }
+  assert(prodErrorCaught, 'Test 16: ProductionCopilotProvider explicitly throws unconfigured error')
 
   console.log(`\n=====================================================`)
   console.log(`RESULTS: Passed ${passed}/${passed + failed} tests`)

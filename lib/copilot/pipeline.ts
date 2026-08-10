@@ -36,10 +36,9 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     }
   }
 
-  // Specific high-signal trigger keywords
   const keywordsMap: Record<string, string[]> = {
     'price-objection': ['expensive', 'cost', 'price', 'budget', 'money', 'fee', 'discount'],
-    'trust-and-credibility': ['trust', 'scam', 'guarantee', 'proof', 'real', 'legit', 'company', 'fake', 'reviews'],
+    'trust-and-credibility': ['trust', 'scam', 'guarantee', 'proof', 'real', 'legit', 'company', 'fake', 'reviews', 'reputation'],
     'need-time-to-think': ['think', 'time', 'decide', 'consider', 'call back', 'reflect'],
     'already-applying-myself': ['apply', 'myself', 'own', 'linkedin', 'portal', 'direct'],
     'parents-spouse-approval': ['parent', 'parents', 'spouse', 'family', 'husband', 'wife', 'father', 'mother'],
@@ -65,7 +64,14 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 }
 
 /**
- * Sales Copilot Grounded AI Reasoning Pipeline (Phase 3)
+ * Sales Copilot Grounded Reasoning Pipeline
+ *
+ * Phase 3 Architecture:
+ * - Deterministic multi-signal classification & compound objection detection
+ * - Reconciled confidence calculation & low-confidence refusal gating
+ * - Grounded retrieval of verbatim approved scripts from `lib/scripts-registry.ts`
+ * - Defense-in-depth protected span & content safety validation on active response
+ * - LLM personalization is DEFERRED until production provider vendor integration (isPersonalized: false)
  */
 export async function runCopilotPipeline(
   input: string,
@@ -153,18 +159,15 @@ export async function runCopilotPipeline(
     primaryScript?.entry.prompt ||
     "I completely respect that you want to evaluate this carefully before taking the next step."
 
-  // Step 6: Personalization, Protected Spans Verification & Content Safety Scanning
+  // Step 6: Defense-in-Depth Safety Scanning on Returned Response
   let safetyFallback = false
-  let isPersonalized = false
+  const isPersonalized = false // Personalization deferred to production LLM provider integration
 
-  // Check if input contained prompt injection or unauthorized claims (e.g. "discount to $500" or "promise a job")
-  const protectedVerification = verifyProtectedSpans(recommendedResponse, text)
-  const contentSafety = scanContentSafety(text)
+  const protectedVerification = verifyProtectedSpans(recommendedResponse, recommendedResponse)
+  const contentSafety = scanContentSafety(recommendedResponse)
 
   if (!protectedVerification.isValid || !contentSafety.isSafe) {
-    // Enforcement: Revert to original un-adapted approved script text
     safetyFallback = true
-    isPersonalized = false
     if (primaryScript?.recommendedAnswer) {
       recommendedResponse = primaryScript.recommendedAnswer
     }
