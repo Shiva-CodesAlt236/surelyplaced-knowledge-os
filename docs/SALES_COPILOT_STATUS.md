@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 4A.1 Database Schema Correctness Fix Complete → Ready for Phase 4B  
+**Current Phase:** Phase 4A.2 Non-Production Neon Setup & Real Database Verification Complete → Ready for Phase 4B  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -24,20 +24,27 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `app/api/copilot/route.ts`: Server API endpoint.
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider.
 
-### Phase 4A.1 Database Foundation & Enforced Schema:
+### Phase 4A / 4A.1 / 4A.2 Database Foundation & Live Verification:
 - `lib/db/schema.ts`: Drizzle Postgres schema using real PostgreSQL `pgEnum` types (`copilot_session_status`, `copilot_outcome_status`, `copilot_outcome_reason`, `copilot_confidence_band`, `copilot_feedback_rating`), native `text[]` for `secondary_objection_ids`, and DB-level `CHECK` constraint for `selected_level`.
 - `lib/db/client.ts`: Lazy Neon Postgres client (`DATABASE_URL` environment variable).
 - `drizzle.config.ts`: Drizzle Kit configuration.
-- `drizzle/0000_new_shriek.sql`: Clean initial SQL migration (Generated; application awaiting non-production database URL configuration).
+- `drizzle/0000_new_shriek.sql`: Initial SQL migration (Applied to Neon Development environment via `pnpm db:migrate`).
 - `.env.example`: Environment configuration template.
 - `scripts/test-copilot-phase4a.mjs`: Schema integrity & generated SQL DDL audit test suite (37/37 tests passing).
+- `scripts/test-copilot-phase4-live.mjs`: Real Neon database live validation suite (30/30 tests passing against development database).
 - `tsx`: Development test-runner tooling (devDependency only; does not ship to runtime).
 
-### Prepared / Future Modules:
-- `lib/copilot/protected-spans.ts`: Differential verifier (`verifyProtectedSpans`). Directly unit-tested in test suite; runtime differential call in `pipeline.ts` is deferred until LLM personalization exists.
-- `lib/copilot/providers/production.ts`: Unconfigured placeholder; explicitly throws `ProductionCopilotProvider is not configured` error until a vendor is chosen.
-- `lib/copilot/prompts/`: System prompts (classifier, adapter, coach) prepared for future LLM vendor integration.
-- Personalization: Text personalization is DEFERRED until production LLM provider integration (`isPersonalized: false`).
+### Live Database Status (Phase 4A.2):
+- **Neon Non-Production Configured:** YES (`ep-bold-hat-avtm2oh7-pooler.c-11.us-east-1.aws.neon.tech`)
+- **Environment Type:** Development (Vercel Marketplace Neon integration)
+- **Migration Applied:** YES (`0000_new_shriek.sql` applied successfully via `pnpm db:migrate`)
+- **Live Metadata Verified:** YES (3 tables, 5 enum types, `text[]` column, `CHECK` constraint, 7 indexes)
+- **Live Constraints Verified:** YES (Invalid enums and `selected_level = 3` rejected by Postgres)
+- **Live Cascade & Unique Verified:** YES (ON DELETE CASCADE recursively deleted exchanges/feedback; UNIQUE rejected duplicate feedback)
+- **Test Data Cleanup:** YES (0 leftover test rows in database)
+- **Production Database Configured:** NO (Production untouched)
+- **Runtime Persistence Active:** NO (NO session, exchange, or outcome writes wired to UI yet)
+- **Phase 4B Started:** NO
 
 ---
 
@@ -71,19 +78,20 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - Removed inert same-string `verifyProtectedSpans` call from `pipeline.ts` (`e7631d7`).
 
 - [x] **Phase 4A — Database Foundation & Schema**
-  - Created Drizzle Postgres schema, lazy database client, Drizzle Kit config, and `.env.example` (`5f6600d`).
+  - Created Drizzle Postgres schema for `copilot_sessions`, `copilot_exchanges`, `copilot_feedback` (`5f6600d`).
 
 - [x] **Phase 4A.1 — Database Schema Correctness Fix**
-  - Enforced real PostgreSQL `pgEnum` types for all status/reason/band/rating columns.
-  - Replaced JSONB with native `text[] DEFAULT '{}'::text[]` for `secondary_objection_ids`.
-  - Added DB-level `CHECK` constraint for `selected_level IN (1, 2)`.
-  - Regenerated clean initial SQL migration (`drizzle/0000_new_shriek.sql`).
-  - Expanded schema test suite to inspect generated SQL DDL directly (37/37 tests passing).
-  - ZERO application runtime persistence active (NO session, exchange, or outcome writes wired to UI yet).
+  - Enforced real PostgreSQL `pgEnum` types, native `text[]` array, and `CHECK` constraints (`292f1a6`).
 
-- [ ] **Phase 4B — Session & Exchange Persistence Endpoint Wiring (Deferred)**
-- [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred)**
-- [ ] **Phase 4D — Feedback Endpoint & UI Wiring (Deferred)**
-- [ ] **Phase 4E — Advisor Identifier & LocalStorage Session Lifecycle (Deferred)**
-- [ ] **Phase 4F — Persistence Testing, Safety Scans & Data Integrity (Deferred)**
-- [ ] **Phase 5 — Full Production QA & Release Verification (Deferred)**
+- [x] **Phase 4A.2 — Non-Production Neon Setup & Real Database Verification**
+  - Linked Vercel project `spartans-53e3/surelyplaced-knowledge-os` to Neon PostgreSQL integration.
+  - Applied initial migration `0000_new_shriek.sql` to Neon Development database via `pnpm db:migrate`.
+  - Created and executed `scripts/test-copilot-phase4-live.mjs` verifying live schema, constraints, cascade delete, outcome updates, and zero test row cleanup (30/30 live tests passing).
+  - Production database untouched. Zero application runtime persistence active.
+
+- [ ] **Phase 4B — Session & Exchange Persistence Endpoint Wiring (Deferred / Not Started)**
+- [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred / Not Started)**
+- [ ] **Phase 4D — Feedback Endpoint & UI Wiring (Deferred / Not Started)**
+- [ ] **Phase 4E — Advisor Identifier & LocalStorage Session Lifecycle (Deferred / Not Started)**
+- [ ] **Phase 4F — Persistence Testing, Safety Scans & Data Integrity (Deferred / Not Started)**
+- [ ] **Phase 5 — Full Production QA & Release Verification (Deferred / Not Started)**
