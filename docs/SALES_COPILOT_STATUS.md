@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 3.2 Protected Span Correctness Fix Complete → Ready for Phase 4  
+**Current Phase:** Phase 4A Database Foundation & Schema Complete → Ready for Phase 4B  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -14,7 +14,7 @@
 
 Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scripts extracted from `content/docs/` MDX files) for all response content.
 
-### Active Components & Modules (Phase 3.2):
+### Active Components & Modules:
 - `lib/scripts-registry.ts`: Primary scripts registry (376 entries across 8 modules).
 - `lib/copilot/objection-categories.ts`: Objection taxonomy metadata.
 - `lib/copilot/scripts-library-adapter.ts`: Read-only query layer bridging Sales Copilot to `SCRIPTS_REGISTRY`.
@@ -23,6 +23,14 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `lib/copilot/pipeline.ts`: Server-side grounded reasoning pipeline.
 - `app/api/copilot/route.ts`: Server API endpoint.
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider.
+
+### Phase 4A Persistence Foundation:
+- `lib/db/schema.ts`: Drizzle Postgres schema for `copilot_sessions`, `copilot_exchanges`, and `copilot_feedback`.
+- `lib/db/client.ts`: Lazy Neon Postgres client (`DATABASE_URL` environment variable).
+- `drizzle.config.ts`: Drizzle Kit configuration.
+- `drizzle/0000_spooky_hercules.sql`: Initial SQL migration (Generated; application awaiting non-production database configuration).
+- `.env.example`: Environment configuration template.
+- `scripts/test-copilot-phase4a.mjs`: Schema integrity audit test suite (31/31 tests passing).
 
 ### Prepared / Future Modules:
 - `lib/copilot/protected-spans.ts`: Differential verifier (`verifyProtectedSpans`). Directly unit-tested in test suite; runtime differential call in `pipeline.ts` is deferred until LLM personalization exists.
@@ -59,11 +67,18 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - `ProductionCopilotProvider` throws explicit unconfigured error (`51c842d`).
 
 - [x] **Phase 3.2 — Protected Span Correctness Fix**
-  - Removed inert same-string `verifyProtectedSpans(recommendedResponse, recommendedResponse)` call from `pipeline.ts`.
-  - Final output validated by direct `scanContentSafety(recommendedResponse)`.
-  - Added 13 direct unit tests for `verifyProtectedSpans` and `scanContentSafety` (35/35 tests passing).
+  - Removed inert same-string `verifyProtectedSpans` call from `pipeline.ts` (`e7631d7`).
 
-- [ ] **Phase 4 — Persistence Layer (Deferred / Not Started)**
-  - Note on historical commits: Commits `02ecda9`, `4ed4485`, and `718fd99` contained earlier Phase 3/4/5 code that was removed/superseded during architecture reset. Postgres database persistence is NOT active in Phase 3.2.
+- [x] **Phase 4A — Database Foundation & Schema**
+  - Created Drizzle Postgres schema for `copilot_sessions`, `copilot_exchanges`, `copilot_feedback`.
+  - Configured lazy database client, Drizzle Kit config, package scripts (`db:generate`, `db:migrate`), and `.env.example`.
+  - Generated initial SQL migration (`drizzle/0000_spooky_hercules.sql`).
+  - Implemented schema integrity audit suite (31/31 tests passing).
+  - ZERO application runtime persistence active in Phase 4A (NO session, exchange, or outcome writes wired to UI yet).
 
-- [ ] **Phase 5 — Full Production QA & Release Verification (Deferred / Not Started)**
+- [ ] **Phase 4B — Session & Exchange Persistence Endpoint Wiring (Deferred)**
+- [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred)**
+- [ ] **Phase 4D — Feedback Endpoint & UI Wiring (Deferred)**
+- [ ] **Phase 4E — Advisor Identifier & LocalStorage Session Lifecycle (Deferred)**
+- [ ] **Phase 4F — Persistence Testing, Safety Scans & Data Integrity (Deferred)**
+- [ ] **Phase 5 — Full Production QA & Release Verification (Deferred)**
