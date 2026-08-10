@@ -1,5 +1,5 @@
 {
-  "id": "5ef2bb9f-8630-4745-bdd3-cd5d114d315f",
+  "id": "78bb1eea-5219-48cc-8bb3-2d4447c57f44",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -42,10 +42,10 @@
         },
         "secondary_objection_ids": {
           "name": "secondary_objection_ids",
-          "type": "jsonb",
+          "type": "text[]",
           "primaryKey": false,
           "notNull": true,
-          "default": "'[]'::jsonb"
+          "default": "'{}'::text[]"
         },
         "numeric_confidence": {
           "name": "numeric_confidence",
@@ -55,7 +55,8 @@
         },
         "confidence_band": {
           "name": "confidence_band",
-          "type": "text",
+          "type": "copilot_confidence_band",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -173,7 +174,12 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "copilot_exchanges_selected_level_check": {
+          "name": "copilot_exchanges_selected_level_check",
+          "value": "\"copilot_exchanges\".\"selected_level\" IS NULL OR \"copilot_exchanges\".\"selected_level\" IN (1, 2)"
+        }
+      },
       "isRLSEnabled": false
     },
     "public.copilot_feedback": {
@@ -201,7 +207,8 @@
         },
         "rating": {
           "name": "rating",
-          "type": "text",
+          "type": "copilot_feedback_rating",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -289,20 +296,23 @@
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "copilot_session_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'active'"
         },
         "outcome_status": {
           "name": "outcome_status",
-          "type": "text",
+          "type": "copilot_outcome_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
         "outcome_reason": {
           "name": "outcome_reason",
-          "type": "text",
+          "type": "copilot_outcome_reason",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
@@ -374,7 +384,55 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.copilot_confidence_band": {
+      "name": "copilot_confidence_band",
+      "schema": "public",
+      "values": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "public.copilot_feedback_rating": {
+      "name": "copilot_feedback_rating",
+      "schema": "public",
+      "values": [
+        "thumbs-up",
+        "neutral",
+        "thumbs-down"
+      ]
+    },
+    "public.copilot_outcome_reason": {
+      "name": "copilot_outcome_reason",
+      "schema": "public",
+      "values": [
+        "price",
+        "trust",
+        "timing",
+        "competitor",
+        "other"
+      ]
+    },
+    "public.copilot_outcome_status": {
+      "name": "copilot_outcome_status",
+      "schema": "public",
+      "values": [
+        "enrolled",
+        "follow-up",
+        "lost"
+      ]
+    },
+    "public.copilot_session_status": {
+      "name": "copilot_session_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "completed",
+        "abandoned"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

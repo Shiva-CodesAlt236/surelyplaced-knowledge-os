@@ -1,24 +1,30 @@
+CREATE TYPE "public"."copilot_confidence_band" AS ENUM('high', 'medium', 'low');--> statement-breakpoint
+CREATE TYPE "public"."copilot_feedback_rating" AS ENUM('thumbs-up', 'neutral', 'thumbs-down');--> statement-breakpoint
+CREATE TYPE "public"."copilot_outcome_reason" AS ENUM('price', 'trust', 'timing', 'competitor', 'other');--> statement-breakpoint
+CREATE TYPE "public"."copilot_outcome_status" AS ENUM('enrolled', 'follow-up', 'lost');--> statement-breakpoint
+CREATE TYPE "public"."copilot_session_status" AS ENUM('active', 'completed', 'abandoned');--> statement-breakpoint
 CREATE TABLE "copilot_exchanges" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"session_id" uuid NOT NULL,
 	"objection_text" text NOT NULL,
 	"is_refusal" boolean DEFAULT false NOT NULL,
 	"primary_objection_id" text,
-	"secondary_objection_ids" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"secondary_objection_ids" text[] DEFAULT '{}'::text[] NOT NULL,
 	"numeric_confidence" real NOT NULL,
-	"confidence_band" text NOT NULL,
+	"confidence_band" "copilot_confidence_band" NOT NULL,
 	"matched_script_id" text,
 	"selected_level" integer,
 	"safety_fallback" boolean DEFAULT false NOT NULL,
 	"is_personalized" boolean DEFAULT false NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "copilot_exchanges_selected_level_check" CHECK ("copilot_exchanges"."selected_level" IS NULL OR "copilot_exchanges"."selected_level" IN (1, 2))
 );
 --> statement-breakpoint
 CREATE TABLE "copilot_feedback" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"exchange_id" uuid NOT NULL,
 	"advisor_identifier" text,
-	"rating" text NOT NULL,
+	"rating" "copilot_feedback_rating" NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "copilot_feedback_exchange_id_unique" UNIQUE("exchange_id")
@@ -30,9 +36,9 @@ CREATE TABLE "copilot_sessions" (
 	"context_module_id" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"last_activity_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"status" text DEFAULT 'active' NOT NULL,
-	"outcome_status" text,
-	"outcome_reason" text,
+	"status" "copilot_session_status" DEFAULT 'active' NOT NULL,
+	"outcome_status" "copilot_outcome_status",
+	"outcome_reason" "copilot_outcome_reason",
 	"outcome_notes" text,
 	"outcome_recorded_at" timestamp with time zone
 );

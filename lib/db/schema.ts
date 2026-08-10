@@ -6,23 +6,58 @@ import {
   boolean,
   integer,
   real,
-  jsonb,
+  pgEnum,
   index,
+  check,
 } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 
 /**
- * Sales Copilot — Database Schema (Phase 4A Foundation)
+ * Sales Copilot — Database Schema (Phase 4A.1 Foundation)
  *
- * Tables:
- * 1. copilot_sessions
- * 2. copilot_exchanges
- * 3. copilot_feedback
+ * PostgreSQL Enums:
+ * - copilot_session_status ('active', 'completed', 'abandoned')
+ * - copilot_outcome_status ('enrolled', 'follow-up', 'lost')
+ * - copilot_outcome_reason ('price', 'trust', 'timing', 'competitor', 'other')
+ * - copilot_confidence_band ('high', 'medium', 'low')
+ * - copilot_feedback_rating ('thumbs-up', 'neutral', 'thumbs-down')
  *
- * Strict Rules:
- * - NO candidate_identifier / candidate PII stored
- * - NO objection_categories or sales_scripts database tables (lib/scripts-registry.ts is single source of truth)
- * - NO full response text persisted (matched_script_id stored only)
+ * Native Types:
+ * - secondary_objection_ids text[] DEFAULT '{}'::text[]
+ * - selected_level integer CHECK (selected_level IS NULL OR selected_level IN (1, 2))
  */
+
+export const copilotSessionStatusEnum = pgEnum('copilot_session_status', [
+  'active',
+  'completed',
+  'abandoned',
+])
+
+export const copilotOutcomeStatusEnum = pgEnum('copilot_outcome_status', [
+  'enrolled',
+  'follow-up',
+  'lost',
+])
+
+export const copilotOutcomeReasonEnum = pgEnum('copilot_outcome_reason', [
+  'price',
+  'trust',
+  'timing',
+  'competitor',
+  'other',
+])
+
+export const copilotConfidenceBandEnum = pgEnum('copilot_confidence_band', [
+  'high',
+  'medium',
+  'low',
+])
+
+export const copilotFeedbackRatingEnum = pgEnum('copilot_feedback_rating', [
+  'thumbs-up',
+  'neutral',
+  'thumbs-down',
+])
 
 export const copilotSessions = pgTable(
   'copilot_sessions',
@@ -32,13 +67,9 @@ export const copilotSessions = pgTable(
     contextModuleId: text('context_module_id'),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     lastActivityAt: timestamp('last_activity_at', { withTimezone: true }).defaultNow().notNull(),
-    status: text('status', { enum: ['active', 'completed', 'abandoned'] })
-      .default('active')
-      .notNull(),
-    outcomeStatus: text('outcome_status', { enum: ['enrolled', 'follow-up', 'lost'] }),
-    outcomeReason: text('outcome_reason', {
-      enum: ['price', 'trust', 'timing', 'competitor', 'other'],
-    }),
+    status: copilotSessionStatusEnum('status').default('active').notNull(),
+    outcomeStatus: copilotOutcomeStatusEnum('outcome_status'),
+    outcomeReason: copilotOutcomeReasonEnum('outcome_reason'),
     outcomeNotes: text('outcome_notes'),
     outcomeRecordedAt: timestamp('outcome_recorded_at', { withTimezone: true }),
   },
@@ -59,9 +90,12 @@ export const copilotExchanges = pgTable(
     objectionText: text('objection_text').notNull(),
     isRefusal: boolean('is_refusal').default(false).notNull(),
     primaryObjectionId: text('primary_objection_id'),
-    secondaryObjectionIds: jsonb('secondary_objection_ids').$type<string[]>().default([]).notNull(),
+    secondaryObjectionIds: text('secondary_objection_ids')
+      .array()
+      .default(sql`'{}'::text[]`)
+      .notNull(),
     numericConfidence: real('numeric_confidence').notNull(),
-    confidenceBand: text('confidence_band', { enum: ['high', 'medium', 'low'] }).notNull(),
+    confidenceBand: copilotConfidenceBandEnum('confidence_band').notNull(),
     matchedScriptId: text('matched_script_id'),
     selectedLevel: integer('selected_level'),
     safetyFallback: boolean('safety_fallback').default(false).notNull(),
@@ -73,6 +107,7 @@ export const copilotExchanges = pgTable(
     index('copilot_exchanges_primary_objection_idx').on(table.primaryObjectionId),
     index('copilot_exchanges_created_at_idx').on(table.createdAt),
     index('copilot_exchanges_confidence_band_idx').on(table.confidenceBand),
+    check('copilot_exchanges_selected_level_check', sql`${table.selectedLevel} IS NULL OR ${table.selectedLevel} IN (1, 2)`),
   ]
 )
 
@@ -85,7 +120,7 @@ export const copilotFeedback = pgTable(
       .unique()
       .references(() => copilotExchanges.id, { onDelete: 'cascade' }),
     advisorIdentifier: text('advisor_identifier'),
-    rating: text('rating', { enum: ['thumbs-up', 'neutral', 'thumbs-down'] }).notNull(),
+    rating: copilotFeedbackRatingEnum('rating').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   }

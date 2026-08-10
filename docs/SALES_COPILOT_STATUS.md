@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 4A Database Foundation & Schema Complete → Ready for Phase 4B  
+**Current Phase:** Phase 4A.1 Database Schema Correctness Fix Complete → Ready for Phase 4B  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -24,13 +24,14 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `app/api/copilot/route.ts`: Server API endpoint.
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider.
 
-### Phase 4A Persistence Foundation:
-- `lib/db/schema.ts`: Drizzle Postgres schema for `copilot_sessions`, `copilot_exchanges`, and `copilot_feedback`.
+### Phase 4A.1 Database Foundation & Enforced Schema:
+- `lib/db/schema.ts`: Drizzle Postgres schema using real PostgreSQL `pgEnum` types (`copilot_session_status`, `copilot_outcome_status`, `copilot_outcome_reason`, `copilot_confidence_band`, `copilot_feedback_rating`), native `text[]` for `secondary_objection_ids`, and DB-level `CHECK` constraint for `selected_level`.
 - `lib/db/client.ts`: Lazy Neon Postgres client (`DATABASE_URL` environment variable).
 - `drizzle.config.ts`: Drizzle Kit configuration.
-- `drizzle/0000_spooky_hercules.sql`: Initial SQL migration (Generated; application awaiting non-production database configuration).
+- `drizzle/0000_new_shriek.sql`: Clean initial SQL migration (Generated; application awaiting non-production database URL configuration).
 - `.env.example`: Environment configuration template.
-- `scripts/test-copilot-phase4a.mjs`: Schema integrity audit test suite (31/31 tests passing).
+- `scripts/test-copilot-phase4a.mjs`: Schema integrity & generated SQL DDL audit test suite (37/37 tests passing).
+- `tsx`: Development test-runner tooling (devDependency only; does not ship to runtime).
 
 ### Prepared / Future Modules:
 - `lib/copilot/protected-spans.ts`: Differential verifier (`verifyProtectedSpans`). Directly unit-tested in test suite; runtime differential call in `pipeline.ts` is deferred until LLM personalization exists.
@@ -70,11 +71,15 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - Removed inert same-string `verifyProtectedSpans` call from `pipeline.ts` (`e7631d7`).
 
 - [x] **Phase 4A — Database Foundation & Schema**
-  - Created Drizzle Postgres schema for `copilot_sessions`, `copilot_exchanges`, `copilot_feedback`.
-  - Configured lazy database client, Drizzle Kit config, package scripts (`db:generate`, `db:migrate`), and `.env.example`.
-  - Generated initial SQL migration (`drizzle/0000_spooky_hercules.sql`).
-  - Implemented schema integrity audit suite (31/31 tests passing).
-  - ZERO application runtime persistence active in Phase 4A (NO session, exchange, or outcome writes wired to UI yet).
+  - Created Drizzle Postgres schema, lazy database client, Drizzle Kit config, and `.env.example` (`5f6600d`).
+
+- [x] **Phase 4A.1 — Database Schema Correctness Fix**
+  - Enforced real PostgreSQL `pgEnum` types for all status/reason/band/rating columns.
+  - Replaced JSONB with native `text[] DEFAULT '{}'::text[]` for `secondary_objection_ids`.
+  - Added DB-level `CHECK` constraint for `selected_level IN (1, 2)`.
+  - Regenerated clean initial SQL migration (`drizzle/0000_new_shriek.sql`).
+  - Expanded schema test suite to inspect generated SQL DDL directly (37/37 tests passing).
+  - ZERO application runtime persistence active (NO session, exchange, or outcome writes wired to UI yet).
 
 - [ ] **Phase 4B — Session & Exchange Persistence Endpoint Wiring (Deferred)**
 - [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred)**
