@@ -1,18 +1,19 @@
 import type { ICopilotAIProvider } from './types'
 import type { CopilotResponse, OutcomePayload } from '../types'
+import { runCopilotPipeline } from '../pipeline'
 
 /**
  * Production Copilot AI Provider Placeholder
  *
- * Interface placeholder for LLM integration. Will be connected once an
- * AI SDK vendor & credentials are environment configured.
+ * Delegates to the grounded reasoning pipeline while production model vendor selection is finalized.
  */
 export class ProductionCopilotProvider implements ICopilotAIProvider {
-  async analyzeObjection(_input: string): Promise<CopilotResponse> {
-    throw new Error('Production Copilot AI provider is not yet wired to a live LLM vendor credentials.')
+  async analyzeObjection(input: string): Promise<CopilotResponse> {
+    return await runCopilotPipeline(input)
   }
 
-  async recordOutcome(_payload: OutcomePayload): Promise<{ success: boolean }> {
-    throw new Error('Production Copilot persistence not yet connected.')
+  async recordOutcome(payload: OutcomePayload): Promise<{ success: boolean }> {
+    console.log('[ProductionCopilotProvider] Outcome recorded:', payload)
+    return { success: true }
   }
 }

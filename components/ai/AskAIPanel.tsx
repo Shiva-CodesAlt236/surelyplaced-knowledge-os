@@ -62,13 +62,31 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     setLastInput(input)
 
     try {
-      const provider = getCopilotAIProvider()
-      const result = await provider.analyzeObjection(input)
-      setCopilotResponse(result)
+      const res = await fetch("/api/copilot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ objectionText: input }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setCopilotResponse(data)
+      } else {
+        const provider = getCopilotAIProvider()
+        const result = await provider.analyzeObjection(input)
+        setCopilotResponse(result)
+      }
     } catch (err) {
       console.error("[Sales Copilot] Analysis error:", err)
-      setAnalysisError("Unable to analyze objection at this moment. Please check your input or try again.")
-      setCopilotResponse(null)
+      try {
+        const provider = getCopilotAIProvider()
+        const result = await provider.analyzeObjection(input)
+        setCopilotResponse(result)
+      } catch (fallbackErr) {
+        console.error("[Sales Copilot] Fallback analysis error:", fallbackErr)
+        setAnalysisError("Unable to analyze objection at this moment. Please check your input or try again.")
+        setCopilotResponse(null)
+      }
     } finally {
       setIsAnalyzing(false)
     }

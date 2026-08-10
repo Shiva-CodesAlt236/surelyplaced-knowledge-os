@@ -17,6 +17,7 @@ import {
   Layers,
   ArrowRight,
   Link2,
+  Sparkles,
 } from "lucide-react"
 
 export interface CopilotResponseCardProps {
@@ -91,10 +92,33 @@ export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
           </span>
         </div>
 
-        <Badge variant={confidenceBadgeVariant} className="text-[10px] uppercase font-mono">
-          {response.confidence} Confidence
-        </Badge>
+        <div className="flex items-center gap-1.5">
+          <Badge variant={confidenceBadgeVariant} className="text-[10px] uppercase font-mono">
+            {response.confidence} Confidence
+          </Badge>
+          {typeof response.numericConfidence === "number" && (
+            <span className="text-[10px] font-mono text-muted-foreground font-semibold">
+              ({Math.round(response.numericConfidence * 100)}%)
+            </span>
+          )}
+        </div>
       </div>
+
+      {/* Compound Objection Secondary Concern Chip */}
+      {response.secondaryObjections && response.secondaryObjections.length > 0 && (
+        <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-2.5 space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-600 dark:text-amber-400">
+            <Sparkles className="h-3.5 w-3.5 shrink-0" />
+            Compound Objection Detected
+          </div>
+          <p className="text-[11px] text-foreground leading-relaxed font-medium">
+            Candidate also expressed:{" "}
+            <span className="font-bold text-amber-700 dark:text-amber-300">
+              {response.secondaryObjections.map((s) => s.objectionTitle).join(", ")}
+            </span>
+          </p>
+        </div>
+      )}
 
       {/* Response Level Selector (Level 1 Foundational vs Level 2 Experienced) */}
       {response.levelOptions && response.levelOptions.length > 1 && (

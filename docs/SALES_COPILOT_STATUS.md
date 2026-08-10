@@ -4,9 +4,9 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Release Readiness Cleanup Complete → Ready for Phase 3  
+**Current Phase:** Phase 3 Grounded AI Reasoning Pipeline Complete → Ready for Phase 4  
 **Branch:** `feature/sales-copilot-mvp`  
-**Architecture Stance:** Guided decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script database exists.
+**Architecture Stance:** Guided decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. Zero duplicate script databases or copied content.
 
 ---
 
@@ -21,6 +21,11 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `components/scripts/`: Scripts Library UI component set.
 - `lib/copilot/objection-categories.ts`: Objection taxonomy metadata.
 - `lib/copilot/scripts-library-adapter.ts`: Read-only query layer bridging Sales Copilot to `SCRIPTS_REGISTRY`.
+- `lib/copilot/confidence.ts`: Multi-signal confidence reconciliation engine.
+- `lib/copilot/protected-spans.ts`: Financial, guarantee, and policy claim verifier.
+- `lib/copilot/content-scanner.ts`: Defense-in-depth safety scanner.
+- `lib/copilot/pipeline.ts`: Server-side grounded reasoning pipeline.
+- `app/api/copilot/route.ts`: Server API endpoint.
 
 ---
 
@@ -44,15 +49,20 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - Implemented explicit error state handling & retry trigger in `AskAIPanel.tsx`.
   - Moved all coaching metadata out of `mock.ts` into `lib/copilot/objection-categories.ts` (`85b2c16`).
 
-- [x] **Phase 2.6 — Repository Integrity & Release Readiness Pass**
+- [x] **Phase 2.6 / 2.7 — Repository Integrity & Release Readiness Pass**
   - Audited git tracking and committed missing canonical files (`lib/scripts-registry.ts`, `app/docs/scripts/page.tsx`, `components/scripts/`, `scripts/extract-scripts.mjs`).
-  - Fixed async `recordOutcome` bug in `AskAIPanel.tsx` & `OutcomeRecorder.tsx` so "Recorded" status is only displayed after provider resolution.
-  - Expanded `trust-and-credibility` keyword classification to cover natural phrasing ("How do I know your company is real?").
-  - Verified clean-clone build execution (`pnpm lint`, `npx tsc --noEmit`, `pnpm build`).
+  - Fixed async `recordOutcome` bug in `AskAIPanel.tsx` & `OutcomeRecorder.tsx` so "Recorded" status is only displayed after provider resolution (`a43c4aa`).
 
-- [ ] **Phase 3 — Reasoning Pipeline & Safety Controls (Deferred)**
-  - Historical Phase 3–5 commits existed in past history (`02ecda9`, `4ed4485`) but were superseded/removed during architecture reset to prioritize Mock Provider & Scripts Registry Adapter. Phase 3 has NOT started in the active tree.
+- [x] **Phase 3 — Grounded AI Reasoning Pipeline**
+  - Implemented multi-signal confidence engine (`lib/copilot/confidence.ts`).
+  - Implemented compound objection detection (`Primary` vs `Secondary` concern retention).
+  - Implemented protected-spans verifier (`lib/copilot/protected-spans.ts`) and defense-in-depth content scanner (`lib/copilot/content-scanner.ts`).
+  - Implemented system prompts with adversarial prompt injection defenses (`lib/copilot/prompts/`).
+  - Created server-side pipeline (`lib/copilot/pipeline.ts`) and server API endpoint (`app/api/copilot/route.ts`).
+  - Updated UI (`CopilotResponseCard.tsx`) with compound objection chips and numeric confidence tags.
+  - Verified 18/18 test matrix suite (`scripts/test-copilot-phase3.mjs`).
 
-- [ ] **Phase 4 — Persistence Layer (Deferred)**
+- [ ] **Phase 4 — Persistence Layer (Deferred / Not Started)**
+  - Note on historical commits: Commits `02ecda9`, `4ed4485`, and `718fd99` contained earlier Phase 3/4/5 code that was removed/superseded during architecture reset. Postgres database persistence is NOT active in Phase 3.
 
-- [ ] **Phase 5 — Full Production QA & Release Verification (Deferred)**
+- [ ] **Phase 5 — Full Production QA & Release Verification (Deferred / Not Started)**

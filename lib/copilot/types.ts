@@ -1,8 +1,8 @@
 /**
- * Sales Copilot MVP — Data Contracts & Interfaces
+ * Sales Copilot MVP — Data Contracts & Interfaces (Phase 3 Pipeline)
  *
  * Defines request, response, confidence levels, outcome statuses,
- * response levels, and loss reasons for the guided sales assistant workflow.
+ * response levels, compound objections, and refusal paths.
  */
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low'
@@ -27,22 +27,41 @@ export interface CopilotResponseLevelOption {
   matchedScriptId?: string
 }
 
+export interface SecondaryObjectionInfo {
+  objectionId: string
+  objectionTitle: string
+  score: number
+}
+
 export interface CopilotResponse {
   exchangeId: string
   objectionId: string
   objectionTitle: string
   confidence: ConfidenceLevel
+  numericConfidence: number // 0.0 - 1.0
+  confidenceBand: ConfidenceLevel
   recommendedResponse: string
   whyItWorks: string
   nextQuestion: string
   avoidSaying: string[]
   matchedScriptId?: string
 
-  // Phase 2.5 Reconciliation Additions
+  // Response Level Ladder
   levelOptions?: CopilotResponseLevelOption[]
   selectedLevel?: ResponseLevel
+
+  // Compound Objections
+  primaryObjection?: {
+    objectionId: string
+    objectionTitle: string
+  }
+  secondaryObjections?: SecondaryObjectionInfo[]
+
+  // Refusal & Safety Controls
   isRefusal?: boolean
   refusalReason?: string
+  isPersonalized?: boolean
+  safetyFallback?: boolean
 }
 
 export interface OutcomePayload {
