@@ -119,7 +119,7 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 
 - [x] **Phase 4D — Feedback Endpoint & UI Wiring**
   - Delivered early via Phase 4B (`6f8c624`).
-  - Feedback API route (`/api/copilot/feedback`) + DB persistence (`recordCopilotFeedback`) + UI star rating component active.
+  - Feedback API route (`/api/copilot/feedback`) + DB persistence (`recordCopilotFeedback`) + UI thumbs-up/neutral/thumbs-down rating control active.
 
 - [x] **Phase 4E — Advisor Identifier & LocalStorage Session Lifecycle**
   - Delivered early via Phase 4B.1–4B.3 (`b52f701`, `c345dc7`, `c6f33b1`).
