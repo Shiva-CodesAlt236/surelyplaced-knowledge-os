@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Sheet,
   SheetContent,
@@ -50,6 +50,23 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisError, setAnalysisError] = useState<string | null>(null)
   const [lastInput, setLastInput] = useState<string>("")
+  const [anonymousAdvisorId, setAnonymousAdvisorId] = useState<string>("anonymous-advisor")
+
+  // Retrieve or generate persistent anonymous advisor attribution identifier
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        let storedId = localStorage.getItem("surelyplaced_anonymous_advisor_id")
+        if (!storedId) {
+          storedId = `anon-adv-${crypto.randomUUID()}`
+          localStorage.setItem("surelyplaced_anonymous_advisor_id", storedId)
+        }
+        setAnonymousAdvisorId(storedId)
+      } catch {
+        setAnonymousAdvisorId("anonymous-advisor")
+      }
+    }
+  }, [])
 
   const handleSendQA = () => {
     if (!qaInput.trim() || isResponding) return
@@ -69,14 +86,16 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
         body: JSON.stringify({
           objectionText: input,
           sessionId: sessionId || undefined,
-          advisorId: "provisional-advisor",
+          advisorId: anonymousAdvisorId,
         }),
       })
 
       if (res.ok) {
         const data: CopilotResponse = await res.json()
         setCopilotResponse(data)
-        if (data.sessionId) {
+
+        // Only update active sessionId if DB persistence succeeded
+        if (data.persistenceStatus === "persisted" && data.sessionId) {
           setSessionId(data.sessionId)
         }
       } else {
@@ -103,61 +122,63 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   const handleClearCopilot = () => {
     setCopilotResponse(null)
     setAnalysisError(null)
+    setSessionId(null) // Lifecycle rule 2: Clear resets sessionId
   }
 
   const handleSaveOutcome = async (outcome: OutcomeStatus, reason?: LostReason) => {
-    try {
-      const res = await fetch("/api/copilot/outcome", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId: copilotResponse?.sessionId || sessionId || undefined,
-          exchangeId: copilotResponse?.exchangeId,
-          outcome,
-          reason,
-        }),
-      })
+    const activeSessionId = copilotResponse?.sessionId || sessionId
+    const activeExchangeId = copilotResponse?.exchangeId
 
-      if (!res.ok) {
-        const provider = getCopilotAIProvider()
-        const result = await provider.recordOutcome({
-          sessionId: copilotResponse?.sessionId || sessionId || undefined,
-          exchangeId: copilotResponse?.exchangeId,
-          outcome,
-          reason,
-          recordedAt: new Date().toISOString(),
-        })
-        if (result && result.success === false) {
-          throw new Error("Failed to record outcome")
-        }
-      }
-    } catch (err) {
-      console.error("[Sales Copilot] Outcome save error:", err)
-      const provider = getCopilotAIProvider()
-      await provider.recordOutcome({
-        sessionId: copilotResponse?.sessionId || sessionId || undefined,
-        exchangeId: copilotResponse?.exchangeId,
+    // Try persistence endpoint first
+    const res = await fetch("/api/copilot/outcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: activeSessionId || undefined,
+        exchangeId: activeExchangeId || undefined,
         outcome,
         reason,
-        recordedAt: new Date().toISOString(),
-      })
+      }),
+    })
+
+    if (!res.ok) {
+      // DO NOT fall back to mock provider to report false success!
+      throw new Error("Could not save outcome to database.")
+    }
+
+    const data = await res.json()
+    if (!data || data.success !== true) {
+      throw new Error("Database reported error saving outcome.")
+    }
+
+    // Lifecycle rules:
+    // If enrolled or lost: Session completed -> clear sessionId for next conversation
+    // If follow-up: Session remains active -> keep sessionId intact
+    if (outcome === "enrolled" || outcome === "lost") {
+      setSessionId(null)
     }
   }
 
   const handleFeedback = async (rating: "thumbs-up" | "neutral" | "thumbs-down") => {
     if (!copilotResponse?.exchangeId) return
-    try {
-      await fetch("/api/copilot/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          exchangeId: copilotResponse.exchangeId,
-          rating,
-          advisorId: "provisional-advisor",
-        }),
-      })
-    } catch (err) {
-      console.error("[Sales Copilot] Feedback save error:", err)
+
+    const res = await fetch("/api/copilot/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        exchangeId: copilotResponse.exchangeId,
+        rating,
+        advisorId: anonymousAdvisorId,
+      }),
+    })
+
+    if (!res.ok) {
+      throw new Error("Could not save feedback rating.")
+    }
+
+    const data = await res.json()
+    if (!data || data.success !== true) {
+      throw new Error("Database error saving feedback.")
     }
   }
 

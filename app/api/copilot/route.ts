@@ -1,10 +1,24 @@
 import { NextResponse } from 'next/server'
 import { runCopilotPipeline } from '@/lib/copilot/pipeline'
-import { createCopilotSession, recordCopilotExchange } from '@/lib/copilot/persistence'
+import {
+  createCopilotSession,
+  recordCopilotExchange,
+  getActiveCopilotSession,
+  isValidUuid,
+} from '@/lib/copilot/persistence'
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    let body: any
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid request JSON payload.' },
+        { status: 400 }
+      )
+    }
+
     const objectionText = body?.objectionText || body?.input || ''
     const advisorId = body?.advisorId || body?.advisorIdentifier
     const contextModuleId = body?.contextModuleId
@@ -15,6 +29,39 @@ export async function POST(request: Request) {
         { error: 'Invalid input payload. Expected non-empty objectionText string.' },
         { status: 400 }
       )
+    }
+
+    // Server-side validation of client-supplied sessionId
+    if (sessionId) {
+      if (typeof sessionId !== 'string' || !isValidUuid(sessionId)) {
+        return NextResponse.json(
+          { error: 'Invalid sessionId format. Must be a valid UUID.' },
+          { status: 400 }
+        )
+      }
+
+      // Check if session exists and is active in DB
+      if (process.env.DATABASE_URL) {
+        const sessionCheck = await getActiveCopilotSession(sessionId)
+        if (!sessionCheck.valid) {
+          if (sessionCheck.reason === 'session-completed') {
+            return NextResponse.json(
+              { error: 'Cannot append exchange to a completed session. Please start a new session.' },
+              { status: 400 }
+            )
+          }
+          if (sessionCheck.reason === 'not-found') {
+            return NextResponse.json(
+              { error: 'Session not found for provided sessionId.' },
+              { status: 400 }
+            )
+          }
+          return NextResponse.json(
+            { error: 'Invalid or inactive session.' },
+            { status: 400 }
+          )
+        }
+      }
     }
 
     // 1. Run grounded AI reasoning pipeline
@@ -52,23 +99,29 @@ export async function POST(request: Request) {
           isPersonalized: pipelineResponse.isPersonalized ?? false,
         })
 
-        // Return DB UUIDs
+        // Return DB UUIDs and explicit persistenceStatus = 'persisted'
         return NextResponse.json({
           ...pipelineResponse,
           exchangeId: exchange.id,
           sessionId,
+          persistenceStatus: 'persisted',
         })
       } catch (dbErr) {
-        console.error('[API /api/copilot] DB Persistence warning (fallback to pipeline result):', dbErr)
+        console.error('[API /api/copilot] DB Persistence warning (falling back to unpersisted output):', dbErr)
         return NextResponse.json({
           ...pipelineResponse,
-          sessionId: sessionId || null,
+          sessionId: null, // Do NOT return unpersisted session ID as DB UUID
+          persistenceStatus: 'not-persisted',
         })
       }
     }
 
-    // Fallback if DATABASE_URL is not set
-    return NextResponse.json(pipelineResponse)
+    // Fallback if DATABASE_URL is not configured
+    return NextResponse.json({
+      ...pipelineResponse,
+      sessionId: null,
+      persistenceStatus: 'not-persisted',
+    })
   } catch (error) {
     console.error('[API /api/copilot] Pipeline execution error:', error)
     return NextResponse.json(

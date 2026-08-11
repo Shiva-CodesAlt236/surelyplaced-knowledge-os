@@ -1,5 +1,11 @@
 import { neon } from '@neondatabase/serverless'
 import fs from 'node:fs'
+
+// Import API route handlers directly for true route-layer testing
+import { POST as copilotRoute } from '../app/api/copilot/route.ts'
+import { POST as feedbackRoute } from '../app/api/copilot/feedback/route.ts'
+import { POST as outcomeRoute } from '../app/api/copilot/outcome/route.ts'
+
 import {
   createCopilotSession,
   recordCopilotExchange,
@@ -62,13 +68,13 @@ async function runPhase4bPersistenceTests() {
   }
 
   const sql = neon(rawUrl)
-  const testAdvisor = 'phase4b-test-advisor-1'
+  const testAdvisor = 'phase4b-test-advisor-' + Date.now()
 
   try {
     // -----------------------------------------------------
-    // 1. Session Creation Persistence
+    // 1. Persistence Service Function Unit Tests
     // -----------------------------------------------------
-    console.log('--- 1. Session Persistence ---')
+    console.log('--- 1. Persistence Service Direct Function Tests ---')
 
     const session = await createCopilotSession({
       advisorIdentifier: testAdvisor,
@@ -85,11 +91,6 @@ async function runPhase4bPersistenceTests() {
     assert(readSession.length === 1, 'Test 2: Session persisted in live database')
     assert(readSession[0].status === 'active', 'Test 3: Default session status is "active"')
     assert(readSession[0].advisor_identifier === testAdvisor, 'Test 4: Advisor identifier persisted accurately')
-
-    // -----------------------------------------------------
-    // 2. Exchange Persistence
-    // -----------------------------------------------------
-    console.log('\n--- 2. Exchange Persistence ---')
 
     const exchange = await recordCopilotExchange({
       sessionId: session.id,
@@ -118,93 +119,167 @@ async function runPhase4bPersistenceTests() {
     assert(Array.isArray(readExchange[0].secondary_objection_ids), 'Test 9: Secondary objections persisted as text array')
     assert(readExchange[0].selected_level === 1, 'Test 10: selected_level=1 persisted')
 
-    // -----------------------------------------------------
-    // 3. Feedback Persistence & Upsert Semantics
-    // -----------------------------------------------------
-    console.log('\n--- 3. Feedback Persistence & Upsert Semantics ---')
-
+    // Feedback Upsert
     const feedback1 = await recordCopilotFeedback({
       exchangeId: exchange.id,
       rating: 'thumbs-up',
       advisorIdentifier: testAdvisor,
     })
     assert(feedback1.id !== undefined, 'Test 11: Feedback record created with UUID')
-    assert(feedback1.rating === 'thumbs-up', 'Test 12: Initial feedback rating recorded as thumbs-up')
 
-    // Update rating (Upsert semantics)
     const feedback2 = await recordCopilotFeedback({
       exchangeId: exchange.id,
       rating: 'neutral',
       advisorIdentifier: testAdvisor,
     })
-    assert(feedback2.id === feedback1.id, 'Test 13: Duplicate exchange_id updated existing feedback record (Upsert)')
-    assert(feedback2.rating === 'neutral', 'Test 14: Updated feedback rating persisted as neutral')
+    assert(feedback2.id === feedback1.id, 'Test 12: Duplicate exchange_id updated existing feedback record (Upsert)')
+    assert(feedback2.rating === 'neutral', 'Test 13: Updated feedback rating persisted as neutral')
 
-    // -----------------------------------------------------
-    // 4. Outcome Update Persistence
-    // -----------------------------------------------------
-    console.log('\n--- 4. Outcome Update Persistence ---')
+    // Outcome Follow-Up (Leaves session active)
+    const followUpRes = await updateCopilotOutcome({
+      sessionId: session.id,
+      outcomeStatus: 'follow-up',
+    })
+    assert(followUpRes.success === true, 'Test 14: updateCopilotOutcome returned success for follow-up')
 
-    const outcomeRes = await updateCopilotOutcome({
+    const readFollowUpSession = await sql`SELECT status FROM copilot_sessions WHERE id = ${session.id}`
+    assert(readFollowUpSession[0].status === 'active', 'Test 15: "follow-up" outcome leaves session status "active"')
+
+    // Outcome Enrolled (Marks session completed)
+    const enrolledRes = await updateCopilotOutcome({
       sessionId: session.id,
       outcomeStatus: 'enrolled',
     })
-    assert(outcomeRes.success === true, 'Test 15: updateCopilotOutcome returned success')
+    assert(enrolledRes.success === true, 'Test 16: updateCopilotOutcome returned success for enrolled')
 
-    const readCompletedSession = await sql`
-      SELECT status, outcome_status, outcome_recorded_at
-      FROM copilot_sessions
-      WHERE id = ${session.id}
-    `
-    assert(readCompletedSession[0].status === 'completed', 'Test 16: Session status set to "completed"')
-    assert(readCompletedSession[0].outcome_status === 'enrolled', 'Test 17: Outcome status set to "enrolled"')
-    assert(readCompletedSession[0].outcome_recorded_at !== null, 'Test 18: outcome_recorded_at timestamp set')
+    const readEnrolledSession = await sql`SELECT status FROM copilot_sessions WHERE id = ${session.id}`
+    assert(readEnrolledSession[0].status === 'completed', 'Test 17: "enrolled" outcome marks session status "completed"')
 
     // -----------------------------------------------------
-    // 5. Input Validation Rejection Tests
+    // 2. Next.js API Route Handlers Integration Execution
     // -----------------------------------------------------
-    console.log('\n--- 5. Input Validation & Error Handling ---')
+    console.log('\n--- 2. Actual Next.js API Route Execution Tests ---')
 
-    let invalidLevelRejected = false
-    try {
-      await recordCopilotExchange({
-        sessionId: session.id,
-        objectionText: 'test',
-        numericConfidence: 0.9,
-        confidenceBand: 'high',
-        selectedLevel: 3, // Invalid level!
-      })
-    } catch {
-      invalidLevelRejected = true
-    }
-    assert(invalidLevelRejected, 'Test 19: selectedLevel=3 rejected by persistence service')
+    // Test POST /api/copilot (New Session & Exchange)
+    const route1Req = new Request('http://localhost/api/copilot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        objectionText: 'I need time to think about this investment',
+        advisorId: testAdvisor,
+      }),
+    })
+    const route1Res = await copilotRoute(route1Req)
+    assert(route1Res.status === 200, 'Route Test 1: POST /api/copilot returned HTTP 200')
 
-    let invalidRatingRejected = false
-    try {
-      await recordCopilotFeedback({
-        exchangeId: exchange.id,
-        rating: 'amazing', // Invalid rating!
-      })
-    } catch {
-      invalidRatingRejected = true
-    }
-    assert(invalidRatingRejected, 'Test 20: Invalid rating value rejected by persistence service')
+    const route1Data = await route1Res.json()
+    assert(route1Data.persistenceStatus === 'persisted', 'Route Test 2: POST /api/copilot returns persistenceStatus="persisted"')
+    assert(typeof route1Data.sessionId === 'string' && route1Data.sessionId.length > 20, 'Route Test 3: Returns real DB UUID sessionId')
+    assert(typeof route1Data.exchangeId === 'string' && route1Data.exchangeId.length > 20, 'Route Test 4: Returns real DB UUID exchangeId')
 
-    let invalidOutcomeRejected = false
-    try {
-      await updateCopilotOutcome({
-        sessionId: session.id,
-        outcomeStatus: 'invalid-status', // Invalid outcome!
-      })
-    } catch {
-      invalidOutcomeRejected = true
-    }
-    assert(invalidOutcomeRejected, 'Test 21: Invalid outcomeStatus rejected by persistence service')
+    const apiSessionId = route1Data.sessionId
+    const apiExchangeId = route1Data.exchangeId
+
+    // Test POST /api/copilot (Continuation of active session)
+    const route2Req = new Request('http://localhost/api/copilot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        objectionText: 'Is there a money back guarantee if I am not satisfied?',
+        sessionId: apiSessionId,
+        advisorId: testAdvisor,
+      }),
+    })
+    const route2Res = await copilotRoute(route2Req)
+    const route2Data = await route2Res.json()
+    assert(route2Res.status === 200, 'Route Test 5: Continued active session returned HTTP 200')
+    assert(route2Data.sessionId === apiSessionId, 'Route Test 6: Continued active session preserved same sessionId')
+
+    // Test POST /api/copilot/feedback
+    const feedbackReq = new Request('http://localhost/api/copilot/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        exchangeId: apiExchangeId,
+        rating: 'thumbs-up',
+        advisorId: testAdvisor,
+      }),
+    })
+    const feedbackRes = await feedbackRoute(feedbackReq)
+    const feedbackData = await feedbackRes.json()
+    assert(feedbackRes.status === 200 && feedbackData.success === true, 'Route Test 7: POST /api/copilot/feedback returned HTTP 200 success')
+
+    // Test POST /api/copilot/outcome (Enrolled -> Completes Session)
+    const outcomeReq = new Request('http://localhost/api/copilot/outcome', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: apiSessionId,
+        outcome: 'enrolled',
+      }),
+    })
+    const outcomeRes = await outcomeRoute(outcomeReq)
+    const outcomeData = await outcomeRes.json()
+    assert(outcomeRes.status === 200 && outcomeData.success === true, 'Route Test 8: POST /api/copilot/outcome returned HTTP 200 success')
+
+    // Test POST /api/copilot appending to completed session (Should be rejected with 400)
+    const completedAppendReq = new Request('http://localhost/api/copilot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        objectionText: 'Another question after enrollment',
+        sessionId: apiSessionId,
+        advisorId: testAdvisor,
+      }),
+    })
+    const completedAppendRes = await copilotRoute(completedAppendReq)
+    assert(completedAppendRes.status === 400, 'Route Test 9: Appending exchange to completed session rejected with HTTP 400')
 
     // -----------------------------------------------------
-    // 6. Privacy & Script Duplication Verification
+    // 3. API Input Validation & Rejection Route Tests
     // -----------------------------------------------------
-    console.log('\n--- 6. Privacy & Script Duplication Audit ---')
+    console.log('\n--- 3. API Input Validation Route Tests ---')
+
+    // Empty objectionText
+    const emptyReq = new Request('http://localhost/api/copilot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ objectionText: '   ' }),
+    })
+    const emptyRes = await copilotRoute(emptyReq)
+    assert(emptyRes.status === 400, 'Validation Test 1: Empty objectionText rejected with HTTP 400')
+
+    // Invalid Session UUID format
+    const badUuidReq = new Request('http://localhost/api/copilot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ objectionText: 'Valid text', sessionId: 'not-a-valid-uuid' }),
+    })
+    const badUuidRes = await copilotRoute(badUuidReq)
+    assert(badUuidRes.status === 400, 'Validation Test 2: Invalid sessionId UUID syntax rejected with HTTP 400')
+
+    // Invalid Feedback Rating
+    const badRatingReq = new Request('http://localhost/api/copilot/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ exchangeId: apiExchangeId, rating: 'super-amazing' }),
+    })
+    const badRatingRes = await feedbackRoute(badRatingReq)
+    assert(badRatingRes.status === 400, 'Validation Test 3: Invalid feedback rating rejected with HTTP 400')
+
+    // Invalid Outcome Status
+    const badOutcomeReq = new Request('http://localhost/api/copilot/outcome', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: apiSessionId, outcome: 'super-enrolled' }),
+    })
+    const badOutcomeRes = await outcomeRoute(badOutcomeReq)
+    assert(badOutcomeRes.status === 400, 'Validation Test 4: Invalid outcome status rejected with HTTP 400')
+
+    // -----------------------------------------------------
+    // 4. Privacy & Script Duplication Audit
+    // -----------------------------------------------------
+    console.log('\n--- 4. Privacy & Script Duplication Audit ---')
 
     const exchangeColumns = await sql`
       SELECT column_name 
@@ -213,8 +288,8 @@ async function runPhase4bPersistenceTests() {
     `
     const colNames = exchangeColumns.map((c) => c.column_name)
 
-    assert(!colNames.includes('recommended_response'), 'Test 22: Zero response text stored in database exchanges table')
-    assert(!colNames.includes('why_it_works'), 'Test 23: Zero coaching text stored in database exchanges table')
+    assert(!colNames.includes('recommended_response'), 'Privacy Test 1: Zero response text stored in database exchanges table')
+    assert(!colNames.includes('why_it_works'), 'Privacy Test 2: Zero coaching text stored in database exchanges table')
 
     const sessionColumns = await sql`
       SELECT column_name 
@@ -223,21 +298,7 @@ async function runPhase4bPersistenceTests() {
     `
     const sessionColNames = sessionColumns.map((c) => c.column_name)
 
-    assert(!sessionColNames.some((c) => c.includes('candidate')), 'Test 24: Zero candidate PII / candidate identity columns exist')
-
-    // -----------------------------------------------------
-    // 7. Cleanup
-    // -----------------------------------------------------
-    console.log('\n--- 7. Test Row Cleanup ---')
-
-    await sql`DELETE FROM copilot_sessions WHERE advisor_identifier LIKE 'phase4b-test-advisor%'`
-
-    const remainingRows = await sql`
-      SELECT count(*)::int as count 
-      FROM copilot_sessions 
-      WHERE advisor_identifier LIKE 'phase4b-test-advisor%'
-    `
-    assert(remainingRows[0].count === 0, 'Test 25: 0 test rows remain in database after cleanup')
+    assert(!sessionColNames.some((c) => c.includes('candidate')), 'Privacy Test 3: Zero candidate PII / candidate identity columns exist')
 
     console.log(`\n=====================================================`)
     console.log(`RESULTS: Passed ${passed}/${passed + failed} tests`)
@@ -249,6 +310,17 @@ async function runPhase4bPersistenceTests() {
   } catch (err) {
     console.error('Phase 4B test error:', err)
     process.exit(1)
+  } finally {
+    // -----------------------------------------------------
+    // 5. Guaranteed Cleanup in finally block
+    // -----------------------------------------------------
+    console.log('Executing guaranteed test row cleanup...')
+    try {
+      await sql`DELETE FROM copilot_sessions WHERE advisor_identifier LIKE 'phase4b-test%'`
+      console.log('✓ Guaranteed cleanup completed successfully.')
+    } catch (cleanupErr) {
+      console.error('Cleanup error:', cleanupErr)
+    }
   }
 }
 

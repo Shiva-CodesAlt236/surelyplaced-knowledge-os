@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 4B Runtime Persistence API Complete → Ready for Phase 4C  
+**Current Phase:** Phase 4B Remediation Complete → Ready for Phase 4C  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -21,19 +21,26 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `lib/copilot/confidence.ts`: Multi-signal confidence reconciliation engine.
 - `lib/copilot/content-scanner.ts`: Direct final-output content safety scanner (`scanContentSafety`).
 - `lib/copilot/pipeline.ts`: Server-side grounded reasoning pipeline.
-- `lib/copilot/persistence.ts`: Server-side database persistence service (`createCopilotSession`, `recordCopilotExchange`, `recordCopilotFeedback`, `updateCopilotOutcome`).
-- `app/api/copilot/route.ts`: Server API endpoint (wires session creation & exchange persistence).
+- `lib/copilot/persistence.ts`: Server-side database persistence service (`createCopilotSession`, `recordCopilotExchange`, `recordCopilotFeedback`, `updateCopilotOutcome`, `getActiveCopilotSession`).
+- `app/api/copilot/route.ts`: Server API endpoint (wires session creation, exchange persistence, explicit `persistenceStatus`).
 - `app/api/copilot/feedback/route.ts`: Server API endpoint for exchange feedback ratings.
 - `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording.
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider.
 
-### Phase 4B Runtime Persistence Architecture:
+### Phase 4B Remediation & Runtime Persistence Architecture:
 - Server persistence service: `lib/copilot/persistence.ts`
-- Provisional advisor identity: `'provisional-advisor'` fallback (No auth or user tables created).
-- Session lifecycle: Sessions created on `/api/copilot` POST requests, track `lastActivityAt`, and set `status = 'completed'` when an outcome is saved via `/api/copilot/outcome`.
-- Feedback rating persistence: `/api/copilot/feedback` handles `'thumbs-up' | 'neutral' | 'thumbs-down'` with `UNIQUE(exchange_id)` upsert semantics.
-- Privacy & script source boundary: ZERO candidate PII stored. ZERO sales response text or coaching text stored in DB (`matched_script_id` reference string only).
-- Unit & integration tests: `scripts/test-copilot-phase4b.mjs` (27/27 tests passing).
+- Explicit persistence status: `/api/copilot` returns `persistenceStatus: 'persisted' | 'not-persisted' | 'error'`. DB UUIDs returned only when persistence succeeds. Ephemeral IDs never passed off as DB UUIDs.
+- No false success fallbacks: UI error handling surfaces persistence failure without calling mock providers. Selected outcomes/ratings preserved for retry.
+- Session lifecycle rules:
+  - `sessionId` starts `null`.
+  - Clear button resets `sessionId`.
+  - `enrolled` and `lost` outcomes set session `status = 'completed'` and clear `sessionId` after confirmed DB persistence.
+  - `follow-up` outcome updates record while keeping session `status = 'active'`, allowing ongoing conversation continuation.
+  - Server rejects appending exchanges to completed or non-existent sessions (HTTP 400).
+- Anonymous/provisional attribution: Persistent anonymous UUID generated in `localStorage` (`surelyplaced_anonymous_advisor_id`) to attribute browser sessions without auth/user tables.
+- Input validation: Strict UUID syntax validation (`isValidUuid`), JSON parsing error handling, HTTP 400 for invalid inputs.
+- API route testing: `scripts/test-copilot-phase4b.mjs` directly invokes Next.js route handlers (`copilotRoute`, `feedbackRoute`, `outcomeRoute`) with real `Request` payloads (35/35 tests passing).
+- Guaranteed test row cleanup: Live test cleanup executed in `finally` blocks.
 
 ---
 
@@ -77,12 +84,16 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - Applied initial SQL migration (`drizzle/0000_new_shriek.sql`) to non-production Neon Postgres database (`f2bdade`).
 
 - [x] **Phase 4B — Runtime Persistence API & Endpoints**
-  - Implemented server-side persistence service `lib/copilot/persistence.ts`.
-  - Extended `/api/copilot/route.ts` to create sessions and persist exchanges.
-  - Implemented `/api/copilot/feedback/route.ts` & `/api/copilot/outcome/route.ts`.
-  - Wired `AskAIPanel.tsx` to maintain `sessionId` and persist feedback & outcomes.
-  - Reconciled 34 vs 35 live DB test assertion count (34 executed calls, 35 string occurrences including function definition).
-  - Authored Phase 4B test suite `scripts/test-copilot-phase4b.mjs` (27/27 tests passing).
+  - Implemented server-side persistence service `lib/copilot/persistence.ts` (`6f8c624`).
+
+- [x] **Phase 4B Remediation — Persistence Semantics & Lifecycle Hardening**
+  - Fixed false success fallback bug in `AskAIPanel.tsx` & `OutcomeRecorder.tsx`.
+  - Added explicit `persistenceStatus` contract (`'persisted' | 'not-persisted' | 'error'`) to `/api/copilot`.
+  - Hardened session lifecycle: `follow-up` leaves session active; `enrolled` and `lost` complete session.
+  - Added server-side validation rejecting exchange appends to completed sessions (HTTP 400).
+  - Added strict UUID syntax validation for `sessionId` and `exchangeId`.
+  - Implemented persistent anonymous attribution identifier (`localStorage.setItem('surelyplaced_anonymous_advisor_id', ...)`).
+  - Refactored `scripts/test-copilot-phase4b.mjs` to execute actual Next.js API route handlers with guaranteed `finally` cleanup (35/35 tests passing).
   - ZERO candidate PII, ZERO auth/users tables, ZERO script text duplication.
 
 - [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred / Not Started)**

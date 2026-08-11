@@ -7,7 +7,7 @@ import { CheckCircle2, Clock, XCircle, ThumbsUp, ThumbsDown, Minus, AlertCircle 
 
 export interface OutcomeRecorderProps {
   onSaveOutcome: (outcome: OutcomeStatus, reason?: LostReason) => Promise<void> | void
-  onFeedback?: (rating: "thumbs-up" | "neutral" | "thumbs-down") => void
+  onFeedback?: (rating: "thumbs-up" | "neutral" | "thumbs-down") => Promise<void> | void
 }
 
 export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderProps) {
@@ -16,6 +16,7 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
   const [feedbackRating, setFeedbackRating] = useState<"thumbs-up" | "neutral" | "thumbs-down" | null>(null)
   const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [feedbackError, setFeedbackError] = useState<string | null>(null)
 
   const handleOutcomeSelect = async (outcome: OutcomeStatus) => {
     setSelectedOutcome(outcome)
@@ -25,7 +26,7 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
       setSaved(true)
     } catch (err) {
       console.error("[OutcomeRecorder] Error saving outcome:", err)
-      setSaveError("Failed to record outcome. Please try again.")
+      setSaveError("Could not save outcome. Please try again.")
       setSaved(false)
     }
   }
@@ -39,14 +40,23 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
         setSaved(true)
       } catch (err) {
         console.error("[OutcomeRecorder] Error saving outcome reason:", err)
-        setSaveError("Failed to update loss reason.")
+        setSaveError("Could not update loss reason. Please try again.")
+        setSaved(false)
       }
     }
   }
 
-  const handleFeedback = (rating: "thumbs-up" | "neutral" | "thumbs-down") => {
-    setFeedbackRating(rating)
-    if (onFeedback) onFeedback(rating)
+  const handleFeedback = async (rating: "thumbs-up" | "neutral" | "thumbs-down") => {
+    setFeedbackError(null)
+    try {
+      if (onFeedback) {
+        await onFeedback(rating)
+      }
+      setFeedbackRating(rating)
+    } catch (err) {
+      console.error("[OutcomeRecorder] Error saving feedback:", err)
+      setFeedbackError("Failed to save feedback rating. Please try again.")
+    }
   }
 
   return (
@@ -130,38 +140,46 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
       )}
 
       {/* Advisor Feedback Rating */}
-      <div className="flex items-center justify-between pt-2 border-t border-border/60">
-        <span className="text-[11px] text-muted-foreground font-medium">Was this response helpful?</span>
-        <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant={feedbackRating === "thumbs-up" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => handleFeedback("thumbs-up")}
-            className="h-7 w-7 p-0"
-          >
-            <ThumbsUp className="h-3.5 w-3.5 text-emerald-500" />
-          </Button>
+      <div className="flex flex-col gap-2 pt-2 border-t border-border/60">
+        {feedbackError && (
+          <div className="flex items-center gap-1.5 p-1.5 text-[11px] text-rose-600 bg-rose-500/10 rounded border border-rose-500/20">
+            <AlertCircle className="h-3 w-3 shrink-0" />
+            <span>{feedbackError}</span>
+          </div>
+        )}
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] text-muted-foreground font-medium">Was this response helpful?</span>
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant={feedbackRating === "thumbs-up" ? "primary" : "ghost"}
+              size="sm"
+              onClick={() => handleFeedback("thumbs-up")}
+              className="h-7 w-7 p-0"
+            >
+              <ThumbsUp className="h-3.5 w-3.5 text-emerald-500" />
+            </Button>
 
-          <Button
-            type="button"
-            variant={feedbackRating === "neutral" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => handleFeedback("neutral")}
-            className="h-7 w-7 p-0"
-          >
-            <Minus className="h-3.5 w-3.5 text-muted-foreground" />
-          </Button>
+            <Button
+              type="button"
+              variant={feedbackRating === "neutral" ? "primary" : "ghost"}
+              size="sm"
+              onClick={() => handleFeedback("neutral")}
+              className="h-7 w-7 p-0"
+            >
+              <Minus className="h-3.5 w-3.5 text-muted-foreground" />
+            </Button>
 
-          <Button
-            type="button"
-            variant={feedbackRating === "thumbs-down" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => handleFeedback("thumbs-down")}
-            className="h-7 w-7 p-0"
-          >
-            <ThumbsDown className="h-3.5 w-3.5 text-rose-500" />
-          </Button>
+            <Button
+              type="button"
+              variant={feedbackRating === "thumbs-down" ? "primary" : "ghost"}
+              size="sm"
+              onClick={() => handleFeedback("thumbs-down")}
+              className="h-7 w-7 p-0"
+            >
+              <ThumbsDown className="h-3.5 w-3.5 text-rose-500" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

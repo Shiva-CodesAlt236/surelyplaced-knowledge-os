@@ -1,8 +1,8 @@
 /**
- * Sales Copilot MVP — Data Contracts & Interfaces (Phase 4B Runtime Persistence)
+ * Sales Copilot MVP — Data Contracts & Interfaces (Phase 4B Remediation)
  *
  * Defines request, response, confidence levels, outcome statuses,
- * response levels, compound objections, and refusal paths.
+ * response levels, compound objections, refusal paths, and persistence statuses.
  */
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low'
@@ -12,6 +12,8 @@ export type ResponseLevel = 1 | 2
 export type OutcomeStatus = 'enrolled' | 'follow-up' | 'lost'
 
 export type LostReason = 'price' | 'trust' | 'timing' | 'competitor' | 'other'
+
+export type PersistenceStatus = 'persisted' | 'not-persisted' | 'error'
 
 export interface CopilotRequest {
   objectionText: string
@@ -36,7 +38,8 @@ export interface SecondaryObjectionInfo {
 
 export interface CopilotResponse {
   exchangeId: string
-  sessionId?: string
+  sessionId?: string | null
+  persistenceStatus?: PersistenceStatus
   objectionId: string
   objectionTitle: string
   confidence: ConfidenceLevel

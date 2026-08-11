@@ -1,20 +1,29 @@
 import { NextResponse } from 'next/server'
-import { recordCopilotFeedback } from '@/lib/copilot/persistence'
+import { recordCopilotFeedback, isValidUuid } from '@/lib/copilot/persistence'
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    let body: any
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid request JSON payload.' },
+        { status: 400 }
+      )
+    }
+
     const { exchangeId, rating, advisorId } = body || {}
 
-    if (!exchangeId || typeof exchangeId !== 'string') {
+    if (!exchangeId || typeof exchangeId !== 'string' || !isValidUuid(exchangeId)) {
       return NextResponse.json(
-        { error: 'Invalid input. exchangeId string is required.' },
+        { error: 'Invalid input. exchangeId must be a valid UUID string.' },
         { status: 400 }
       )
     }
 
     const validRatings = ['thumbs-up', 'neutral', 'thumbs-down']
-    if (!rating || !validRatings.includes(rating)) {
+    if (!rating || typeof rating !== 'string' || !validRatings.includes(rating)) {
       return NextResponse.json(
         { error: 'Invalid rating. Expected "thumbs-up", "neutral", or "thumbs-down".' },
         { status: 400 }
@@ -24,23 +33,23 @@ export async function POST(request: Request) {
     try {
       const feedback = await recordCopilotFeedback({
         exchangeId,
-        rating,
-        advisorIdentifier: advisorId,
+        rating: rating as 'thumbs-up' | 'neutral' | 'thumbs-down',
+        advisorIdentifier: typeof advisorId === 'string' ? advisorId : undefined,
       })
 
       return NextResponse.json({ success: true, feedback })
-    } catch (dbErr) {
-      console.error('[API /api/copilot/feedback] Persistence error:', dbErr)
+    } catch (dbErr: any) {
+      console.error('[API /api/copilot/feedback] Persistence error:', dbErr?.message || dbErr)
       return NextResponse.json(
         { error: 'Database persistence error while saving feedback.' },
         { status: 500 }
       )
     }
   } catch (error) {
-    console.error('[API /api/copilot/feedback] Request parsing error:', error)
+    console.error('[API /api/copilot/feedback] Internal error:', error)
     return NextResponse.json(
-      { error: 'Invalid request JSON payload.' },
-      { status: 400 }
+      { error: 'An internal server error occurred.' },
+      { status: 500 }
     )
   }
 }

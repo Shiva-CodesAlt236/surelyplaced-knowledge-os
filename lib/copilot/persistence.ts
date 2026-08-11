@@ -3,13 +3,19 @@ import { copilotSessions, copilotExchanges, copilotFeedback } from '@/lib/db/sch
 import { eq, sql } from 'drizzle-orm'
 
 /**
- * Sales Copilot MVP — Server-Side Persistence Service (Phase 4B)
+ * Sales Copilot MVP — Server-Side Persistence Service (Phase 4B Remediation)
  *
  * Implements safe, server-only data persistence for sessions, exchanges,
  * advisor feedback, and student outcomes against Neon PostgreSQL.
  *
  * ZERO candidate PII stored. ZERO sales response text stored.
  */
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+export function isValidUuid(id: string): boolean {
+  return typeof id === 'string' && UUID_REGEX.test(id)
+}
 
 export interface CreateSessionParams {
   advisorIdentifier?: string
@@ -49,7 +55,7 @@ export interface RecordOutcomeParams {
  */
 export async function createCopilotSession(params: CreateSessionParams = {}) {
   const db = getDb()
-  const advisorIdentifier = params.advisorIdentifier?.trim() || 'provisional-advisor'
+  const advisorIdentifier = params.advisorIdentifier?.trim() || 'anonymous-advisor'
   const contextModuleId = params.contextModuleId?.trim() || null
 
   const [session] = await db
@@ -65,16 +71,56 @@ export async function createCopilotSession(params: CreateSessionParams = {}) {
 }
 
 /**
+ * Validate that a session exists and is currently active.
+ */
+export async function getActiveCopilotSession(sessionId: string) {
+  if (!isValidUuid(sessionId)) {
+    return { valid: false, reason: 'invalid-uuid' } as const
+  }
+
+  const db = getDb()
+  const [session] = await db
+    .select({
+      id: copilotSessions.id,
+      status: copilotSessions.status,
+      advisorIdentifier: copilotSessions.advisorIdentifier,
+    })
+    .from(copilotSessions)
+    .where(eq(copilotSessions.id, sessionId))
+    .limit(1)
+
+  if (!session) {
+    return { valid: false, reason: 'not-found' } as const
+  }
+
+  if (session.status !== 'active') {
+    return { valid: false, reason: 'session-completed', session } as const
+  }
+
+  return { valid: true, session } as const
+}
+
+/**
  * Record a completed reasoning exchange linked to an active session.
  */
 export async function recordCopilotExchange(params: RecordExchangeParams) {
-  const db = getDb()
-
-  if (!params.sessionId) {
-    throw new Error('sessionId is required to record a Copilot exchange.')
+  if (!params.sessionId || !isValidUuid(params.sessionId)) {
+    throw new Error('Valid sessionId UUID is required to record a Copilot exchange.')
   }
-  if (!params.objectionText) {
+  if (!params.objectionText || !params.objectionText.trim()) {
     throw new Error('objectionText is required to record a Copilot exchange.')
+  }
+
+  // Server-side protection: Verify session exists and is active
+  const sessionCheck = await getActiveCopilotSession(params.sessionId)
+  if (!sessionCheck.valid) {
+    if (sessionCheck.reason === 'not-found') {
+      throw new Error(`Session not found for ID: ${params.sessionId}`)
+    }
+    if (sessionCheck.reason === 'session-completed') {
+      throw new Error(`Cannot append exchange to a completed session (${params.sessionId}).`)
+    }
+    throw new Error(`Invalid session ID: ${params.sessionId}`)
   }
 
   // Validate selectedLevel DB constraint (NULL or 1 or 2)
@@ -91,6 +137,7 @@ export async function recordCopilotExchange(params: RecordExchangeParams) {
     ? params.secondaryObjectionIds
     : []
 
+  const db = getDb()
   const [exchange] = await db
     .insert(copilotExchanges)
     .values({
@@ -122,17 +169,16 @@ export async function recordCopilotExchange(params: RecordExchangeParams) {
  * Respects UNIQUE(exchange_id) by using ON CONFLICT DO UPDATE.
  */
 export async function recordCopilotFeedback(params: RecordFeedbackParams) {
-  const db = getDb()
-
-  if (!params.exchangeId) {
-    throw new Error('exchangeId is required to record feedback.')
+  if (!params.exchangeId || !isValidUuid(params.exchangeId)) {
+    throw new Error('Valid exchangeId UUID is required to record feedback.')
   }
 
   const validRatings = ['thumbs-up', 'neutral', 'thumbs-down']
-  if (!validRatings.includes(params.rating)) {
+  if (!params.rating || !validRatings.includes(params.rating)) {
     throw new Error(`Invalid feedback rating: ${params.rating}`)
   }
 
+  const db = getDb()
   const [feedback] = await db
     .insert(copilotFeedback)
     .values({
@@ -156,15 +202,25 @@ export async function recordCopilotFeedback(params: RecordFeedbackParams) {
 }
 
 /**
- * Record student outcome for a session and mark session completed.
+ * Record student outcome for a session.
+ *
+ * Rules:
+ * - 'enrolled' or 'lost' -> Session status set to 'completed'
+ * - 'follow-up' -> Session status remains 'active' (ongoing conversation)
  */
 export async function updateCopilotOutcome(params: RecordOutcomeParams) {
   const db = getDb()
-
   let targetSessionId = params.sessionId
+
+  if (targetSessionId && !isValidUuid(targetSessionId)) {
+    throw new Error(`Invalid sessionId format: ${targetSessionId}`)
+  }
 
   // If exchangeId provided without sessionId, lookup sessionId from exchange
   if (!targetSessionId && params.exchangeId) {
+    if (!isValidUuid(params.exchangeId)) {
+      throw new Error(`Invalid exchangeId format: ${params.exchangeId}`)
+    }
     const exchange = await db
       .select({ sessionId: copilotExchanges.sessionId })
       .from(copilotExchanges)
@@ -181,14 +237,17 @@ export async function updateCopilotOutcome(params: RecordOutcomeParams) {
   }
 
   const validOutcomes = ['enrolled', 'follow-up', 'lost']
-  if (!validOutcomes.includes(params.outcomeStatus)) {
+  if (!params.outcomeStatus || !validOutcomes.includes(params.outcomeStatus)) {
     throw new Error(`Invalid outcomeStatus: ${params.outcomeStatus}`)
   }
+
+  // Lifecycle rule: 'follow-up' keeps session active; 'enrolled' and 'lost' mark session completed.
+  const newStatus = params.outcomeStatus === 'follow-up' ? 'active' : 'completed'
 
   const [updated] = await db
     .update(copilotSessions)
     .set({
-      status: 'completed',
+      status: newStatus,
       outcomeStatus: params.outcomeStatus,
       outcomeReason: params.outcomeReason || null,
       outcomeNotes: params.outcomeNotes || null,
@@ -202,6 +261,10 @@ export async function updateCopilotOutcome(params: RecordOutcomeParams) {
       outcomeStatus: copilotSessions.outcomeStatus,
       outcomeReason: copilotSessions.outcomeReason,
     })
+
+  if (!updated) {
+    throw new Error(`Session not found for ID: ${targetSessionId}`)
+  }
 
   return { success: true, session: updated }
 }
