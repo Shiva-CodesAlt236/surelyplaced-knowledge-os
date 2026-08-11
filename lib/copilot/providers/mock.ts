@@ -1,5 +1,5 @@
 import type { ICopilotAIProvider } from './types'
-import type { CopilotResponse, OutcomePayload } from '../types'
+import type { CopilotResponse } from '../types'
 import { runCopilotPipeline } from '../pipeline'
 
 /**
@@ -10,10 +10,5 @@ import { runCopilotPipeline } from '../pipeline'
 export class MockCopilotProvider implements ICopilotAIProvider {
   async analyzeObjection(input: string): Promise<CopilotResponse> {
     return await runCopilotPipeline(input)
-  }
-
-  async recordOutcome(payload: OutcomePayload): Promise<{ success: boolean }> {
-    console.log('[MockCopilotProvider] Outcome recorded:', payload)
-    return { success: true }
   }
 }

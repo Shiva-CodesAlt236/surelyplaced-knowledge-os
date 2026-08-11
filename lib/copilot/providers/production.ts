@@ -1,5 +1,5 @@
 import type { ICopilotAIProvider } from './types'
-import type { CopilotResponse, OutcomePayload } from '../types'
+import type { CopilotResponse } from '../types'
 
 /**
  * Production Copilot AI Provider Placeholder
@@ -9,12 +9,6 @@ import type { CopilotResponse, OutcomePayload } from '../types'
  */
 export class ProductionCopilotProvider implements ICopilotAIProvider {
   async analyzeObjection(_input: string): Promise<CopilotResponse> {
-    throw new Error(
-      "ProductionCopilotProvider is not configured. Please set COPILOT_AI_PROVIDER=mock or configure a production model vendor."
-    )
-  }
-
-  async recordOutcome(_payload: OutcomePayload): Promise<{ success: boolean }> {
     throw new Error(
       "ProductionCopilotProvider is not configured. Please set COPILOT_AI_PROVIDER=mock or configure a production model vendor."
     )

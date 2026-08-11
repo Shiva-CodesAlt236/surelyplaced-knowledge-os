@@ -11,7 +11,7 @@ let cachedProvider: ICopilotAIProvider | null = null
 export function getCopilotAIProvider(): ICopilotAIProvider {
   if (cachedProvider) return cachedProvider
 
-  const providerType = process.env.NEXT_PUBLIC_COPILOT_AI_PROVIDER || process.env.COPILOT_AI_PROVIDER || 'mock'
+  const providerType = process.env.COPILOT_AI_PROVIDER || 'mock'
 
   if (providerType === 'production') {
     cachedProvider = new ProductionCopilotProvider()
