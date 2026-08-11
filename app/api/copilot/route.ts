@@ -32,18 +32,15 @@ export async function POST(request: Request) {
       )
     }
 
-    // Normalize and validate advisor identifier if creating session or persisting
-    let normalizedAdvisor: string | undefined
-    if (advisorIdRaw !== undefined && advisorIdRaw !== null) {
-      const advisorValidation = validateAdvisorIdentifier(advisorIdRaw)
-      if (!advisorValidation.valid) {
-        return NextResponse.json(
-          { error: advisorValidation.error || 'Invalid advisor identifier.' },
-          { status: 400 }
-        )
-      }
-      normalizedAdvisor = advisorValidation.normalized
+    // Require and validate self-entered advisor identifier
+    const advisorValidation = validateAdvisorIdentifier(advisorIdRaw)
+    if (!advisorValidation.valid || !advisorValidation.normalized) {
+      return NextResponse.json(
+        { error: advisorValidation.error || 'Advisor identifier is required.' },
+        { status: 400 }
+      )
     }
+    const normalizedAdvisor = advisorValidation.normalized
 
     // Server-side validation of client-supplied sessionId
     if (sessionId) {

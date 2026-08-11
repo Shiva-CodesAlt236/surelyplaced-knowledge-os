@@ -4,7 +4,7 @@ import { eq, sql } from 'drizzle-orm'
 import { validateAdvisorIdentifier } from './advisor'
 
 /**
- * Sales Copilot MVP — Server-Side Persistence Service (Phase 4B.1 Product Alignment)
+ * Sales Copilot MVP — Server-Side Persistence Service (Phase 4B.2 Remediation)
  *
  * Implements safe, server-only data persistence for sessions, exchanges,
  * advisor feedback, and student outcomes against Neon PostgreSQL.
@@ -53,15 +53,16 @@ export interface RecordOutcomeParams {
 
 /**
  * Create a new active Copilot session.
+ * REQUIRES a valid, non-blank self-entered advisor identifier.
  */
 export async function createCopilotSession(params: CreateSessionParams = {}) {
-  const db = getDb()
-
   const advisorValidation = validateAdvisorIdentifier(params.advisorIdentifier)
-  const advisorIdentifier = advisorValidation.valid
-    ? advisorValidation.normalized!
-    : 'anonymous-advisor'
+  if (!advisorValidation.valid || !advisorValidation.normalized) {
+    throw new Error('Valid advisor identifier is required to create a Copilot session.')
+  }
 
+  const db = getDb()
+  const advisorIdentifier = advisorValidation.normalized
   const contextModuleId = params.contextModuleId?.trim() || null
 
   const [session] = await db
@@ -226,9 +227,10 @@ export async function recordCopilotFeedback(params: RecordFeedbackParams) {
  * Record student outcome for a session.
  *
  * Rules:
- * - 'enrolled' or 'lost' -> Session status set to 'completed'
- * - 'follow-up' -> Session status remains 'active' (ongoing conversation)
- * - If session is already completed, allow updating outcome attributes without error.
+ * - ACTIVE session + 'follow-up' -> status remains 'active'
+ * - ACTIVE session + 'enrolled' / 'lost' -> status set to 'completed'
+ * - COMPLETED session + 'enrolled' / 'lost' -> outcome details updated, status remains 'completed'
+ * - COMPLETED session + 'follow-up' -> REJECTED (cannot reopen completed session to follow-up)
  */
 export async function updateCopilotOutcome(params: RecordOutcomeParams) {
   const db = getDb()
@@ -274,9 +276,19 @@ export async function updateCopilotOutcome(params: RecordOutcomeParams) {
     throw new Error(`Session not found for ID: ${targetSessionId}`)
   }
 
-  // If session is already completed and outcome is changed, preserve completed status unless follow-up is specified
+  // Reopening check: Completed sessions cannot be changed back to follow-up
+  if (existingSession.status === 'completed' && params.outcomeStatus === 'follow-up') {
+    throw new Error('Completed session cannot be changed to follow-up. Start a new conversation instead.')
+  }
+
+  // Lifecycle rule:
+  // If active and follow-up -> stays active
+  // If active and enrolled/lost -> becomes completed
+  // If completed and enrolled/lost -> stays completed
   const newStatus =
-    params.outcomeStatus === 'follow-up'
+    existingSession.status === 'completed'
+      ? 'completed'
+      : params.outcomeStatus === 'follow-up'
       ? 'active'
       : 'completed'
 

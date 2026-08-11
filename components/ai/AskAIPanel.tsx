@@ -19,6 +19,7 @@ import type { CopilotResponse, OutcomeStatus, LostReason } from "@/lib/copilot/t
 import {
   ADVISOR_STORAGE_KEY,
   validateAdvisorIdentifier,
+  normalizeAdvisorIdentifier,
 } from "@/lib/copilot/advisor"
 import {
   SESSION_STORAGE_KEY,
@@ -67,6 +68,18 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   const [isEditingAdvisor, setIsEditingAdvisor] = useState(false)
   const [advisorError, setAdvisorError] = useState<string | null>(null)
 
+  // Shared session boundary reset helper
+  const clearCopilotSessionBoundary = () => {
+    setCopilotResponse(null)
+    setAnalysisError(null)
+    setSessionId(null)
+    try {
+      sessionStorage.removeItem(SESSION_STORAGE_KEY)
+    } catch {
+      // Ignore sessionStorage write error
+    }
+  }
+
   // Initialize Advisor Identifier from localStorage & Session ID from sessionStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -74,9 +87,9 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
         const storedAdvisor = localStorage.getItem(ADVISOR_STORAGE_KEY)
         if (storedAdvisor) {
           const validation = validateAdvisorIdentifier(storedAdvisor)
-          if (validation.valid) {
-            setAdvisorId(storedAdvisor)
-            setAdvisorInput(storedAdvisor)
+          if (validation.valid && validation.normalized) {
+            setAdvisorId(validation.normalized)
+            setAdvisorInput(validation.normalized)
           }
         }
 
@@ -93,18 +106,28 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   const handleSaveAdvisorId = (e?: React.FormEvent) => {
     if (e) e.preventDefault()
     const validation = validateAdvisorIdentifier(advisorInput)
-    if (!validation.valid) {
+    if (!validation.valid || !validation.normalized) {
       setAdvisorError(validation.error || "Invalid advisor identifier.")
       return
     }
 
+    const newNormalized = validation.normalized
+    const currentNormalized = normalizeAdvisorIdentifier(advisorId)
+
     setAdvisorError(null)
-    setAdvisorId(advisorInput.trim())
+    setAdvisorId(newNormalized)
+    setAdvisorInput(newNormalized)
     setIsEditingAdvisor(false)
+
     try {
-      localStorage.setItem(ADVISOR_STORAGE_KEY, advisorInput.trim())
+      localStorage.setItem(ADVISOR_STORAGE_KEY, newNormalized)
     } catch {
       // Ignore localStorage write failure
+    }
+
+    // Only establish a new session boundary if the normalized advisor identifier genuinely changed
+    if (currentNormalized && newNormalized !== currentNormalized) {
+      clearCopilotSessionBoundary()
     }
   }
 
@@ -148,7 +171,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
           try {
             sessionStorage.setItem(SESSION_STORAGE_KEY, data.sessionId)
           } catch {
-            // Ignore sessionStorage failure
+            // Ignore
           }
         }
       } else {
@@ -156,13 +179,8 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
 
         // Check if error is due to a stale or completed session
         if (!isRetryAfterStaleSession && isStaleSessionError(res.status, errorData.error)) {
-          console.warn("[AskAIPanel] Stale session detected. Resetting session and retrying once...")
-          setSessionId(null)
-          try {
-            sessionStorage.removeItem(SESSION_STORAGE_KEY)
-          } catch {
-            // Ignore
-          }
+          console.warn("[AskAIPanel] Stale session detected. Resetting session boundary and retrying once...")
+          clearCopilotSessionBoundary()
           // Retry ONCE without sessionId to create a fresh active session
           return await handleAnalyzeObjection(input, true)
         }
@@ -187,14 +205,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   }
 
   const handleStartNewConversation = () => {
-    setCopilotResponse(null)
-    setAnalysisError(null)
-    setSessionId(null)
-    try {
-      sessionStorage.removeItem(SESSION_STORAGE_KEY)
-    } catch {
-      // Ignore
-    }
+    clearCopilotSessionBoundary()
   }
 
   const handleSaveOutcome = async (outcome: OutcomeStatus, reason?: LostReason) => {
@@ -227,12 +238,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     // If enrolled or lost: Session completed -> clear sessionId & sessionStorage for next conversation
     // If follow-up: Session remains active -> keep sessionId & sessionStorage intact
     if (outcome === "enrolled" || outcome === "lost") {
-      setSessionId(null)
-      try {
-        sessionStorage.removeItem(SESSION_STORAGE_KEY)
-      } catch {
-        // Ignore
-      }
+      clearCopilotSessionBoundary()
     }
   }
 

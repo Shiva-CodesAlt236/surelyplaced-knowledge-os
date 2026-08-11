@@ -1,5 +1,5 @@
 /**
- * Sales Copilot MVP — Session Storage & Continuity Utilities (Phase 4B.1)
+ * Sales Copilot MVP — Session Storage & Continuity Utilities (Phase 4B.2 Remediation)
  *
  * Provides constants and pure helper classification functions for tab-level
  * session continuity and stale session recovery.
@@ -20,6 +20,8 @@ export function isStaleSessionError(status: number, errorMessage?: string): bool
   return (
     lower.includes('completed session') ||
     lower.includes('session not found') ||
-    lower.includes('inactive session')
+    lower.includes('inactive session') ||
+    lower.includes('invalid sessionid format') ||
+    lower.includes('invalid session id')
   )
 }
