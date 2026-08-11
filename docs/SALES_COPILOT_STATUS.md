@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 4B.3 Final HTTP Contract Cleanup Complete → Ready for Phase 4C  
+**Current Phase:** Phase 4 Complete → Ready for Phase 5 Planning / Production QA Specification  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -27,11 +27,11 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `app/api/copilot/route.ts`: Server API endpoint (wires session creation, exchange persistence, explicit `persistenceStatus`).
 - `app/api/copilot/feedback/route.ts`: Server API endpoint for exchange feedback ratings.
 - `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording (explicitly returns HTTP 400 on completed session reopening attempts).
-- `lib/copilot/providers/mock.ts`: Active offline/mock AI provider.
+- `lib/copilot/providers/mock.ts`: Active offline/mock AI provider (implements `ICopilotAIProvider` for AI reasoning only).
 
 ### Phase 4B.3 HTTP Contract Architecture:
 - Self-entered advisor attribution: Required self-entered advisor name stored in browser `localStorage` (`surelyplaced_advisor_identifier`). Preserves human casing locally, normalized on client/server (`validateAdvisorIdentifier`). Includes UI header (`Advisor: [Name] [Change]`). NOT authenticated login or RBAC.
-- Mandatory server advisor validation: `/api/copilot` and `createCopilotSession` enforce required valid advisor identifier for all requests creating/using persistence. Missing/blank/invalid advisor returns HTTP 400. All legacy server fallback buckets (`anonymous-advisor`, `provisional-advisor`, `anon-adv-`) removed (00 runtime occurrences).
+- Mandatory server advisor validation: `/api/copilot` and `createCopilotSession` enforce required valid advisor identifier for all requests creating/using persistence. Missing/blank/invalid advisor returns HTTP 400. All legacy server fallback buckets (`anonymous-advisor`, `provisional-advisor`, `anon-adv-`) removed (0 runtime occurrences).
 - Advisor change session boundary: Changing saved advisor to a different normalized identifier executes `clearCopilotSessionBoundary()`, resetting `sessionId` state, `sessionStorage`, Copilot response, and analysis errors to start a clean DB session boundary under the new advisor. Unchanged normalized names do not destroy active session.
 - Session continuity across refresh: Active DB `sessionId` saved in tab `sessionStorage` (`surelyplaced_copilot_session_id`). Restored on component mount so page refreshes maintain ongoing candidate session.
 - Explicit "Start New Conversation": Top input header action clears Copilot response, analysis errors, React `sessionId`, and `sessionStorage`, allowing explicit transition between candidate conversations without deleting historical DB rows.
@@ -44,6 +44,15 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - API route validation & 404/400 error contracts: Returns HTTP 404 for non-existent feedback exchange UUIDs or outcome session UUIDs. Returns HTTP 400 for domain validation errors (completed -> follow-up). Returns HTTP 500 only for genuine infrastructure/database failures.
 - Controlled test row cleanup: Test cleanup in `scripts/test-copilot-phase4b.mjs` targets strictly test-owned prefixes (`WHERE advisor_identifier LIKE 'phase4b-test-%' OR advisor_identifier LIKE 'phase4b-normalization-%'`) in `finally` block (49/49 tests passing).
 - Zero schema modifications: Schema and DDL remain 100% untouched.
+
+### Phase 4C AI Provider / Persistence Separation Architecture:
+- Provider Boundary: `ICopilotAIProvider` interface now represents pure AI reasoning only (`analyzeObjection(input: string)`).
+- Method Removal: Obsolete `recordOutcome` method & `OutcomePayload` import removed from interface, `MockCopilotProvider`, and `ProductionCopilotProvider`.
+- Mock Provider Integrity: `MockCopilotProvider` no longer pretends persistence success; delegates reasoning to `runCopilotPipeline(input)`.
+- Production Provider Honesty: `ProductionCopilotProvider` remains explicitly unconfigured and throws a fail-loud error if selected.
+- Server-Style Configuration: Removed unused `NEXT_PUBLIC_COPILOT_AI_PROVIDER` check from provider factory (`process.env.COPILOT_AI_PROVIDER || 'mock'`).
+- Persistence Layer Decoupling: Real outcome and feedback persistence remain cleanly situated in API routes (`/api/copilot/outcome`, `/api/copilot/feedback`) and `lib/copilot/persistence.ts`.
+- Zero Code Side Effects: Zero schema, migration, or dependency changes (`71366ea`).
 
 ---
 
@@ -101,10 +110,24 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - [x] **Phase 4B.3 — Final HTTP Contract Cleanup Pass**
   - Classified completed -> follow-up domain error as HTTP 400 in `app/api/copilot/outcome/route.ts`.
   - Updated `scripts/test-copilot-phase4b.mjs` with strict HTTP 400 and error message assertions (49/49 tests passing).
-  - ZERO candidate PII, ZERO auth/users tables, ZERO script text duplication, ZERO schema changes.
+  - ZERO candidate PII, ZERO auth/users tables, ZERO script text duplication, ZERO schema changes (`c6f33b1`).
 
-- [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred / Not Started)**
-- [ ] **Phase 4D — Feedback Endpoint & UI Wiring (Deferred / Not Started)**
-- [ ] **Phase 4E — Advisor Identifier & LocalStorage Session Lifecycle (Deferred / Not Started)**
-- [ ] **Phase 4F — Persistence Testing, Safety Scans & Data Integrity (Deferred / Not Started)**
-- [ ] **Phase 5 — Full Production QA & Release Verification (Deferred / Not Started)**
+- [x] **Phase 4C — AI Provider / Persistence Separation**
+  - Removed obsolete `recordOutcome` method & `OutcomePayload` import from interface & provider implementations.
+  - Removed unused `NEXT_PUBLIC_COPILOT_AI_PROVIDER` from provider factory.
+  - Decoupled AI provider from persistence; real outcome & feedback persistence remain in API/persistence layers (`71366ea`).
+
+- [x] **Phase 4D — Feedback Endpoint & UI Wiring**
+  - Delivered early via Phase 4B (`6f8c624`).
+  - Feedback API route (`/api/copilot/feedback`) + DB persistence (`recordCopilotFeedback`) + UI star rating component active.
+
+- [x] **Phase 4E — Advisor Identifier & LocalStorage Session Lifecycle**
+  - Delivered early via Phase 4B.1–4B.3 (`b52f701`, `c345dc7`, `c6f33b1`).
+  - Self-entered advisor `localStorage` attribution, tab `sessionStorage` continuity, advisor-change session boundary reset, top "Start New Conversation" control, stale-session recovery, and outcome completion lifecycle active.
+
+- [x] **Phase 4F — Persistence Testing, Safety Scans & Data Integrity**
+  - Delivered across Phase 4B–4B.3.
+  - Comprehensive test matrix covering 49 Phase 4B assertions, 34 Live DB assertions, 37 Phase 4A static assertions, controlled test-owned cleanup, privacy checks, script duplication audits, and HTTP error contracts.
+
+- [ ] **Phase 5 — Full Production QA & Release Verification (Not Started)**
+  - NOT STARTED. Scope to be reconciled and planned before production QA specification.
