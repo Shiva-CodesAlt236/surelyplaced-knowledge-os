@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 4 Complete → Ready for Phase 5 Planning / Production QA Specification  
+**Current Phase:** Phase 5A Complete → Ready for Phase 5B Pilot Access, E2E & Deployment Gate  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -21,12 +21,13 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `lib/copilot/confidence.ts`: Multi-signal confidence reconciliation engine.
 - `lib/copilot/content-scanner.ts`: Direct final-output content safety scanner (`scanContentSafety`).
 - `lib/copilot/pipeline.ts`: Server-side grounded reasoning pipeline.
+- `lib/copilot/limits.ts`: Canonical application limits (`MAX_OBJECTION_TEXT_LENGTH = 4000`).
 - `lib/copilot/advisor.ts`: Advisor attribution normalization & validation utilities (`surelyplaced_advisor_identifier`).
 - `lib/copilot/session.ts`: Session storage continuity & stale session recovery helpers (`surelyplaced_copilot_session_id`).
 - `lib/copilot/persistence.ts`: Server-side database persistence service (`createCopilotSession`, `recordCopilotExchange`, `recordCopilotFeedback`, `updateCopilotOutcome`, `getActiveCopilotSession`).
-- `app/api/copilot/route.ts`: Server API endpoint (wires session creation, exchange persistence, explicit `persistenceStatus`).
+- `app/api/copilot/route.ts`: Server API endpoint (wires session creation, exchange persistence, explicit `persistenceStatus`, 4000-char input limit).
 - `app/api/copilot/feedback/route.ts`: Server API endpoint for exchange feedback ratings.
-- `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording (explicitly returns HTTP 400 on completed session reopening attempts).
+- `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording (sanitized generic 500 error messages, explicitly returns HTTP 400 on completed session reopening attempts).
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider (implements `ICopilotAIProvider` for AI reasoning only).
 
 ### Phase 4B.3 HTTP Contract Architecture:
@@ -53,6 +54,22 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - Server-Style Configuration: Removed unused `NEXT_PUBLIC_COPILOT_AI_PROVIDER` check from provider factory (`process.env.COPILOT_AI_PROVIDER || 'mock'`).
 - Persistence Layer Decoupling: Real outcome and feedback persistence remain cleanly situated in API routes (`/api/copilot/outcome`, `/api/copilot/feedback`) and `lib/copilot/persistence.ts`.
 - Zero Code Side Effects: Zero schema, migration, or dependency changes (`71366ea`).
+
+### Phase 5A Pilot Correctness & Data-Trust Hardening Architecture:
+- Feedback False-Success Elimination: `onFeedback` callback in `AskAIPanel.tsx` explicitly throws an error when no valid persisted exchange exists (`!exchangeId` or `persistenceStatus === 'not-persisted'`), preventing `OutcomeRecorder` from pretending feedback was persisted.
+- Visual Persistence Warning: `CopilotResponseCard` displays a prominent amber warning banner (`"Response generated, but this conversation was not saved. Feedback and outcome tracking are unavailable for this response."`) when `persistenceStatus === 'not-persisted'`.
+- Tracking Controls Disabling: Outcome buttons and feedback controls in `OutcomeRecorder` are disabled (`disabled={!isPersisted}`) for non-persisted responses, displaying helper message `"Unavailable because this response was not saved."`.
+- Degraded Server Persistence Semantics: Standard degraded persistence behavior remains: reasoning may succeed while database persistence fails or is unconfigured, but the advisor is now explicitly notified that tracking is unavailable.
+- Canonical Objection Text Limit: `MAX_OBJECTION_TEXT_LENGTH = 4000` defined in `lib/copilot/limits.ts`.
+- Server Input Length Enforcement: `/api/copilot` rejects objection text exceeding 4000 characters with HTTP 400 and `{ error: 'Objection text must be 4000 characters or fewer.' }`.
+- Client Input Length Enforcement: `CopilotInput.tsx` textarea enforces `maxLength={MAX_OBJECTION_TEXT_LENGTH}`.
+- Candidate Privacy Guidance: `CopilotInput.tsx` displays candidate privacy guidance (`"Do not include candidate names, email addresses, phone numbers, or other personal information."`). *Note on Privacy Truth:* No dedicated candidate PII database fields exist, but `objectionText` remains free-form text input. Phase 5A introduced UI guidance, not automated technical redaction.
+- Browser Reasoning Fallback Removal: Removed `getCopilotAIProvider` import and browser fallback from `AskAIPanel.tsx`. Network analysis errors display `"Unable to reach Sales Copilot. Please try again."` rather than attempting browser execution. The Sales Copilot / `AskAIPanel` client exposure path into `SCRIPTS_REGISTRY` was completely removed.
+- Broader Scripts Registry Client Exposure: *Note on IP / Client Graph:* While the Sales Copilot path was removed, `components/scripts/ScriptsLibraryView.tsx` continues to directly import `SCRIPTS_REGISTRY` in a Client Component. Assessing broader browser script exposure remains a Phase 5B release-readiness item.
+- Sanitized Outcome HTTP 500 Response: Catch block in `/api/copilot/outcome/route.ts` returns a safe generic error payload `{ error: 'Database persistence error while saving outcome.' }` for genuine 500 failures without exposing raw database exception strings. Domain 400/404 contracts remain unchanged.
+- Feedback Content-Type Correctness: Corrected feedback request header in `AskAIPanel.tsx` to `"Content-Type": "application/json"`.
+- Test Suite Truthfulness & Reclassification: `scripts/test-copilot-phase5a.mjs` executes 13 total assertions: 1 unit/constant assertion (`MAX_OBJECTION_TEXT_LENGTH === 4000`), 3 real server route tests (4000 chars accepted, 4001 chars rejected, empty input rejected), and 9 static source assertions (sanitized outcome 500, no client provider import, no browser fallback, feedback throw guard, PII warning, client maxLength, visible not-persisted banner, OutcomeRecorder disabled behavior, valid feedback Content-Type header).
+- Zero Database Schema / Dependency Changes: Zero changes made to `lib/db/`, `drizzle/`, `package.json`, `pnpm-lock.yaml`, or database persistence functions.
 
 ---
 
@@ -129,5 +146,32 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - Delivered across Phase 4B–4B.3.
   - Comprehensive test matrix covering 49 Phase 4B assertions, 34 Live DB assertions, 37 Phase 4A static assertions, controlled test-owned cleanup, privacy checks, script duplication audits, and HTTP error contracts.
 
-- [ ] **Phase 5 — Full Production QA & Release Verification (Not Started)**
-  - NOT STARTED. Scope to be reconciled and planned before production QA specification.
+- [x] **Phase 5A — Pilot Correctness & Data-Trust Hardening**
+  - Delivered across commits `fa4b903`, `e0fa9dc`, and `00cf894`.
+  - Eliminated feedback false-success bug; `AskAIPanel` throws when response is unpersisted.
+  - Added visible warning banner for non-persisted responses and disabled outcome/feedback controls.
+  - Enforced canonical 4000-character objection limit on server (`/api/copilot`) and client (`CopilotInput.tsx`).
+  - Added candidate PII privacy warning notice near objection input.
+  - Removed browser-side Sales Copilot reasoning fallback and `getCopilotAIProvider` import from `AskAIPanel.tsx`.
+  - Sanitized generic HTTP 500 database persistence error payloads in `/api/copilot/outcome/route.ts`.
+  - Corrected feedback fetch `Content-Type` header to `application/json`.
+  - Test suite `scripts/test-copilot-phase5a.mjs` passing 13/13 assertions (1 unit assertion, 3 real route tests, 9 static source assertions).
+
+- [ ] **Phase 5B — Pilot Access, E2E & Deployment Gate (Not Started)**
+  - NOT STARTED. Required before Controlled Internal Advisor Pilot / Level B release.
+  - Scope includes:
+    - Pilot access protection / authorization decision
+    - Rate limiting / abuse-boundary decision
+    - Browser / E2E test suite verification (Playwright)
+    - Vercel Preview deployment verification
+    - Environment & database separation verification
+    - Controlled pilot release & rollback gate
+    - Assessment of broader `ScriptsLibraryView.tsx` `SCRIPTS_REGISTRY` client exposure
+
+---
+
+## Level B / Release Readiness Stance
+
+**Phase 5A Complete ≠ Level B Release-Ready.**
+
+While Phase 5A completed critical pilot correctness, data trust, and client safety hardening, Level B release remains intentionally blocked until Phase 5B gates (pilot access protection, rate limiting, E2E browser verification, Preview deployment verification) are completed and approved.
