@@ -2,7 +2,6 @@ import assert from 'assert'
 import fs from 'fs'
 import path from 'path'
 import { POST as copilotRoute } from '../app/api/copilot/route.ts'
-import { POST as outcomeRoute } from '../app/api/copilot/outcome/route.ts'
 import { MAX_OBJECTION_TEXT_LENGTH } from '../lib/copilot/limits.ts'
 
 console.log('=====================================================')
@@ -35,12 +34,12 @@ async function asyncTest(name, fn) {
   }
 }
 
-// --- 1. Canonical Limits ---
+// --- 1. Canonical Limits (1 Unit Assertion) ---
 test('Limits Test 1: MAX_OBJECTION_TEXT_LENGTH is 4000', () => {
   assert.strictEqual(MAX_OBJECTION_TEXT_LENGTH, 4000)
 })
 
-// --- 2. Real Route Execution Tests ---
+// --- 2. Real Server Route Execution Tests (3 Route Tests) ---
 async function runRouteTests() {
   console.log('\n--- Real Server Route Execution Tests ---')
 
@@ -86,18 +85,17 @@ async function runRouteTests() {
     const res = await copilotRoute(req)
     assert.strictEqual(res.status, 400)
   })
+}
 
-  await asyncTest('Route Test 4: Outcome route returns sanitized HTTP 500 error string without exposing raw DB error', async () => {
-    // Pass valid parameters but a non-existent UUID with database mock/override to trigger catch or test sanitized message in file
+// --- 3. Static Source Code Assertions (9 Static Assertions) ---
+function runStaticSourceAssertions() {
+  console.log('\n--- Static Source Code Security & Architectural Assertions ---')
+
+  test('STATIC SOURCE ASSERTION: Outcome route generic 500 response is sanitized', () => {
     const outcomeCode = fs.readFileSync(path.join(process.cwd(), 'app/api/copilot/outcome/route.ts'), 'utf8')
     assert(outcomeCode.includes("error: 'Database persistence error while saving outcome.'"))
     assert(!outcomeCode.includes("error: msg || 'Database persistence error while saving outcome.'"))
   })
-}
-
-// --- 3. Static Source Code Assertions ---
-function runStaticSourceAssertions() {
-  console.log('\n--- Static Source Code Security & Architectural Assertions ---')
 
   test('STATIC SOURCE ASSERTION: AskAIPanel does NOT import getCopilotAIProvider', () => {
     const code = fs.readFileSync(path.join(process.cwd(), 'components/ai/AskAIPanel.tsx'), 'utf8')
