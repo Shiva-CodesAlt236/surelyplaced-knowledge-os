@@ -36,7 +36,7 @@ if (!process.env.DATABASE_URL && fs.existsSync('.env.local')) {
 
 async function runPhase4bPersistenceTests() {
   console.log('=====================================================')
-  console.log('   SALES COPILOT PHASE 4B.2 PRODUCT ALIGNMENT SUITE  ')
+  console.log('   SALES COPILOT PHASE 4B.3 PRODUCT ALIGNMENT SUITE  ')
   console.log('=====================================================\n')
 
   let passed = 0
@@ -325,7 +325,7 @@ async function runPhase4bPersistenceTests() {
     const outcomeRes = await outcomeRoute(outcomeReq)
     assert(outcomeRes.status === 200, 'Route Test 9: POST /api/copilot/outcome returned HTTP 200')
 
-    // Completed session outcome correction to follow-up -> REJECTED
+    // Completed session outcome correction to follow-up -> REJECTED WITH HTTP 400
     const followupReopenReq = new Request('http://localhost/api/copilot/outcome', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -335,7 +335,13 @@ async function runPhase4bPersistenceTests() {
       }),
     })
     const followupReopenRes = await outcomeRoute(followupReopenReq)
-    assert(followupReopenRes.status === 500 || followupReopenRes.status === 400, 'Route Test 10: Outcome API rejected completed to follow-up update')
+    assert(followupReopenRes.status === 400, 'Route Test 10: Outcome API rejected completed to follow-up update with HTTP 400')
+    const followupReopenData = await followupReopenRes.json()
+    assert(
+      typeof followupReopenData.error === 'string' &&
+        followupReopenData.error.includes('Completed session cannot be changed to follow-up'),
+      'Route Test 11: Outcome API returns clear error message explaining completed session reopening rejection'
+    )
 
     // Appending exchange to completed session -> HTTP 400
     const completedAppendReq = new Request('http://localhost/api/copilot', {
@@ -348,7 +354,7 @@ async function runPhase4bPersistenceTests() {
       }),
     })
     const completedAppendRes = await copilotRoute(completedAppendReq)
-    assert(completedAppendRes.status === 400, 'Route Test 11: Appending exchange to completed session rejected with HTTP 400')
+    assert(completedAppendRes.status === 400, 'Route Test 12: Appending exchange to completed session rejected with HTTP 400')
 
     // -----------------------------------------------------
     // 4. API Input Validation & Non-Existent Identifier Tests

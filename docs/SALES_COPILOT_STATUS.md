@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 4B.2 Final Advisor / Session Boundary Remediation Complete → Ready for Phase 4C  
+**Current Phase:** Phase 4B.3 Final HTTP Contract Cleanup Complete → Ready for Phase 4C  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -26,13 +26,13 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `lib/copilot/persistence.ts`: Server-side database persistence service (`createCopilotSession`, `recordCopilotExchange`, `recordCopilotFeedback`, `updateCopilotOutcome`, `getActiveCopilotSession`).
 - `app/api/copilot/route.ts`: Server API endpoint (wires session creation, exchange persistence, explicit `persistenceStatus`).
 - `app/api/copilot/feedback/route.ts`: Server API endpoint for exchange feedback ratings.
-- `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording.
+- `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording (explicitly returns HTTP 400 on completed session reopening attempts).
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider.
 
-### Phase 4B.2 Final Advisor / Session Boundary Architecture:
+### Phase 4B.3 HTTP Contract Architecture:
 - Self-entered advisor attribution: Required self-entered advisor name stored in browser `localStorage` (`surelyplaced_advisor_identifier`). Preserves human casing locally, normalized on client/server (`validateAdvisorIdentifier`). Includes UI header (`Advisor: [Name] [Change]`). NOT authenticated login or RBAC.
-- Mandatory server advisor validation: `/api/copilot` and `createCopilotSession` enforce required valid advisor identifier for all requests creating/using persistence. Missing/blank/invalid advisor returns HTTP 400. All legacy server fallback buckets (`anonymous-advisor`, `provisional-advisor`, `anon-adv-`) removed (0 runtime occurrences).
-- Advisor change session boundary: Changing saved advisor to a different normalized identifier executes `clearCopilotSessionBoundary()`, resetting `sessionId` state, `sessionStorage`, Copilot response, and analysis errors to start a clean DB session boundary under the new advisor. Unchanged normalized names (e.g. `"  Yash   Mishra "` vs `"Yash Mishra"`) do not destroy active session.
+- Mandatory server advisor validation: `/api/copilot` and `createCopilotSession` enforce required valid advisor identifier for all requests creating/using persistence. Missing/blank/invalid advisor returns HTTP 400. All legacy server fallback buckets (`anonymous-advisor`, `provisional-advisor`, `anon-adv-`) removed (00 runtime occurrences).
+- Advisor change session boundary: Changing saved advisor to a different normalized identifier executes `clearCopilotSessionBoundary()`, resetting `sessionId` state, `sessionStorage`, Copilot response, and analysis errors to start a clean DB session boundary under the new advisor. Unchanged normalized names do not destroy active session.
 - Session continuity across refresh: Active DB `sessionId` saved in tab `sessionStorage` (`surelyplaced_copilot_session_id`). Restored on component mount so page refreshes maintain ongoing candidate session.
 - Explicit "Start New Conversation": Top input header action clears Copilot response, analysis errors, React `sessionId`, and `sessionStorage`, allowing explicit transition between candidate conversations without deleting historical DB rows.
 - Stale session recovery flow: If stored `sessionId` is rejected by server (400 completed/not-found/inactive/invalid-format), `isStaleSessionError` classifies it, client automatically clears stale storage and retries objection analysis ONCE without `sessionId` to create a fresh active session.
@@ -40,9 +40,9 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - `enrolled` and `lost` set session `status = 'completed'` and clear `sessionId` in React & `sessionStorage`.
   - `follow-up` updates record while keeping session `status = 'active'`, preserving `sessionId` in React & `sessionStorage`.
   - Outcome corrections on completed sessions allow updating outcome attributes/reasons (`enrolled` <-> `lost`) while keeping `status = 'completed'`.
-  - Completed session correction to `follow-up` is strictly **REJECTED** (HTTP 400), preventing completed sessions from reopening to active.
-- API route validation & missing UUID 404: Returns HTTP 404 for non-existent feedback exchange UUIDs or outcome session UUIDs.
-- Controlled test row cleanup: Test cleanup in `scripts/test-copilot-phase4b.mjs` targets strictly test-owned prefixes (`WHERE advisor_identifier LIKE 'phase4b-test-%' OR advisor_identifier LIKE 'phase4b-normalization-%'`) in `finally` block (48/48 tests passing).
+  - Completed session correction to `follow-up` is strictly **REJECTED WITH HTTP 400**, preventing completed sessions from reopening to active.
+- API route validation & 404/400 error contracts: Returns HTTP 404 for non-existent feedback exchange UUIDs or outcome session UUIDs. Returns HTTP 400 for domain validation errors (completed -> follow-up). Returns HTTP 500 only for genuine infrastructure/database failures.
+- Controlled test row cleanup: Test cleanup in `scripts/test-copilot-phase4b.mjs` targets strictly test-owned prefixes (`WHERE advisor_identifier LIKE 'phase4b-test-%' OR advisor_identifier LIKE 'phase4b-normalization-%'`) in `finally` block (49/49 tests passing).
 - Zero schema modifications: Schema and DDL remain 100% untouched.
 
 ---
@@ -96,13 +96,11 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - Implemented self-entered advisor identity with `localStorage` persistence (`b52f701`).
 
 - [x] **Phase 4B.2 — Final Advisor / Session Boundary Remediation Pass**
-  - Enforced mandatory advisor identifier on server (/api/copilot & createCopilotSession reject missing advisor with HTTP 400).
-  - Removed all server anonymous fallback buckets (`anonymous-advisor`, `provisional-advisor`, `anon-adv-`).
-  - Added session boundary reset when saved advisor identifier genuinely changes.
-  - Hardened completed session reopening protection: completed -> follow-up update is strictly rejected (HTTP 400).
-  - Hardened stale session storage recovery for invalid UUID formats.
-  - Updated test suite cleanup in `scripts/test-copilot-phase4b.mjs` to target strictly test-owned prefixes (`phase4b-test-%` & `phase4b-normalization-%`).
-  - Verified 48/48 unit, service, route execution, and live DB tests passing.
+  - Enforced mandatory advisor identifier on server (/api/copilot & createCopilotSession reject missing advisor with HTTP 400) (`c345dc7`).
+
+- [x] **Phase 4B.3 — Final HTTP Contract Cleanup Pass**
+  - Classified completed -> follow-up domain error as HTTP 400 in `app/api/copilot/outcome/route.ts`.
+  - Updated `scripts/test-copilot-phase4b.mjs` with strict HTTP 400 and error message assertions (49/49 tests passing).
   - ZERO candidate PII, ZERO auth/users tables, ZERO script text duplication, ZERO schema changes.
 
 - [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred / Not Started)**

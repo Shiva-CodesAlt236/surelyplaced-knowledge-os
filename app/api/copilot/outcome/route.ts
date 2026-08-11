@@ -73,6 +73,13 @@ export async function POST(request: Request) {
         )
       }
 
+      if (msg.includes('Completed session cannot be changed to follow-up')) {
+        return NextResponse.json(
+          { error: msg },
+          { status: 400 }
+        )
+      }
+
       console.error('[API /api/copilot/outcome] Persistence error:', msg)
       return NextResponse.json(
         { error: msg || 'Database persistence error while saving outcome.' },
