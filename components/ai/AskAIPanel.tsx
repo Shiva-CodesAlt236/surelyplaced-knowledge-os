@@ -245,7 +245,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
 
     const res = await fetch("/api/copilot/feedback", {
       method: "POST",
-      headers: { "Content-Type": "application/json font" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         exchangeId: copilotResponse.exchangeId,
         rating,

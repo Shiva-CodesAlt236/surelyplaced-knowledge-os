@@ -137,6 +137,12 @@ function runStaticSourceAssertions() {
     assert(code.includes('disabled={!isPersisted}'))
     assert(code.includes('Unavailable because this response was not saved.'))
   })
+
+  test('STATIC SOURCE ASSERTION: AskAIPanel feedback request uses valid application/json Content-Type header', () => {
+    const code = fs.readFileSync(path.join(process.cwd(), 'components/ai/AskAIPanel.tsx'), 'utf8')
+    assert(code.includes('headers: { "Content-Type": "application/json" }'))
+    assert(!code.includes('application/json font'), 'AskAIPanel must not contain malformed Content-Type header')
+  })
 }
 
 async function main() {
