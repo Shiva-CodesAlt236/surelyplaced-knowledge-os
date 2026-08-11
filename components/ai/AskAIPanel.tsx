@@ -14,7 +14,6 @@ import { useAIStore } from "@/components/providers/AIProvider"
 import { CopilotInput } from "@/components/copilot/CopilotInput"
 import { CopilotResponseCard } from "@/components/copilot/CopilotResponseCard"
 import { OutcomeRecorder } from "@/components/copilot/OutcomeRecorder"
-import { getCopilotAIProvider } from "@/lib/copilot/providers"
 import type { CopilotResponse, OutcomeStatus, LostReason } from "@/lib/copilot/types"
 import {
   ADVISOR_STORAGE_KEY,
@@ -189,16 +188,9 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
         setCopilotResponse(null)
       }
     } catch (err) {
-      console.error("[Sales Copilot] Analysis error:", err)
-      try {
-        const provider = getCopilotAIProvider()
-        const result = await provider.analyzeObjection(input)
-        setCopilotResponse(result)
-      } catch (fallbackErr) {
-        console.error("[Sales Copilot] Fallback analysis error:", fallbackErr)
-        setAnalysisError("Unable to analyze objection at this moment. Please check your input or try again.")
-        setCopilotResponse(null)
-      }
+      console.error("[Sales Copilot] Analysis network error:", err)
+      setAnalysisError("Unable to reach Sales Copilot. Please try again.")
+      setCopilotResponse(null)
     } finally {
       setIsAnalyzing(false)
     }
@@ -209,6 +201,10 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   }
 
   const handleSaveOutcome = async (outcome: OutcomeStatus, reason?: LostReason) => {
+    if (copilotResponse?.persistenceStatus === "not-persisted") {
+      throw new Error("Outcome tracking unavailable because this response was not saved.")
+    }
+
     const activeSessionId = copilotResponse?.sessionId || sessionId
     const activeExchangeId = copilotResponse?.exchangeId
 
@@ -243,11 +239,13 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   }
 
   const handleFeedback = async (rating: "thumbs-up" | "neutral" | "thumbs-down") => {
-    if (!copilotResponse?.exchangeId) return
+    if (!copilotResponse?.exchangeId || copilotResponse?.persistenceStatus === "not-persisted") {
+      throw new Error("Feedback unavailable because this response was not saved.")
+    }
 
     const res = await fetch("/api/copilot/feedback", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json font" },
       body: JSON.stringify({
         exchangeId: copilotResponse.exchangeId,
         rating,
@@ -265,6 +263,8 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
       throw new Error("Database error saving feedback.")
     }
   }
+
+  const isPersisted = copilotResponse?.persistenceStatus !== "not-persisted" && Boolean(copilotResponse?.exchangeId || sessionId)
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -415,6 +415,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
                   <OutcomeRecorder
                     onSaveOutcome={handleSaveOutcome}
                     onFeedback={handleFeedback}
+                    isPersisted={isPersisted}
                   />
                 )}
               </div>

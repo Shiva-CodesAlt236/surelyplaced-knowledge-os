@@ -77,6 +77,7 @@ export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
       : "outline"
 
   const lessonUrl = response.objectionId ? `/docs/objections/${response.objectionId}` : "/docs/scripts"
+  const isNotPersisted = response.persistenceStatus === "not-persisted"
 
   return (
     <div className="space-y-4 rounded-xl border border-border bg-card p-4 shadow-sm">
@@ -103,6 +104,19 @@ export function CopilotResponseCard({ response }: CopilotResponseCardProps) {
           )}
         </div>
       </div>
+
+      {/* Persistence Warning Banner (When DB persistence failed or unconfigured) */}
+      {isNotPersisted && (
+        <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3 space-y-1 text-amber-600 dark:text-amber-400">
+          <div className="flex items-center gap-1.5 text-xs font-bold">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            <span>Response Not Persisted</span>
+          </div>
+          <p className="text-[11px] text-foreground font-medium leading-relaxed">
+            Response generated, but this conversation was not saved. Feedback and outcome tracking are unavailable for this response.
+          </p>
+        </div>
+      )}
 
       {/* Compound Objection Secondary Concern Chip */}
       {response.secondaryObjections && response.secondaryObjections.length > 0 && (

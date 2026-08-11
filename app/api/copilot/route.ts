@@ -7,6 +7,7 @@ import {
   isValidUuid,
 } from '@/lib/copilot/persistence'
 import { validateAdvisorIdentifier } from '@/lib/copilot/advisor'
+import { MAX_OBJECTION_TEXT_LENGTH } from '@/lib/copilot/limits'
 
 export async function POST(request: Request) {
   try {
@@ -28,6 +29,13 @@ export async function POST(request: Request) {
     if (typeof objectionText !== 'string' || !objectionText.trim()) {
       return NextResponse.json(
         { error: 'Invalid input payload. Expected non-empty objectionText string.' },
+        { status: 400 }
+      )
+    }
+
+    if (objectionText.length > MAX_OBJECTION_TEXT_LENGTH) {
+      return NextResponse.json(
+        { error: `Objection text must be ${MAX_OBJECTION_TEXT_LENGTH} characters or fewer.` },
         { status: 400 }
       )
     }

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Sparkles, RotateCcw, MessageSquareQuote } from "lucide-react"
+import { Sparkles, RotateCcw, MessageSquareQuote, ShieldAlert } from "lucide-react"
+import { MAX_OBJECTION_TEXT_LENGTH } from "@/lib/copilot/limits"
 
 export interface CopilotInputProps {
   onAnalyze: (objectionText: string) => void
@@ -64,10 +65,19 @@ export function CopilotInput({
         )}
       </div>
 
+      {/* Candidate Privacy / PII Warning */}
+      <div className="flex items-center gap-1.5 p-2 text-[11px] text-amber-700 dark:text-amber-300 bg-amber-500/10 rounded-md border border-amber-500/20 font-medium">
+        <ShieldAlert className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+        <span>
+          Do not include candidate names, email addresses, phone numbers, or other personal information.
+        </span>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-3">
         <textarea
           value={input}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+          maxLength={MAX_OBJECTION_TEXT_LENGTH}
           placeholder='e.g., "I want to think about it before making a payment..."'
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-xs shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[75px] resize-none"
         />

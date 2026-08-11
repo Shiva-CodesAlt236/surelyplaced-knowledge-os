@@ -8,9 +8,10 @@ import { CheckCircle2, Clock, XCircle, ThumbsUp, ThumbsDown, Minus, AlertCircle 
 export interface OutcomeRecorderProps {
   onSaveOutcome: (outcome: OutcomeStatus, reason?: LostReason) => Promise<void> | void
   onFeedback?: (rating: "thumbs-up" | "neutral" | "thumbs-down") => Promise<void> | void
+  isPersisted?: boolean
 }
 
-export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderProps) {
+export function OutcomeRecorder({ onSaveOutcome, onFeedback, isPersisted = true }: OutcomeRecorderProps) {
   const [selectedOutcome, setSelectedOutcome] = useState<OutcomeStatus | null>(null)
   const [lostReason, setLostReason] = useState<LostReason>("price")
   const [feedbackRating, setFeedbackRating] = useState<"thumbs-up" | "neutral" | "thumbs-down" | null>(null)
@@ -19,14 +20,18 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
   const [feedbackError, setFeedbackError] = useState<string | null>(null)
 
   const handleOutcomeSelect = async (outcome: OutcomeStatus) => {
+    if (!isPersisted) {
+      setSaveError("Outcome tracking unavailable because this response was not saved.")
+      return
+    }
     setSelectedOutcome(outcome)
     setSaveError(null)
     try {
       await onSaveOutcome(outcome, outcome === "lost" ? lostReason : undefined)
       setSaved(true)
-    } catch (err) {
+    } catch (err: any) {
       console.error("[OutcomeRecorder] Error saving outcome:", err)
-      setSaveError("Could not save outcome. Please try again.")
+      setSaveError(err?.message || "Could not save outcome. Please try again.")
       setSaved(false)
     }
   }
@@ -35,12 +40,16 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
     setLostReason(reason)
     setSaveError(null)
     if (selectedOutcome === "lost") {
+      if (!isPersisted) {
+        setSaveError("Outcome tracking unavailable because this response was not saved.")
+        return
+      }
       try {
         await onSaveOutcome("lost", reason)
         setSaved(true)
-      } catch (err) {
+      } catch (err: any) {
         console.error("[OutcomeRecorder] Error saving outcome reason:", err)
-        setSaveError("Could not update loss reason. Please try again.")
+        setSaveError(err?.message || "Could not update loss reason. Please try again.")
         setSaved(false)
       }
     }
@@ -48,14 +57,17 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
 
   const handleFeedback = async (rating: "thumbs-up" | "neutral" | "thumbs-down") => {
     setFeedbackError(null)
+    if (!isPersisted || !onFeedback) {
+      setFeedbackError("Feedback unavailable because this response was not saved.")
+      return
+    }
     try {
-      if (onFeedback) {
-        await onFeedback(rating)
-      }
+      await onFeedback(rating)
       setFeedbackRating(rating)
-    } catch (err) {
+    } catch (err: any) {
       console.error("[OutcomeRecorder] Error saving feedback:", err)
-      setFeedbackError("Failed to save feedback rating. Please try again.")
+      setFeedbackError(err?.message || "Failed to save feedback rating. Please try again.")
+      // Do NOT set feedbackRating on error; visual selection remains clear
     }
   }
 
@@ -63,12 +75,18 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
     <div className="space-y-3.5 rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <span className="text-xs font-bold text-foreground">Student Outcome Tracking</span>
-        {saved && !saveError && (
+        {saved && !saveError && isPersisted && (
           <span className="text-[10px] font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
             Recorded
           </span>
         )}
       </div>
+
+      {!isPersisted && (
+        <p className="text-[11px] text-amber-600 dark:text-amber-400 italic">
+          Unavailable because this response was not saved.
+        </p>
+      )}
 
       {saveError && (
         <div className="flex items-center gap-1.5 p-2 text-xs text-rose-600 bg-rose-500/10 rounded border border-rose-500/20">
@@ -82,6 +100,7 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
         <Button
           type="button"
           size="sm"
+          disabled={!isPersisted}
           variant={selectedOutcome === "enrolled" ? "primary" : "outline"}
           onClick={() => handleOutcomeSelect("enrolled")}
           className={`h-9 text-xs font-bold gap-1.5 ${
@@ -95,6 +114,7 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
         <Button
           type="button"
           size="sm"
+          disabled={!isPersisted}
           variant={selectedOutcome === "follow-up" ? "primary" : "outline"}
           onClick={() => handleOutcomeSelect("follow-up")}
           className={`h-9 text-xs font-bold gap-1.5 ${
@@ -108,6 +128,7 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
         <Button
           type="button"
           size="sm"
+          disabled={!isPersisted}
           variant={selectedOutcome === "lost" ? "primary" : "outline"}
           onClick={() => handleOutcomeSelect("lost")}
           className={`h-9 text-xs font-bold gap-1.5 ${
@@ -120,7 +141,7 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
       </div>
 
       {/* If Lost: Select Reason */}
-      {selectedOutcome === "lost" && (
+      {selectedOutcome === "lost" && isPersisted && (
         <div className="space-y-2 rounded-md bg-rose-500/5 p-3 border border-rose-500/15 animate-in fade-in duration-150">
           <label className="text-[11px] font-bold text-rose-600 dark:text-rose-400">
             Reason for Loss:
@@ -152,30 +173,36 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback }: OutcomeRecorderPr
           <div className="flex items-center gap-1">
             <Button
               type="button"
+              disabled={!isPersisted}
               variant={feedbackRating === "thumbs-up" ? "primary" : "ghost"}
               size="sm"
               onClick={() => handleFeedback("thumbs-up")}
               className="h-7 w-7 p-0"
+              title={!isPersisted ? "Feedback unavailable because this response was not saved." : "Thumbs Up"}
             >
               <ThumbsUp className="h-3.5 w-3.5 text-emerald-500" />
             </Button>
 
             <Button
               type="button"
+              disabled={!isPersisted}
               variant={feedbackRating === "neutral" ? "primary" : "ghost"}
               size="sm"
               onClick={() => handleFeedback("neutral")}
               className="h-7 w-7 p-0"
+              title={!isPersisted ? "Feedback unavailable because this response was not saved." : "Neutral"}
             >
               <Minus className="h-3.5 w-3.5 text-muted-foreground" />
             </Button>
 
             <Button
               type="button"
+              disabled={!isPersisted}
               variant={feedbackRating === "thumbs-down" ? "primary" : "ghost"}
               size="sm"
               onClick={() => handleFeedback("thumbs-down")}
               className="h-7 w-7 p-0"
+              title={!isPersisted ? "Feedback unavailable because this response was not saved." : "Thumbs Down"}
             >
               <ThumbsDown className="h-3.5 w-3.5 text-rose-500" />
             </Button>

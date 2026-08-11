@@ -82,7 +82,7 @@ export async function POST(request: Request) {
 
       console.error('[API /api/copilot/outcome] Persistence error:', msg)
       return NextResponse.json(
-        { error: msg || 'Database persistence error while saving outcome.' },
+        { error: 'Database persistence error while saving outcome.' },
         { status: 500 }
       )
     }
