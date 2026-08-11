@@ -46,6 +46,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
 
   // Sales Copilot State
   const [copilotResponse, setCopilotResponse] = useState<CopilotResponse | null>(null)
+  const [sessionId, setSessionId] = useState<string | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisError, setAnalysisError] = useState<string | null>(null)
   const [lastInput, setLastInput] = useState<string>("")
@@ -65,12 +66,19 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
       const res = await fetch("/api/copilot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objectionText: input }),
+        body: JSON.stringify({
+          objectionText: input,
+          sessionId: sessionId || undefined,
+          advisorId: "provisional-advisor",
+        }),
       })
 
       if (res.ok) {
-        const data = await res.json()
+        const data: CopilotResponse = await res.json()
         setCopilotResponse(data)
+        if (data.sessionId) {
+          setSessionId(data.sessionId)
+        }
       } else {
         const provider = getCopilotAIProvider()
         const result = await provider.analyzeObjection(input)
@@ -99,19 +107,57 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
 
   const handleSaveOutcome = async (outcome: OutcomeStatus, reason?: LostReason) => {
     try {
+      const res = await fetch("/api/copilot/outcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: copilotResponse?.sessionId || sessionId || undefined,
+          exchangeId: copilotResponse?.exchangeId,
+          outcome,
+          reason,
+        }),
+      })
+
+      if (!res.ok) {
+        const provider = getCopilotAIProvider()
+        const result = await provider.recordOutcome({
+          sessionId: copilotResponse?.sessionId || sessionId || undefined,
+          exchangeId: copilotResponse?.exchangeId,
+          outcome,
+          reason,
+          recordedAt: new Date().toISOString(),
+        })
+        if (result && result.success === false) {
+          throw new Error("Failed to record outcome")
+        }
+      }
+    } catch (err) {
+      console.error("[Sales Copilot] Outcome save error:", err)
       const provider = getCopilotAIProvider()
-      const res = await provider.recordOutcome({
+      await provider.recordOutcome({
+        sessionId: copilotResponse?.sessionId || sessionId || undefined,
         exchangeId: copilotResponse?.exchangeId,
         outcome,
         reason,
         recordedAt: new Date().toISOString(),
       })
-      if (res && res.success === false) {
-        throw new Error("Failed to record outcome")
-      }
+    }
+  }
+
+  const handleFeedback = async (rating: "thumbs-up" | "neutral" | "thumbs-down") => {
+    if (!copilotResponse?.exchangeId) return
+    try {
+      await fetch("/api/copilot/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          exchangeId: copilotResponse.exchangeId,
+          rating,
+          advisorId: "provisional-advisor",
+        }),
+      })
     } catch (err) {
-      console.error("[Sales Copilot] Outcome save error:", err)
-      throw err
+      console.error("[Sales Copilot] Feedback save error:", err)
     }
   }
 
@@ -214,7 +260,10 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
               <div className="space-y-4 animate-in fade-in duration-200">
                 <CopilotResponseCard response={copilotResponse} />
                 {!copilotResponse.isRefusal && (
-                  <OutcomeRecorder onSaveOutcome={handleSaveOutcome} />
+                  <OutcomeRecorder
+                    onSaveOutcome={handleSaveOutcome}
+                    onFeedback={handleFeedback}
+                  />
                 )}
               </div>
             )}

@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 4A.2 Non-Production Neon Setup & Live DB Verification Complete → Ready for Phase 4B  
+**Current Phase:** Phase 4B Runtime Persistence API Complete → Ready for Phase 4C  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -21,19 +21,19 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `lib/copilot/confidence.ts`: Multi-signal confidence reconciliation engine.
 - `lib/copilot/content-scanner.ts`: Direct final-output content safety scanner (`scanContentSafety`).
 - `lib/copilot/pipeline.ts`: Server-side grounded reasoning pipeline.
-- `app/api/copilot/route.ts`: Server API endpoint.
+- `lib/copilot/persistence.ts`: Server-side database persistence service (`createCopilotSession`, `recordCopilotExchange`, `recordCopilotFeedback`, `updateCopilotOutcome`).
+- `app/api/copilot/route.ts`: Server API endpoint (wires session creation & exchange persistence).
+- `app/api/copilot/feedback/route.ts`: Server API endpoint for exchange feedback ratings.
+- `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording.
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider.
 
-### Phase 4A / 4A.1 / 4A.2 Database Foundation & Verified Live Schema:
-- Neon non-production environment configured: YES (`development` / `preview` environment via `spartans-53e3/surelyplaced-knowledge-os`)
-- Migration applied: YES (`drizzle/0000_new_shriek.sql` applied successfully via `pnpm db:migrate`)
-- Live schema metadata verified: YES (3 tables, 5 pgEnums, native `text[]`, `CHECK` constraint, 7 indexes, ON DELETE CASCADE, UNIQUE)
-- Live DB constraint rejection tests: YES (invalid enums & `selected_level = 3` rejected by Postgres)
-- Live DB round-trip & cascade tests: YES (session CRUD, 2 linked exchanges, duplicate feedback UNIQUE rejection, cascade delete)
-- Test rows cleaned up: YES (0 test rows remaining in database)
-- Production database configured: NO
-- Runtime persistence active: NO (NO UI or API route persistence calls wired yet)
-- Phase 4B started: NO
+### Phase 4B Runtime Persistence Architecture:
+- Server persistence service: `lib/copilot/persistence.ts`
+- Provisional advisor identity: `'provisional-advisor'` fallback (No auth or user tables created).
+- Session lifecycle: Sessions created on `/api/copilot` POST requests, track `lastActivityAt`, and set `status = 'completed'` when an outcome is saved via `/api/copilot/outcome`.
+- Feedback rating persistence: `/api/copilot/feedback` handles `'thumbs-up' | 'neutral' | 'thumbs-down'` with `UNIQUE(exchange_id)` upsert semantics.
+- Privacy & script source boundary: ZERO candidate PII stored. ZERO sales response text or coaching text stored in DB (`matched_script_id` reference string only).
+- Unit & integration tests: `scripts/test-copilot-phase4b.mjs` (27/27 tests passing).
 
 ---
 
@@ -74,13 +74,17 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 
 - [x] **Phase 4A.2 — Non-Production Neon Setup & Live DB Verification**
   - Linked Vercel development environment (`DATABASE_URL`).
-  - Applied initial SQL migration (`drizzle/0000_new_shriek.sql`) to non-production Neon Postgres database.
-  - Authored live database verification test suite (`scripts/test-copilot-phase4-live.mjs`).
-  - Verified 34/34 live DB assertions (introspection, enums, `text[]`, `CHECK`, CASCADE, UNIQUE, CRUD, cleanup).
-  - Production database remains completely untouched.
-  - ZERO application runtime persistence active in Phase 4A.2.
+  - Applied initial SQL migration (`drizzle/0000_new_shriek.sql`) to non-production Neon Postgres database (`f2bdade`).
 
-- [ ] **Phase 4B — Session & Exchange Persistence Endpoint Wiring (Deferred / Not Started)**
+- [x] **Phase 4B — Runtime Persistence API & Endpoints**
+  - Implemented server-side persistence service `lib/copilot/persistence.ts`.
+  - Extended `/api/copilot/route.ts` to create sessions and persist exchanges.
+  - Implemented `/api/copilot/feedback/route.ts` & `/api/copilot/outcome/route.ts`.
+  - Wired `AskAIPanel.tsx` to maintain `sessionId` and persist feedback & outcomes.
+  - Reconciled 34 vs 35 live DB test assertion count (34 executed calls, 35 string occurrences including function definition).
+  - Authored Phase 4B test suite `scripts/test-copilot-phase4b.mjs` (27/27 tests passing).
+  - ZERO candidate PII, ZERO auth/users tables, ZERO script text duplication.
+
 - [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred / Not Started)**
 - [ ] **Phase 4D — Feedback Endpoint & UI Wiring (Deferred / Not Started)**
 - [ ] **Phase 4E — Advisor Identifier & LocalStorage Session Lifecycle (Deferred / Not Started)**
