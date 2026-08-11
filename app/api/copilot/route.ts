@@ -6,6 +6,7 @@ import {
   getActiveCopilotSession,
   isValidUuid,
 } from '@/lib/copilot/persistence'
+import { validateAdvisorIdentifier } from '@/lib/copilot/advisor'
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     const objectionText = body?.objectionText || body?.input || ''
-    const advisorId = body?.advisorId || body?.advisorIdentifier
+    const advisorIdRaw = body?.advisorId || body?.advisorIdentifier
     const contextModuleId = body?.contextModuleId
     let sessionId = body?.sessionId
 
@@ -29,6 +30,19 @@ export async function POST(request: Request) {
         { error: 'Invalid input payload. Expected non-empty objectionText string.' },
         { status: 400 }
       )
+    }
+
+    // Normalize and validate advisor identifier if creating session or persisting
+    let normalizedAdvisor: string | undefined
+    if (advisorIdRaw !== undefined && advisorIdRaw !== null) {
+      const advisorValidation = validateAdvisorIdentifier(advisorIdRaw)
+      if (!advisorValidation.valid) {
+        return NextResponse.json(
+          { error: advisorValidation.error || 'Invalid advisor identifier.' },
+          { status: 400 }
+        )
+      }
+      normalizedAdvisor = advisorValidation.normalized
     }
 
     // Server-side validation of client-supplied sessionId
@@ -73,7 +87,7 @@ export async function POST(request: Request) {
         // Create session if not provided
         if (!sessionId) {
           const session = await createCopilotSession({
-            advisorIdentifier: advisorId,
+            advisorIdentifier: normalizedAdvisor,
             contextModuleId,
           })
           sessionId = session.id

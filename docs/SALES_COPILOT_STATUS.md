@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 4B Remediation Complete → Ready for Phase 4C  
+**Current Phase:** Phase 4B.1 Product-Decision Alignment Complete → Ready for Phase 4C  
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -21,26 +21,25 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - `lib/copilot/confidence.ts`: Multi-signal confidence reconciliation engine.
 - `lib/copilot/content-scanner.ts`: Direct final-output content safety scanner (`scanContentSafety`).
 - `lib/copilot/pipeline.ts`: Server-side grounded reasoning pipeline.
+- `lib/copilot/advisor.ts`: Advisor attribution normalization & validation utilities (`surelyplaced_advisor_identifier`).
+- `lib/copilot/session.ts`: Session storage continuity & stale session recovery helpers (`surelyplaced_copilot_session_id`).
 - `lib/copilot/persistence.ts`: Server-side database persistence service (`createCopilotSession`, `recordCopilotExchange`, `recordCopilotFeedback`, `updateCopilotOutcome`, `getActiveCopilotSession`).
 - `app/api/copilot/route.ts`: Server API endpoint (wires session creation, exchange persistence, explicit `persistenceStatus`).
 - `app/api/copilot/feedback/route.ts`: Server API endpoint for exchange feedback ratings.
 - `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording.
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider.
 
-### Phase 4B Remediation & Runtime Persistence Architecture:
-- Server persistence service: `lib/copilot/persistence.ts`
-- Explicit persistence status: `/api/copilot` returns `persistenceStatus: 'persisted' | 'not-persisted' | 'error'`. DB UUIDs returned only when persistence succeeds. Ephemeral IDs never passed off as DB UUIDs.
-- No false success fallbacks: UI error handling surfaces persistence failure without calling mock providers. Selected outcomes/ratings preserved for retry.
-- Session lifecycle rules:
-  - `sessionId` starts `null`.
-  - Clear button resets `sessionId`.
-  - `enrolled` and `lost` outcomes set session `status = 'completed'` and clear `sessionId` after confirmed DB persistence.
-  - `follow-up` outcome updates record while keeping session `status = 'active'`, allowing ongoing conversation continuation.
-  - Server rejects appending exchanges to completed or non-existent sessions (HTTP 400).
-- Anonymous/provisional attribution: Persistent anonymous UUID generated in `localStorage` (`surelyplaced_anonymous_advisor_id`) to attribute browser sessions without auth/user tables.
-- Input validation: Strict UUID syntax validation (`isValidUuid`), JSON parsing error handling, HTTP 400 for invalid inputs.
-- API route testing: `scripts/test-copilot-phase4b.mjs` directly invokes Next.js route handlers (`copilotRoute`, `feedbackRoute`, `outcomeRoute`) with real `Request` payloads (35/35 tests passing).
-- Guaranteed test row cleanup: Live test cleanup executed in `finally` blocks.
+### Phase 4B.1 Product Alignment Architecture:
+- Self-entered advisor attribution: Required self-entered advisor name stored in browser `localStorage` (`surelyplaced_advisor_identifier`). Preserves human casing locally, normalized on client/server (`validateAdvisorIdentifier`). Includes UI header (`Advisor: [Name] [Change]`). NOT authenticated login or RBAC.
+- Session continuity across refresh: Active DB `sessionId` saved in tab `sessionStorage` (`surelyplaced_copilot_session_id`). Restored on component mount so page refreshes maintain ongoing candidate session.
+- Explicit "Start New Conversation": Top input header action clears Copilot response, analysis errors, React `sessionId`, and `sessionStorage`, allowing explicit transition between candidate conversations without deleting historical DB rows.
+- Stale session recovery flow: If stored `sessionId` is rejected by server (400 completed/not-found), client automatically clears stale storage and retries objection analysis ONCE without `sessionId` to create a fresh active session.
+- Outcome lifecycle rules:
+  - `enrolled` and `lost` set session `status = 'completed'` and clear `sessionId` in React & `sessionStorage`.
+  - `follow-up` updates record while keeping session `status = 'active'`, preserving `sessionId` in React & `sessionStorage`.
+  - Outcome updates on completed sessions allow updating outcome attributes/reasons without reopening completed status.
+- API route validation: Direct Next.js route handler tests in `scripts/test-copilot-phase4b.mjs` (41/41 tests passing). Returns 404 for missing exchange/session UUIDs.
+- Zero schema modifications: Schema and DDL remain 100% untouched.
 
 ---
 
@@ -87,14 +86,16 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - Implemented server-side persistence service `lib/copilot/persistence.ts` (`6f8c624`).
 
 - [x] **Phase 4B Remediation — Persistence Semantics & Lifecycle Hardening**
-  - Fixed false success fallback bug in `AskAIPanel.tsx` & `OutcomeRecorder.tsx`.
-  - Added explicit `persistenceStatus` contract (`'persisted' | 'not-persisted' | 'error'`) to `/api/copilot`.
-  - Hardened session lifecycle: `follow-up` leaves session active; `enrolled` and `lost` complete session.
-  - Added server-side validation rejecting exchange appends to completed sessions (HTTP 400).
-  - Added strict UUID syntax validation for `sessionId` and `exchangeId`.
-  - Implemented persistent anonymous attribution identifier (`localStorage.setItem('surelyplaced_anonymous_advisor_id', ...)`).
-  - Refactored `scripts/test-copilot-phase4b.mjs` to execute actual Next.js API route handlers with guaranteed `finally` cleanup (35/35 tests passing).
-  - ZERO candidate PII, ZERO auth/users tables, ZERO script text duplication.
+  - Fixed false success fallback bug in `AskAIPanel.tsx` & `OutcomeRecorder.tsx` (`9f36d9d`).
+
+- [x] **Phase 4B.1 — Product Alignment & Session Continuity Pass**
+  - Implemented self-entered advisor identity with `localStorage` persistence (`surelyplaced_advisor_identifier`).
+  - Added UI prompt and `Advisor: [Name] [Change]` header in `AskAIPanel.tsx`.
+  - Added `sessionStorage` session continuity across tab refreshes (`surelyplaced_copilot_session_id`).
+  - Added explicit "Start New Conversation" action.
+  - Implemented one-time automatic stale session recovery flow on client.
+  - Verified 41/41 unit, route execution, and live DB tests passing.
+  - ZERO candidate PII, ZERO auth/users tables, ZERO script text duplication, ZERO schema changes.
 
 - [ ] **Phase 4C — Outcome Persistence & Provider Separation (Deferred / Not Started)**
 - [ ] **Phase 4D — Feedback Endpoint & UI Wiring (Deferred / Not Started)**

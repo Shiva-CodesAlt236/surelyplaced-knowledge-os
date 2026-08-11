@@ -17,6 +17,14 @@ import { OutcomeRecorder } from "@/components/copilot/OutcomeRecorder"
 import { getCopilotAIProvider } from "@/lib/copilot/providers"
 import type { CopilotResponse, OutcomeStatus, LostReason } from "@/lib/copilot/types"
 import {
+  ADVISOR_STORAGE_KEY,
+  validateAdvisorIdentifier,
+} from "@/lib/copilot/advisor"
+import {
+  SESSION_STORAGE_KEY,
+  isStaleSessionError,
+} from "@/lib/copilot/session"
+import {
   Sparkles,
   Send,
   Bot,
@@ -27,6 +35,8 @@ import {
   Headphones,
   AlertCircle,
   RefreshCw,
+  UserCheck,
+  Edit2,
 } from "lucide-react"
 
 export interface AskAIPanelProps {
@@ -50,23 +60,53 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisError, setAnalysisError] = useState<string | null>(null)
   const [lastInput, setLastInput] = useState<string>("")
-  const [anonymousAdvisorId, setAnonymousAdvisorId] = useState<string>("anonymous-advisor")
 
-  // Retrieve or generate persistent anonymous advisor attribution identifier
+  // Self-entered Advisor Attribution State (NOT authenticated identity)
+  const [advisorId, setAdvisorId] = useState<string>("")
+  const [advisorInput, setAdvisorInput] = useState<string>("")
+  const [isEditingAdvisor, setIsEditingAdvisor] = useState(false)
+  const [advisorError, setAdvisorError] = useState<string | null>(null)
+
+  // Initialize Advisor Identifier from localStorage & Session ID from sessionStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        let storedId = localStorage.getItem("surelyplaced_anonymous_advisor_id")
-        if (!storedId) {
-          storedId = `anon-adv-${crypto.randomUUID()}`
-          localStorage.setItem("surelyplaced_anonymous_advisor_id", storedId)
+        const storedAdvisor = localStorage.getItem(ADVISOR_STORAGE_KEY)
+        if (storedAdvisor) {
+          const validation = validateAdvisorIdentifier(storedAdvisor)
+          if (validation.valid) {
+            setAdvisorId(storedAdvisor)
+            setAdvisorInput(storedAdvisor)
+          }
         }
-        setAnonymousAdvisorId(storedId)
-      } catch {
-        setAnonymousAdvisorId("anonymous-advisor")
+
+        const storedSession = sessionStorage.getItem(SESSION_STORAGE_KEY)
+        if (storedSession) {
+          setSessionId(storedSession)
+        }
+      } catch (err) {
+        console.error("[AskAIPanel] Storage initialization error:", err)
       }
     }
   }, [])
+
+  const handleSaveAdvisorId = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    const validation = validateAdvisorIdentifier(advisorInput)
+    if (!validation.valid) {
+      setAdvisorError(validation.error || "Invalid advisor identifier.")
+      return
+    }
+
+    setAdvisorError(null)
+    setAdvisorId(advisorInput.trim())
+    setIsEditingAdvisor(false)
+    try {
+      localStorage.setItem(ADVISOR_STORAGE_KEY, advisorInput.trim())
+    } catch {
+      // Ignore localStorage write failure
+    }
+  }
 
   const handleSendQA = () => {
     if (!qaInput.trim() || isResponding) return
@@ -74,10 +114,18 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     setQaInput("")
   }
 
-  const handleAnalyzeObjection = async (input: string) => {
+  const handleAnalyzeObjection = async (input: string, isRetryAfterStaleSession = false) => {
+    if (!advisorId) {
+      setIsEditingAdvisor(true)
+      setAdvisorError("Please enter your advisor name before analyzing objections.")
+      return
+    }
+
     setIsAnalyzing(true)
     setAnalysisError(null)
     setLastInput(input)
+
+    const activeSessionId = isRetryAfterStaleSession ? undefined : sessionId || undefined
 
     try {
       const res = await fetch("/api/copilot", {
@@ -85,8 +133,8 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           objectionText: input,
-          sessionId: sessionId || undefined,
-          advisorId: anonymousAdvisorId,
+          sessionId: activeSessionId,
+          advisorId: advisorId,
         }),
       })
 
@@ -97,11 +145,30 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
         // Only update active sessionId if DB persistence succeeded
         if (data.persistenceStatus === "persisted" && data.sessionId) {
           setSessionId(data.sessionId)
+          try {
+            sessionStorage.setItem(SESSION_STORAGE_KEY, data.sessionId)
+          } catch {
+            // Ignore sessionStorage failure
+          }
         }
       } else {
-        const provider = getCopilotAIProvider()
-        const result = await provider.analyzeObjection(input)
-        setCopilotResponse(result)
+        const errorData = await res.json().catch(() => ({}))
+
+        // Check if error is due to a stale or completed session
+        if (!isRetryAfterStaleSession && isStaleSessionError(res.status, errorData.error)) {
+          console.warn("[AskAIPanel] Stale session detected. Resetting session and retrying once...")
+          setSessionId(null)
+          try {
+            sessionStorage.removeItem(SESSION_STORAGE_KEY)
+          } catch {
+            // Ignore
+          }
+          // Retry ONCE without sessionId to create a fresh active session
+          return await handleAnalyzeObjection(input, true)
+        }
+
+        setAnalysisError(errorData.error || "Unable to analyze objection. Please try again.")
+        setCopilotResponse(null)
       }
     } catch (err) {
       console.error("[Sales Copilot] Analysis error:", err)
@@ -119,10 +186,15 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     }
   }
 
-  const handleClearCopilot = () => {
+  const handleStartNewConversation = () => {
     setCopilotResponse(null)
     setAnalysisError(null)
-    setSessionId(null) // Lifecycle rule 2: Clear resets sessionId
+    setSessionId(null)
+    try {
+      sessionStorage.removeItem(SESSION_STORAGE_KEY)
+    } catch {
+      // Ignore
+    }
   }
 
   const handleSaveOutcome = async (outcome: OutcomeStatus, reason?: LostReason) => {
@@ -142,8 +214,8 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     })
 
     if (!res.ok) {
-      // DO NOT fall back to mock provider to report false success!
-      throw new Error("Could not save outcome to database.")
+      const errData = await res.json().catch(() => ({}))
+      throw new Error(errData.error || "Could not save outcome to database.")
     }
 
     const data = await res.json()
@@ -152,10 +224,15 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     }
 
     // Lifecycle rules:
-    // If enrolled or lost: Session completed -> clear sessionId for next conversation
-    // If follow-up: Session remains active -> keep sessionId intact
+    // If enrolled or lost: Session completed -> clear sessionId & sessionStorage for next conversation
+    // If follow-up: Session remains active -> keep sessionId & sessionStorage intact
     if (outcome === "enrolled" || outcome === "lost") {
       setSessionId(null)
+      try {
+        sessionStorage.removeItem(SESSION_STORAGE_KEY)
+      } catch {
+        // Ignore
+      }
     }
   }
 
@@ -168,12 +245,13 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
       body: JSON.stringify({
         exchangeId: copilotResponse.exchangeId,
         rating,
-        advisorId: anonymousAdvisorId,
+        advisorId: advisorId,
       }),
     })
 
     if (!res.ok) {
-      throw new Error("Could not save feedback rating.")
+      const errData = await res.json().catch(() => ({}))
+      throw new Error(errData.error || "Could not save feedback rating.")
     }
 
     const data = await res.json()
@@ -239,10 +317,57 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
              SALES COPILOT MVP MODE (Guided Decision-Support Tool)
              =================================================================== */
           <div className="flex-1 overflow-y-auto p-4 space-y-4" aria-live="polite">
+            {/* Advisor Identity Attribution Header / Prompt */}
+            {(!advisorId || isEditingAdvisor) ? (
+              <form
+                onSubmit={handleSaveAdvisorId}
+                className="rounded-xl border border-primary/30 bg-primary/5 p-3.5 space-y-2 animate-in fade-in duration-150"
+              >
+                <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                  <UserCheck className="h-4 w-4 text-primary" />
+                  <span>Enter Your Advisor Name</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Your name is used for local browser session attribution on this device (NOT authenticated login).
+                </p>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={advisorInput}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAdvisorInput(e.target.value)}
+                    placeholder="e.g. Yash Mishra"
+                    className="h-8 text-xs flex-1 bg-card"
+                  />
+                  <Button type="submit" size="sm" className="h-8 text-xs font-bold px-3">
+                    Save
+                  </Button>
+                </div>
+                {advisorError && (
+                  <p className="text-[11px] text-rose-500 font-medium">{advisorError}</p>
+                )}
+              </form>
+            ) : (
+              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/50 border border-border text-xs">
+                <div className="flex items-center gap-2 text-muted-foreground font-medium">
+                  <UserCheck className="h-3.5 w-3.5 text-primary" />
+                  <span>Advisor:</span>
+                  <strong className="text-foreground font-bold">{advisorId}</strong>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingAdvisor(true)}
+                  className="text-[11px] text-primary hover:underline font-semibold flex items-center gap-1"
+                >
+                  <Edit2 className="h-3 w-3" />
+                  Change
+                </button>
+              </div>
+            )}
+
             <CopilotInput
               onAnalyze={handleAnalyzeObjection}
-              onClear={handleClearCopilot}
+              onClear={handleStartNewConversation}
               isAnalyzing={isAnalyzing}
+              hasActiveSession={Boolean(sessionId || copilotResponse)}
             />
 
             {isAnalyzing && (

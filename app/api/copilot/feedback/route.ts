@@ -39,7 +39,15 @@ export async function POST(request: Request) {
 
       return NextResponse.json({ success: true, feedback })
     } catch (dbErr: any) {
-      console.error('[API /api/copilot/feedback] Persistence error:', dbErr?.message || dbErr)
+      const msg = dbErr?.message || ''
+      if (msg.includes('Exchange not found')) {
+        return NextResponse.json(
+          { error: 'Exchange not found for provided exchangeId.' },
+          { status: 404 }
+        )
+      }
+
+      console.error('[API /api/copilot/feedback] Persistence error:', msg)
       return NextResponse.json(
         { error: 'Database persistence error while saving feedback.' },
         { status: 500 }

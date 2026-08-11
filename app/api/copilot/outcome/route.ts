@@ -65,9 +65,17 @@ export async function POST(request: Request) {
 
       return NextResponse.json(result)
     } catch (dbErr: any) {
-      console.error('[API /api/copilot/outcome] Persistence error:', dbErr?.message || dbErr)
+      const msg = dbErr?.message || ''
+      if (msg.includes('Session not found')) {
+        return NextResponse.json(
+          { error: 'Session not found for provided identifier.' },
+          { status: 404 }
+        )
+      }
+
+      console.error('[API /api/copilot/outcome] Persistence error:', msg)
       return NextResponse.json(
-        { error: dbErr?.message || 'Database persistence error while saving outcome.' },
+        { error: msg || 'Database persistence error while saving outcome.' },
         { status: 500 }
       )
     }

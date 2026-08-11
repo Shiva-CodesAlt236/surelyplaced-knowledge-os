@@ -1,9 +1,10 @@
 import { getDb } from '@/lib/db/client'
 import { copilotSessions, copilotExchanges, copilotFeedback } from '@/lib/db/schema'
 import { eq, sql } from 'drizzle-orm'
+import { validateAdvisorIdentifier } from './advisor'
 
 /**
- * Sales Copilot MVP — Server-Side Persistence Service (Phase 4B Remediation)
+ * Sales Copilot MVP — Server-Side Persistence Service (Phase 4B.1 Product Alignment)
  *
  * Implements safe, server-only data persistence for sessions, exchanges,
  * advisor feedback, and student outcomes against Neon PostgreSQL.
@@ -55,7 +56,12 @@ export interface RecordOutcomeParams {
  */
 export async function createCopilotSession(params: CreateSessionParams = {}) {
   const db = getDb()
-  const advisorIdentifier = params.advisorIdentifier?.trim() || 'anonymous-advisor'
+
+  const advisorValidation = validateAdvisorIdentifier(params.advisorIdentifier)
+  const advisorIdentifier = advisorValidation.valid
+    ? advisorValidation.normalized!
+    : 'anonymous-advisor'
+
   const contextModuleId = params.contextModuleId?.trim() || null
 
   const [session] = await db
@@ -179,11 +185,26 @@ export async function recordCopilotFeedback(params: RecordFeedbackParams) {
   }
 
   const db = getDb()
+
+  // Verify exchange exists before inserting to avoid raw FK violation 500 error
+  const [existingExchange] = await db
+    .select({ id: copilotExchanges.id })
+    .from(copilotExchanges)
+    .where(eq(copilotExchanges.id, params.exchangeId))
+    .limit(1)
+
+  if (!existingExchange) {
+    throw new Error(`Exchange not found for ID: ${params.exchangeId}`)
+  }
+
+  const advisorValidation = validateAdvisorIdentifier(params.advisorIdentifier)
+  const normalizedAdvisor = advisorValidation.valid ? advisorValidation.normalized : null
+
   const [feedback] = await db
     .insert(copilotFeedback)
     .values({
       exchangeId: params.exchangeId,
-      advisorIdentifier: params.advisorIdentifier || null,
+      advisorIdentifier: normalizedAdvisor,
       rating: params.rating,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -192,7 +213,7 @@ export async function recordCopilotFeedback(params: RecordFeedbackParams) {
       target: copilotFeedback.exchangeId,
       set: {
         rating: params.rating,
-        advisorIdentifier: params.advisorIdentifier || sql`copilot_feedback.advisor_identifier`,
+        advisorIdentifier: normalizedAdvisor || sql`copilot_feedback.advisor_identifier`,
         updatedAt: new Date(),
       },
     })
@@ -207,6 +228,7 @@ export async function recordCopilotFeedback(params: RecordFeedbackParams) {
  * Rules:
  * - 'enrolled' or 'lost' -> Session status set to 'completed'
  * - 'follow-up' -> Session status remains 'active' (ongoing conversation)
+ * - If session is already completed, allow updating outcome attributes without error.
  */
 export async function updateCopilotOutcome(params: RecordOutcomeParams) {
   const db = getDb()
@@ -241,8 +263,22 @@ export async function updateCopilotOutcome(params: RecordOutcomeParams) {
     throw new Error(`Invalid outcomeStatus: ${params.outcomeStatus}`)
   }
 
-  // Lifecycle rule: 'follow-up' keeps session active; 'enrolled' and 'lost' mark session completed.
-  const newStatus = params.outcomeStatus === 'follow-up' ? 'active' : 'completed'
+  // Check existing session status
+  const [existingSession] = await db
+    .select({ id: copilotSessions.id, status: copilotSessions.status })
+    .from(copilotSessions)
+    .where(eq(copilotSessions.id, targetSessionId))
+    .limit(1)
+
+  if (!existingSession) {
+    throw new Error(`Session not found for ID: ${targetSessionId}`)
+  }
+
+  // If session is already completed and outcome is changed, preserve completed status unless follow-up is specified
+  const newStatus =
+    params.outcomeStatus === 'follow-up'
+      ? 'active'
+      : 'completed'
 
   const [updated] = await db
     .update(copilotSessions)
@@ -261,10 +297,6 @@ export async function updateCopilotOutcome(params: RecordOutcomeParams) {
       outcomeStatus: copilotSessions.outcomeStatus,
       outcomeReason: copilotSessions.outcomeReason,
     })
-
-  if (!updated) {
-    throw new Error(`Session not found for ID: ${targetSessionId}`)
-  }
 
   return { success: true, session: updated }
 }

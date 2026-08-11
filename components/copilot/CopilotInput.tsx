@@ -2,12 +2,13 @@
 
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Sparkles, RefreshCw, MessageSquareQuote } from "lucide-react"
+import { Sparkles, RotateCcw, MessageSquareQuote } from "lucide-react"
 
 export interface CopilotInputProps {
   onAnalyze: (objectionText: string) => void
   onClear?: () => void
   isAnalyzing?: boolean
+  hasActiveSession?: boolean
 }
 
 const EXAMPLE_PROMPTS = [
@@ -17,7 +18,12 @@ const EXAMPLE_PROMPTS = [
   "I'm already applying on LinkedIn myself",
 ]
 
-export function CopilotInput({ onAnalyze, onClear, isAnalyzing = false }: CopilotInputProps) {
+export function CopilotInput({
+  onAnalyze,
+  onClear,
+  isAnalyzing = false,
+  hasActiveSession = false,
+}: CopilotInputProps) {
   const [input, setInput] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,16 +49,17 @@ export function CopilotInput({ onAnalyze, onClear, isAnalyzing = false }: Copilo
           <MessageSquareQuote className="h-4 w-4 text-primary" />
           What did the student say?
         </label>
-        {input && (
+        {(input || hasActiveSession) && (
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={handleClear}
-            className="h-6 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+            className="h-6 px-2 text-[10px] text-muted-foreground hover:text-foreground font-semibold"
+            title="Start a new candidate conversation session"
           >
-            <RefreshCw className="h-3 w-3 mr-1" />
-            Clear
+            <RotateCcw className="h-3 w-3 mr-1" />
+            Start New Conversation
           </Button>
         )}
       </div>
