@@ -23,7 +23,7 @@
 ### Gate A: Git & Baseline Integrity
 - [x] **A.1** Working tree clean on `feature/sales-copilot-mvp` branch (**STATUS: PASS**).
 - [x] **A.2** Local `HEAD` matches `origin/feature/sales-copilot-mvp` (`0 0` count divergence) (**STATUS: PASS**).
-- [x] **A.3** Phase 4 and Phase 5A freeze ancestry verified (`162d5ef` is direct parent) (**STATUS: PASS**).
+- [x] **A.3** Phase 4 and Phase 5A freeze ancestry verified; Phase 5A freeze `162d5ef` remains the immutable Phase 5B implementation baseline and ancestor of the current release candidate (**STATUS: PASS**).
 
 ### Gate B: Preview Build Verification
 - [ ] **B.1** Target Vercel Preview deployment builds successfully (**STATUS: PENDING — Preview Deployment**).
