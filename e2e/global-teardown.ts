@@ -43,9 +43,12 @@ export default async function globalTeardown() {
 
     console.log(`[E2E Teardown] Successfully cleaned ${deletedSessions.length} test sessions with prefix "phase5b-e2e-%".`)
     console.log('=====================================================\n')
-  } catch (err: any) {
-    const sanitizedErrorMsg = err?.message || String(err)
-    console.error('[E2E Teardown Error] Database cleanup failed:', sanitizedErrorMsg)
-    throw new Error(`[E2E Teardown Failed] Database deletion error: ${sanitizedErrorMsg}`)
+  } catch {
+    console.error(
+      '[E2E Teardown Error] Database cleanup failed. See secure execution logs for infrastructure diagnosis.'
+    )
+    throw new Error(
+      '[E2E Teardown Failed] Test-owned database cleanup did not complete.'
+    )
   }
 }
