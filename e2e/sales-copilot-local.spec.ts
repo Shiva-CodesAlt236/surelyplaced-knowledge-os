@@ -191,4 +191,71 @@ test.describe('Sales Copilot Local E2E Journeys', () => {
     await expect(dialog.getByText('Approved Response')).not.toBeVisible()
   })
 
+  test('Journey H: Not-Persisted Response Disables Persistence Controls', async ({ page }) => {
+    const dialog = page.getByRole('dialog')
+
+    const advisorInput = dialog.locator('input[placeholder*="Yash Mishra"]')
+    if (await advisorInput.isVisible()) {
+      await advisorInput.fill('phase5b-e2e-local-h')
+      await dialog.getByRole('button', { name: 'Save' }).click()
+    }
+
+    // Intercept /api/copilot to return valid response with persistenceStatus: "not-persisted"
+    await page.route('**/api/copilot', (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          objectionId: 'price-objection',
+          objectionTitle: 'Pricing / Investment',
+          objectionLabel: 'Pricing / Investment',
+          confidence: 'high',
+          numericConfidence: 0.95,
+          matchedScriptId: '/docs/objections/price-objection#roleplay-1',
+          recommendedResponse: 'I understand your budget concerns. Let us look at the value delivered.',
+          whyItWorks: 'Acknowledges concerns directly.',
+          nextQuestion: 'What timeline are you targeting?',
+          secondaryObjections: [],
+          persistenceStatus: 'not-persisted',
+        }),
+      })
+    })
+
+    // Track whether any POST /api/copilot/feedback request is dispatched
+    let feedbackDispatched = false
+    page.on('request', (req) => {
+      if (req.url().includes('/api/copilot/feedback') && req.method() === 'POST') {
+        feedbackDispatched = true
+      }
+    })
+
+    const objectionTextarea = dialog.locator('textarea[placeholder*="I want to think about it"]')
+    await objectionTextarea.fill("It's too expensive for my budget.")
+    await dialog.getByRole('button', { name: 'Analyze Objection' }).click()
+
+    // 1. Visible response renders
+    await expect(dialog.getByText('Approved Response')).toBeVisible({ timeout: 20000 })
+
+    // 2. Visible "not saved" warning banner appears on card
+    await expect(dialog.getByText('Response Not Persisted')).toBeVisible()
+
+    // 3. Feedback thumbs-up button is disabled
+    const thumbsUpButton = dialog.locator('button[title*="Feedback unavailable"]').first()
+    await expect(thumbsUpButton).toBeDisabled()
+
+    // 4. Outcome buttons (Enrolled, Follow-up, Lost) are disabled
+    const enrolledButton = dialog.getByRole('button', { name: 'Enrolled' })
+    const followUpButton = dialog.getByRole('button', { name: 'Follow-up' })
+    const lostButton = dialog.getByRole('button', { name: 'Lost' })
+
+    await expect(enrolledButton).toBeDisabled()
+    await expect(followUpButton).toBeDisabled()
+    await expect(lostButton).toBeDisabled()
+
+    // 5. Attempt clicking disabled feedback button and assert no selected state or API call
+    await thumbsUpButton.click({ force: true }).catch(() => {})
+    await expect(thumbsUpButton).not.toHaveClass(/bg-fd-primary/)
+    expect(feedbackDispatched).toBe(false)
+  })
+
 })

@@ -42,8 +42,8 @@
 - [x] **D.3** `pnpm exec tsx scripts/test-copilot-phase4b.mjs` PASSED (49/49 assertions against Neon non-prod DB) (**STATUS: PASS**).
 
 ### Gate E: Content Safety Audit & Human Triage
-- [x] **E.1** `pnpm exec tsx scripts/audit-scripts-registry-claims.mjs` executed (376 scripts, 804 fields audited) (**STATUS: PASS — Automated Audit Executed**).
-- [ ] **E.2** All 10 automated findings manually reviewed and triaged by product owner (**STATUS: PENDING — Human Content Triage**).
+- [x] **E.1** `pnpm exec tsx scripts/audit-scripts-registry-claims.mjs` executed (376 scripts, 1411 fields audited, 15 findings) (**STATUS: PASS — Automated Audit Executed**).
+- [ ] **E.2** All 15 automated findings manually reviewed and triaged by product owner (**STATUS: PENDING — Human Content Triage**).
 - [ ] **E.3** Zero unresolved content remediation findings remaining (**STATUS: PENDING**).
 
 ### Gate F: Vercel Access Protection (Path A)
@@ -66,7 +66,7 @@
 
 ### Gate I: Playwright Local E2E Journeys
 - [x] **I.1** `pnpm exec playwright test --project=local` executed against local app (**STATUS: PASS**).
-- [x] **I.2** All 7 local E2E journeys PASSED (Journey A: Open & analyze, Journey B: Feedback persistence with primary class assertion, Journey C: Follow-up outcome, Journey D: Completion outcome, Journey E: Refresh session-ID continuity, Journey F: Start new conversation, Journey G: Network failure handling) (**STATUS: PASS**).
+- [x] **I.2** All 8 local E2E journeys PASSED (Journey A: Open & analyze, Journey B: Feedback persistence with primary class assertion, Journey C: Follow-up outcome, Journey D: Completion outcome, Journey E: Refresh session-ID continuity, Journey F: Start new conversation, Journey G: Network failure handling, Journey H: Not-persisted response disables controls) (**STATUS: PASS**).
 
 ### Gate J: Playwright Preview Smoke Suite
 - [ ] **J.1** `PLAYWRIGHT_PREVIEW_URL` and `VERCEL_AUTOMATION_BYPASS_SECRET` configured in environment (**STATUS: PENDING — Preview Smoke**).
@@ -98,18 +98,18 @@
 5. Critical browser crash or E2E failure on Preview deployment.
 
 ### Rollback Target
-- **Rollback Commit:** `162d5ef9a43428abc0cebc9a877387996a801e97` (Phase 5A Frozen Baseline).
-- **Rollback Deployment:** Redeploy known-good commit `162d5ef` to Vercel Preview or point advisors to prior stable Preview deployment URL.
+- **Rollback Target:** Phase 5A Freeze commit `162d5ef9a43428abc0cebc9a877387996a801e97` or verified approved Preview release candidate.
 
 ### Rollback Steps
-1. **Notify Pilot Advisors:** Request pilot advisors to cease using current Preview URL.
-2. **Promote Rollback Deployment:** In Vercel Dashboard, promote previous known-good deployment (`162d5ef`) to the active Preview domain.
-3. **Database Impact Audit:** Run read-only cleanup query targeting pilot test rows:
+1. **Stop Advisor Usage:** Request pilot advisors to cease using the failing Preview deployment URL.
+2. **Identify Known-Good Target:** Identify the known-good Phase 5A baseline commit (`162d5ef`) or prior approved Preview release candidate.
+3. **Restore Target Preview:** Provide advisors the known-good protected Preview URL or restore the relevant branch/preview alias using the verified Vercel dashboard mechanism.
+4. **Database Impact Audit:** Run read-only cleanup query targeting pilot test rows:
    ```sql
    SELECT count(*) FROM copilot_sessions WHERE advisor_identifier LIKE 'phase5b-%';
    ```
    *(Note: Zero schema migrations exist in Phase 5B; database rollback requires no DDL reverts).*
-4. **Post-Rollback Verification:** Verify previous deployment is active and protected under Vercel Authentication.
+5. **Post-Rollback Verification:** Verify Vercel Authentication remains enabled on the target Preview deployment before resuming pilot usage.
 
 ---
 
@@ -125,7 +125,7 @@
 | Gate F (Vercel Authentication) | **PENDING** | DevOps / Admin | [Pending Vercel Config] |
 | Gate G (Anonymous API Protection) | **PENDING** | Verification Curl | [Pending Preview Deployment] |
 | Gate H (Preview DB Separation) | **PENDING** | Preview Neon DB Verification | [Pending Preview Deployment] |
-| Gate I (Playwright Local E2E 7/7) | **PASS** | Playwright Local Suite | 2026-08-12 |
+| Gate I (Playwright Local E2E 8/8) | **PASS** | Playwright Local Suite | 2026-08-12 |
 | Gate J (Playwright Preview Smoke 3/3) | **PENDING** | Playwright Preview Suite | [Pending Preview Deployment] |
 | Gate K (Candidate Privacy Stance) | **PASS (Code) / PENDING (Operational)** | Code Banner / Pilot Briefing | 2026-08-12 |
 | Gate L (Preview Scripts-Route Protection) | **PENDING** | Preview Verification | [Pending Preview Deployment] |
