@@ -75,6 +75,10 @@ test.describe('Sales Copilot Local E2E Journeys', () => {
     const thumbsUpButton = dialog.locator('button[title="Thumbs Up"]')
     await thumbsUpButton.click()
 
+    // Assert successful state transition: thumbs-up button has primary active class
+    await expect(thumbsUpButton).toHaveClass(/bg-fd-primary/, { timeout: 10000 })
+
+    // Verify no feedback errors are shown
     await expect(dialog.getByText('Could not save feedback')).not.toBeVisible()
     await expect(dialog.getByText('Feedback unavailable')).not.toBeVisible()
   })
@@ -129,10 +133,25 @@ test.describe('Sales Copilot Local E2E Journeys', () => {
     await dialog.getByRole('button', { name: 'Analyze Objection' }).click()
     await expect(dialog.getByText('Approved Response')).toBeVisible({ timeout: 20000 })
 
+    // Capture persisted active session ID before reload
+    const sessionIdBefore = await page.evaluate(() => sessionStorage.getItem('surelyplaced_copilot_session_id'))
+    expect(sessionIdBefore).toBeTruthy()
+
     await page.reload()
     dialog = await openSalesCopilotDialog(page)
 
+    // Verify advisor identity persisted
     await expect(dialog.getByText('phase5b-e2e-local-e')).toBeVisible()
+
+    // Assert same non-empty session ID before and after reload
+    const sessionIdAfter = await page.evaluate(() => sessionStorage.getItem('surelyplaced_copilot_session_id'))
+    expect(sessionIdAfter).toBe(sessionIdBefore)
+
+    // Submit second objection to prove restored session remains active and usable
+    const secondObjectionTextarea = dialog.locator('textarea[placeholder*="I want to think about it"]')
+    await secondObjectionTextarea.fill('Can you explain the placement guarantee?')
+    await dialog.getByRole('button', { name: 'Analyze Objection' }).click()
+    await expect(dialog.getByText('Approved Response')).toBeVisible({ timeout: 20000 })
   })
 
   test('Journey F: Start New Conversation Clears State', async ({ page }) => {

@@ -13,31 +13,28 @@ export default async function globalTeardown() {
   console.log('      PLAYWRIGHT E2E GLOBAL TEARDOWN CLEANUP        ')
   console.log('=====================================================')
 
-  // Safety Guards
+  // Safety Guards — ALL MUST THROW LOUDLY ON ANY FAILURE
   if (dbEnv === 'production') {
     throw new Error('[E2E Teardown Guard] REFUSING execution against production COPILOT_DB_ENV=production!')
   }
 
   if (!allowNonProd) {
-    console.log('[E2E Teardown] COPILOT_DB_TEST_ALLOW_NON_PROD is not "true". Skipping database teardown cleanup.')
-    return
+    throw new Error('[E2E Teardown Guard] COPILOT_DB_TEST_ALLOW_NON_PROD=true is required for Playwright E2E global teardown!')
   }
 
   if (dbEnv !== 'development' && dbEnv !== 'preview') {
-    console.log(`[E2E Teardown] COPILOT_DB_ENV="${dbEnv}" is not "development" or "preview". Skipping teardown.`)
-    return
+    throw new Error(`[E2E Teardown Guard] COPILOT_DB_ENV="${dbEnv}" must be "development" or "preview" for Playwright E2E global teardown!`)
   }
 
   if (!databaseUrl) {
-    console.log('[E2E Teardown] DATABASE_URL is not configured. Skipping database teardown cleanup.')
-    return
+    throw new Error('[E2E Teardown Guard] DATABASE_URL environment variable is missing!')
   }
 
   try {
     const sql = neon(databaseUrl)
 
     // Execute safe test-owned prefix cleanup targeting STRICTLY 'phase5b-e2e-%'
-    // Cascade delete on copilot_exchanges & copilot_feedback cleans child records automatically
+    // Foreign key CASCADE deletes linked exchanges & feedback automatically
     const deletedSessions = await sql`
       DELETE FROM copilot_sessions
       WHERE advisor_identifier LIKE 'phase5b-e2e-%'
@@ -47,6 +44,8 @@ export default async function globalTeardown() {
     console.log(`[E2E Teardown] Successfully cleaned ${deletedSessions.length} test sessions with prefix "phase5b-e2e-%".`)
     console.log('=====================================================\n')
   } catch (err: any) {
-    console.error('[E2E Teardown Error] Database cleanup failed:', err?.message || err)
+    const sanitizedErrorMsg = err?.message || String(err)
+    console.error('[E2E Teardown Error] Database cleanup failed:', sanitizedErrorMsg)
+    throw new Error(`[E2E Teardown Failed] Database deletion error: ${sanitizedErrorMsg}`)
   }
 }
