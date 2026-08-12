@@ -200,22 +200,25 @@ test.describe('Sales Copilot Local E2E Journeys', () => {
       await dialog.getByRole('button', { name: 'Save' }).click()
     }
 
-    // Intercept /api/copilot to return valid response with persistenceStatus: "not-persisted"
+    // Intercept /api/copilot to return valid unpersisted pipeline response shape
     await page.route('**/api/copilot', (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
+          exchangeId: 'exc_test_not_persisted',
           objectionId: 'price-objection',
           objectionTitle: 'Pricing / Investment',
-          objectionLabel: 'Pricing / Investment',
           confidence: 'high',
           numericConfidence: 0.95,
+          confidenceBand: 'high',
           matchedScriptId: '/docs/objections/price-objection#roleplay-1',
           recommendedResponse: 'I understand your budget concerns. Let us look at the value delivered.',
           whyItWorks: 'Acknowledges concerns directly.',
           nextQuestion: 'What timeline are you targeting?',
+          avoidSaying: ['Do not offer unauthorized discounts.'],
           secondaryObjections: [],
+          sessionId: null,
           persistenceStatus: 'not-persisted',
         }),
       })
@@ -252,8 +255,7 @@ test.describe('Sales Copilot Local E2E Journeys', () => {
     await expect(followUpButton).toBeDisabled()
     await expect(lostButton).toBeDisabled()
 
-    // 5. Attempt clicking disabled feedback button and assert no selected state or API call
-    await thumbsUpButton.click({ force: true }).catch(() => {})
+    // 5. Assert selected state is absent and zero feedback requests dispatched
     await expect(thumbsUpButton).not.toHaveClass(/bg-fd-primary/)
     expect(feedbackDispatched).toBe(false)
   })

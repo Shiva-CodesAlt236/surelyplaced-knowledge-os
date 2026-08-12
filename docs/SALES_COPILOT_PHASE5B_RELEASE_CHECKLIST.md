@@ -42,8 +42,8 @@
 - [x] **D.3** `pnpm exec tsx scripts/test-copilot-phase4b.mjs` PASSED (49/49 assertions against Neon non-prod DB) (**STATUS: PASS**).
 
 ### Gate E: Content Safety Audit & Human Triage
-- [x] **E.1** `pnpm exec tsx scripts/audit-scripts-registry-claims.mjs` executed (376 scripts, 1411 fields audited, 15 findings) (**STATUS: PASS — Automated Audit Executed**).
-- [ ] **E.2** All 15 automated findings manually reviewed and triaged by product owner (**STATUS: PENDING — Human Content Triage**).
+- [x] **E.1** `pnpm exec tsx scripts/audit-scripts-registry-claims.mjs` executed (376 scripts, 1698 fields audited, 14 findings) (**STATUS: PASS — Automated Audit Executed**).
+- [ ] **E.2** All 14 automated findings manually reviewed and triaged by product owner (**STATUS: PENDING — Human Content Triage**).
 - [ ] **E.3** Zero unresolved content remediation findings remaining (**STATUS: PENDING**).
 
 ### Gate F: Vercel Access Protection (Path A)
