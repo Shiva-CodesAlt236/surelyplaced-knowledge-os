@@ -2,7 +2,8 @@ import { runCopilotPipeline } from '../lib/copilot/pipeline.ts'
 
 console.log('=====================================================')
 console.log('   SALES COPILOT PHASE 5C LIVE OBJECTION HOTFIX SUITE  ')
-console.log('=====================================================\n')
+console.log('=====================================================')
+console.log('   Phase 5C.1 Explicit-Refusal Truthfulness Verification\n')
 
 let passCount = 0
 let failCount = 0
@@ -15,6 +16,29 @@ function assert(condition, message) {
     console.error(`❌ FAIL: ${message}`)
     failCount++
   }
+}
+
+const FORBIDDEN_NAMES = ['rahul', 'akash', 'emily', 'neha']
+const FORBIDDEN_CRM_PROMISES = [
+  'updated your contact',
+  'updating your contact',
+  'updated your records',
+  'updating your records',
+  'won\'t receive further calls',
+  'wont receive further calls',
+  'stop all further outreach',
+  'removed your number',
+  'updating your contact records',
+]
+
+function containsForbiddenPersonaName(text) {
+  const lower = text.toLowerCase()
+  return FORBIDDEN_NAMES.some((name) => new RegExp(`\\b${name}\\b`, 'i').test(lower))
+}
+
+function containsFalseCrmPromise(text) {
+  const lower = text.toLowerCase()
+  return FORBIDDEN_CRM_PROMISES.some((phrase) => lower.includes(phrase))
 }
 
 async function runPhase5CSuite() {
@@ -57,19 +81,40 @@ async function runPhase5CSuite() {
   assert(t8.objectionId === 'explicit-refusal', 'Test 8: Primary is explicit-refusal')
   assert(!t8.secondaryObjections || t8.secondaryObjections.length === 0, 'Test 8: No secondary objections on explicit-refusal')
   assert(t8.nextQuestion === '', 'Test 8: No persuasive next question on explicit-refusal')
+  assert(!containsForbiddenPersonaName(t8.recommendedResponse), 'Test 8: Response is name-neutral (no Rahul/Akash/Emily/Neha)')
+  assert(!containsFalseCrmPromise(t8.recommendedResponse), 'Test 8: Response contains no false completed CRM/DNC promises')
 
   // TEST 9: Sequential Soft Refusal Escalation
   const t9a = await runCopilotPipeline("I'm not interested.")
   assert(t9a.objectionId === 'not-interested', 'Test 9a: First utterance classifies as not-interested')
   const t9b = await runCopilotPipeline("No, I'm still not interested.", { previousObjectionId: t9a.objectionId })
   assert(t9b.objectionId === 'explicit-refusal', 'Test 9b: Second soft refusal with previousObjectionId escalates to explicit-refusal')
+  assert(!containsForbiddenPersonaName(t9b.recommendedResponse), 'Test 9b: Escalated response is name-neutral')
+  assert(!containsFalseCrmPromise(t9b.recommendedResponse), 'Test 9b: Escalated response contains no false CRM promises')
 
   // TEST 10: Compound Statement
   const t10 = await runCopilotPipeline("I don't trust these companies and I don't want to pay upfront.")
   const ids10 = [t10.objectionId, ...(t10.secondaryObjections?.map((s) => s.objectionId) || [])]
   assert(ids10.includes('trust-and-credibility') && ids10.includes('upfront-payment-resistance'), 'Test 10: Compound statement detects both trust and upfront-payment-resistance')
 
-  console.log('\n--- 2. Collision & Response Differentiation Tests ---')
+  console.log('\n--- 2. Phase 5C.1 Explicit-Refusal Truthfulness & Name-Neutrality ---')
+  const refusalVariations = [
+    "Please stop calling me.",
+    "Don't call me again.",
+    "Remove my number.",
+    "Do not contact me.",
+  ]
+
+  for (let i = 0; i < refusalVariations.length; i++) {
+    const input = refusalVariations[i]
+    const res = await runCopilotPipeline(input)
+    assert(res.objectionId === 'explicit-refusal', `Refusal ${i + 1}: "${input}" -> explicit-refusal`)
+    assert(res.nextQuestion === '', `Refusal ${i + 1}: nextQuestion is empty`)
+    assert(!containsForbiddenPersonaName(res.recommendedResponse), `Refusal ${i + 1}: Name-neutral response ("${res.recommendedResponse.substring(0, 40)}...")`)
+    assert(!containsFalseCrmPromise(res.recommendedResponse), `Refusal ${i + 1}: No false CRM update claim`)
+  }
+
+  console.log('\n--- 3. Collision & Response Differentiation Tests ---')
   const catA = await runCopilotPipeline("I don't want to pay any upfront.")
   const catB = await runCopilotPipeline("Can you please email me the details so that I can review them and get back to you?")
   const catC = await runCopilotPipeline("I want to try on my own for some time.")
@@ -85,7 +130,7 @@ async function runPhase5CSuite() {
   assert(catF.recommendedResponse !== catG.recommendedResponse, 'Collision 5: Soft not-interested vs Hard refusal responses differ')
   assert(catG.nextQuestion === '', 'Collision 6: Hard refusal has empty nextQuestion')
 
-  console.log('\n--- 3. Determinism Verification Tests ---')
+  console.log('\n--- 4. Determinism Verification Tests ---')
   const testInputs = [
     "I don't want to pay any upfront.",
     "Can you please email me the details?",
@@ -106,7 +151,7 @@ async function runPhase5CSuite() {
     )
   }
 
-  console.log('\n--- 4. Negative / Near-Miss Safety Tests ---')
+  console.log('\n--- 5. Negative / Near-Miss Safety Tests ---')
   const nm1 = await runCopilotPipeline("Can you email me the calendar invite?")
   assert(nm1.objectionId !== 'information-request-deferral', 'Near-Miss 1: Calendar invite request is not sales info deferral')
 
@@ -122,7 +167,7 @@ async function runPhase5CSuite() {
   const nm5 = await runCopilotPipeline("I'm not interested in changing my resume format.")
   assert(nm5.objectionId !== 'explicit-refusal', 'Near-Miss 5: Resume format disinterest is not hard exit explicit refusal')
 
-  console.log('\n--- 5. Cold-Call Colloquial Language Fixtures (20 Fixtures) ---')
+  console.log('\n--- 6. Cold-Call Colloquial Language Fixtures (20 Fixtures) ---')
   const colloquialFixtures = [
     { input: "nah I'm good", expected: 'not-interested' },
     { input: "send me something", expected: 'information-request-deferral' },

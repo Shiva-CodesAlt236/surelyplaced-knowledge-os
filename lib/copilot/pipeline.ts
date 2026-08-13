@@ -98,7 +98,7 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 }
 
 /**
- * Sales Copilot Grounded Reasoning Pipeline — Phase 5C Live Objection Hotfix
+ * Sales Copilot Grounded Reasoning Pipeline — Phase 5C Live Objection Hotfix & Truthfulness Remediation
  */
 export async function runCopilotPipeline(
   input: string,
@@ -141,7 +141,7 @@ export async function runCopilotPipeline(
       confidenceBand: 'high',
       recommendedResponse:
         primaryScript?.recommendedAnswer ||
-        "Understood. Thank you for letting me know. I'll make sure your contact preferences are updated immediately. Have a great day.",
+        "Understood. Thank you for letting me know. I'll leave it there. Have a great day.",
       whyItWorks:
         primaryScript?.whyThisWorks ||
         explicitMeta?.whyItWorks ||
@@ -249,7 +249,7 @@ export async function runCopilotPipeline(
   if (primaryCategory.id === 'explicit-refusal') {
     recommendedResponse =
       selectedScript?.recommendedAnswer ||
-      "Understood. Thank you for letting me know. I'll make sure your contact preferences are updated immediately. Have a great day."
+      "Understood. Thank you for letting me know. I'll leave it there. Have a great day."
   }
 
   // Step 8: Safety Scanning on Response
