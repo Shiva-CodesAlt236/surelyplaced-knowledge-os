@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 5B Complete — Level B Controlled Internal Advisor Pilot Authorized
+**Current Phase:** Phase 5C Complete — Live Objection Hotfix Verified — Level B Pilot Continues
 **Branch:** `feature/sales-copilot-mvp`  
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
@@ -12,10 +12,10 @@
 
 ## Active Architecture & Canonical Dependency Set
 
-Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scripts extracted from `content/docs/` MDX files) for all response content.
+Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scripts extracted from `content/docs/` MDX files) for all response content.
 
 ### Active Components & Modules:
-- `lib/scripts-registry.ts`: Primary scripts registry (376 entries across 8 modules).
+- `lib/scripts-registry.ts`: Primary scripts registry (396 entries across 8 modules).
 - `lib/copilot/objection-categories.ts`: Objection taxonomy metadata.
 - `lib/copilot/scripts-library-adapter.ts`: Read-only query layer bridging Sales Copilot to `SCRIPTS_REGISTRY`.
 - `lib/copilot/confidence.ts`: Multi-signal confidence reconciliation engine.
@@ -70,6 +70,19 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
 - Feedback Content-Type Correctness: Corrected feedback request header in `AskAIPanel.tsx` to `"Content-Type": "application/json"`.
 - Test Suite Truthfulness & Reclassification: `scripts/test-copilot-phase5a.mjs` executes 13 total assertions: 1 unit/constant assertion (`MAX_OBJECTION_TEXT_LENGTH === 4000`), 3 real server route tests (4000 chars accepted, 4001 chars rejected, empty input rejected), and 9 static source assertions (sanitized outcome 500, no client provider import, no browser fallback, feedback throw guard, PII warning, client maxLength, visible not-persisted banner, OutcomeRecorder disabled behavior, valid feedback Content-Type header).
 - Zero Database Schema / Dependency Changes: Zero changes made to `lib/db/`, `drizzle/`, `package.json`, `pnpm-lock.yaml`, or database persistence functions.
+
+### Phase 5C Live Objection Coverage & Classification Quality Hotfix Architecture:
+- Taxonomy Expansion: Added 4 new objection categories (`upfront-payment-resistance`, `information-request-deferral`, `not-interested`, `explicit-refusal`) and activated 1 existing content-backed category (`already-working-with-consultancy`). `call-me-later` and `pay-after-placement-only` remain variants under existing taxonomy and were NOT made separate categories.
+- Primary Live Issue Fixes: (1) "I don't want to pay any upfront" — formerly Classification Deferred, now `upfront-payment-resistance`. (2) "Can you please email me the details so that I can review them and get back to you?" — formerly Classification Deferred, now `information-request-deferral`. (3) "I want to try on my own for some time" — formerly `need-time-to-think` primary, now correctly `already-applying-myself` primary. (4) Soft vs hard "not interested" behavior implemented. (5) Deterministic response differentiation improved across all categories.
+- Soft vs Hard Refusal Model: Soft first-time brush-off (`not-interested`) permits ONE respectful diagnostic question. Hard/explicit refusal (`explicit-refusal`) short-circuits all persuasion — no secondary objection chain, no persuasive next question. Repeated soft refusal with `previousObjectionId` escalates to `explicit-refusal`. Conversation-local only; no DB memory, no schema change, no cross-session refusal memory.
+- Explicit-Refusal Truthfulness Remediation (Phase 5C.1): Earlier defect allowed explicit-refusal responses to inject fictional roleplay candidate names and falsely imply CRM/contact-preference records were already updated. Remediation made responses name-neutral, removed fictitious candidate names, removed false CRM completion claims, removed persuasive next questions and secondary objections. Advisor guidance may note to follow applicable internal DNC/contact preference process after call, without claiming that process was already completed (`f8142f8edad45e5784e6baab157e62d48f80da34`).
+- `previousObjectionId` Architecture: Optional `previousObjectionId` threaded through `AskAIPanel` → API route → pipeline options for conversation-local repeated soft-refusal escalation only. No schema field, no persistence layer change, no session lifecycle redesign, no advisor identity change.
+- Deterministic Response Differentiation: Improved grounded differentiation across `upfront-payment-resistance`, `information-request-deferral`, `already-applying-myself`, `need-time-to-think`, `trust-and-credibility`, `not-interested`, `explicit-refusal`. Selection remains deterministic, grounded, registry-backed, and testable. Same input produces stable output. No uncontrolled randomness.
+- Content Safety: No new Phase 5C content introduced unauthorized discounts, zero-upfront promises, pay-after-placement promises, ISA promises, job guarantees, visa/sponsorship guarantees, fake employer relationships, proxy interviews, or fabricated experience. Upfront enrollment remains required; installment options may be discussed; no unauthorized pay-after-placement or zero-upfront promise.
+- Source of Truth Preservation: `content/docs/objections/*.mdx` = authoring source; `lib/scripts-registry.ts` = generated runtime registry. Phase 5C added four MDX objection lessons and regenerated the registry. `already-working-with-consultancy` reused existing content rather than duplicating it. Registry was not manually edited.
+- Frozen Areas: Zero schema changes, zero migration changes, zero persistence-layer changes, zero dependency changes, zero auth/Vercel architecture changes, zero Level-B protection changes, zero release-document changes during implementation.
+- Phase 5C Commit History: `713ada31f0cc0e8565109cbd7007452e51e1c058` feat(copilot): expand live objection classification coverage; `0dfbf8cf15901d79c045d51dc08341b99befbab3` test(copilot): add phase5c live objection regressions; `be72636aee4b8e8021500f47eceb6922d7d391bc` fix(copilot): refine near-miss keyword precision in pipeline classification; `f8142f8edad45e5784e6baab157e62d48f80da34` fix(copilot): make explicit-refusal responses name-neutral and truthful.
+- Operational Verification Suite: Phase 5C 73/73 PASS; Phase 3 35/35 PASS; Phase 4A 37/37 PASS; Phase 5A 13/13 PASS; Lint PASS (0 errors, 0 warnings); Typecheck PASS (0 errors); Local Playwright 8/8 was executed and reported PASS by Antigravity (Claude could not independently rerun Chromium due to sandbox browser download restrictions); Preview Playwright was NOT RERUN for Phase 5C because current replacement automation bypass secret was not available in the Antigravity verification runtime (historical Phase 5B Preview result remains 3/3 PASS); content audit 396 scripts / 1806 text fields / 14 findings / 348 hint items; 14 scanner/audit findings remain, all pre-existing and already triaged as acceptable context; Phase 5C introduced 0 new findings.
 
 ### Phase 5B Deployment & Protection Architecture:
 - Path A Vercel Authentication Architecture: Standard Vercel Deployment Protection ("Vercel Authentication") enabled on target Preview deployment (`https://surelyplaced-knowledge-h6vflq3io-spartans-53e3.vercel.app` / `dpl_GR7zUFyFac3PxuQwXDzK6pwwx9xh`). Anonymous requests to `/`, `/docs/scripts`, `/api/copilot`, `/api/copilot/feedback`, `/api/copilot/outcome` receive HTTP `302 Found` redirects to Vercel SSO challenge before application execution.
@@ -179,16 +192,34 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (376 scr
   - LEVEL B AUTHORIZED for Controlled Internal Advisor Pilot under protected Vercel Preview.
   - LEVEL C DEFERRED; Production NOT deployed.
 
+- [x] **Phase 5C — Live Objection Coverage & Classification Quality Hotfix — COMPLETE**
+  - 4 new objection categories (`upfront-payment-resistance`, `information-request-deferral`, `not-interested`, `explicit-refusal`); existing `already-working-with-consultancy` category activated.
+  - Upfront-payment live failure fixed; email-details live failure fixed; DIY primary ranking fixed.
+  - Soft/hard refusal model implemented; repeated soft refusal escalation implemented.
+  - Deterministic response differentiation added; near-miss keyword precision refinement added.
+  - Explicit-refusal name/CRM truthfulness remediation completed (`f8142f8`).
+  - Phase 5C 73/73 PASS; Phase 3/4A/5A regressions PASS.
+  - Local Playwright 8/8 PASS (executed by Antigravity); Preview Playwright not rerun for Phase 5C (bypass secret unavailable).
+  - Content audit: 396 scripts / 1806 fields / 14 findings / 348 hints; 0 new Phase 5C content findings.
+  - Implementation frozen after Claude approval.
+  - Authoritative final Phase 5C SHA: `f8142f8edad45e5784e6baab157e62d48f80da34`.
+
 ---
 
-## Level B / Release Readiness Stance
+## Current Release Stance
 
-**LEVEL B AUTHORIZED for Controlled Internal Advisor Pilot under protected Vercel Preview only.**
+**PHASE 5C IMPLEMENTATION VERIFIED AND FROZEN.**
+
+**LEVEL B CONTROLLED INTERNAL ADVISOR PILOT CONTINUES.**
+
+**LEVEL C NOT AUTHORIZED.**
+
+**PRODUCTION NOT AUTHORIZED / NOT DEPLOYED.**
 
 ### Explicit Level-B Operating Boundaries:
 - Internal authorized sales advisors only (5–10 participating advisors).
 - Vercel Authentication remains mandatory for Preview deployment access.
-- Preview non-production Neon database only.
+- Preview non-production Neon database only (verified non-production Preview database).
 - No candidate PII permitted in objection input text.
 - Production deployment is NOT authorized and NOT deployed.
 - Level C / public release is NOT authorized.
@@ -207,3 +238,4 @@ The following items are deferred to future Level C / post-pilot phases and do NO
 7. **Observability & Telemetry:** Implement production telemetry, error monitoring, and reasoning performance metrics.
 8. **Transactional & Idempotency Hardening:** Add transactional database operations for multi-step exchange/feedback flows.
 9. **Production Launch Planning:** Establish full production infrastructure, domain routing, and go-live deployment procedures.
+10. **Phase 5C Classifier Precision Hardening (Should-Fix, Non-Blocking):** Add contextual exclusion / near-miss guard for unrelated uses of "not interested" that are not actual sales disengagement. Example: "I'm not interested in changing my resume format" currently classifies as `not-interested` at high confidence because the bare phrase matches without enough semantic context. This is a deferred hardening item, not a Level-B blocker.
