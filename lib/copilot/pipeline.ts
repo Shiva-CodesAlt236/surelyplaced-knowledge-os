@@ -23,20 +23,45 @@ const SEVERITY_WEIGHTS: Record<string, number> = {
   'need-time-to-think': 0.95,
 }
 
-// Explicit Hard Refusal Patterns for Deterministic Pre-Check
+// Explicit Hard Refusal Patterns for Deterministic Pre-Check (Phase 5D Expanded Coverage)
 const HARD_REFUSAL_PATTERNS = [
   'stop calling',
   "don't call me",
   "dont call me",
+  'do not call me',
   'remove my number',
+  'remove me from your list',
+  'remove me from list',
   'take me off your list',
+  'take me off list',
+  'take off your list',
   'do not contact me',
+  "don't contact me",
+  "dont contact me",
+  'do not message me',
+  "don't message me",
+  "dont message me",
+  'stop contacting me',
+  'stop messaging me',
   'definitely not interested',
   "don't ask me again",
+  "dont ask me again",
+  "do not ask me again",
   "not interested and i don't want to discuss",
+  "not interested and i dont want to discuss",
   'take my number off',
-  'stop contacting me',
   'remove my details',
+  'told you not to call',
+  "said don't call me",
+  "said dont call me",
+  "said do not call me",
+  "already told you not to call",
+  "already said don't call",
+  "already said dont call",
+  "already said do not call",
+  "already said i'm not interested",
+  "already said im not interested",
+  "already said i am not interested",
 ]
 
 /**
@@ -47,6 +72,164 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
   if (!meta) {
     return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
   }
+
+  // --- CATEGORY SAFETY FILTERS & EXCLUSION GUARDS (Phase 5D Precision) ---
+
+  // 1. Explicit Refusal Near-Miss Safety
+  // Near-misses like "stop the application", "stop the video", "message me the details", "contact me next week", "call me tomorrow", "don't call this API"
+  // must NOT trigger hard refusal or explicit-refusal category unless a hard refusal phrase matched.
+  if (categoryId === 'explicit-refusal') {
+    const matchesHardRefusal = HARD_REFUSAL_PATTERNS.some((pat) => text.includes(pat))
+    if (!matchesHardRefusal) {
+      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+  }
+
+  // 2. Not-Interested Contextual Precision Guard (Section 8, 9, 10, 28)
+  if (categoryId === 'not-interested') {
+    // Exclusion 2A: positive interest phrases ("i am interested", "i'm interested but", "am interested")
+    if (
+      text.includes('i am interested') ||
+      text.includes("i'm interested but") ||
+      text.includes('im interested but') ||
+      text.includes('am interested')
+    ) {
+      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+
+    // Exclusion 2B: "not interested in <object>" contextual guard
+    // If text has "not interested in <object>", treat as topic-specific UNLESS <object> is in program/service disengagement allowlist.
+    if (text.includes('not interested in')) {
+      const allowedTargets = [
+        'this program',
+        'your program',
+        'this service',
+        'your service',
+        'this package',
+        'your package',
+        'this offer',
+        'signing up',
+        'enrolling',
+        'moving forward',
+        'joining',
+        'participating',
+        'working with you',
+        'using your service',
+        'this consultancy',
+        'your consultancy',
+      ]
+      const hasAllowedTarget = allowedTargets.some((target) => text.includes(`not interested in ${target}`))
+      if (!hasAllowedTarget) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
+    }
+  }
+
+  // 3. Parents / Spouse Approval Decision Context Guard (Section 24)
+  if (categoryId === 'parents-spouse-approval') {
+    // Family words ("parents", "spouse", "husband", "wife", "father", "mother", "family") alone must NOT trigger approval objection.
+    // Must require decision/approval/discussion context.
+    const familyWords = ['parents', 'parent', 'spouse', 'husband', 'wife', 'father', 'mother', 'family']
+    const hasFamilyWord = familyWords.some((w) => text.includes(w))
+    if (hasFamilyWord) {
+      const decisionVerbs = [
+        'talk',
+        'discuss',
+        'ask',
+        'agree',
+        'decide',
+        'approve',
+        'review',
+        'clearance',
+        'permission',
+        'decision',
+        'handles',
+        'approval',
+        'wants to',
+        'won\'t',
+        'wont',
+        'need',
+      ]
+      const hasDecisionContext = decisionVerbs.some((v) => text.includes(v))
+      if (!hasDecisionContext) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
+    }
+  }
+
+  // 4. Already-Applying-Myself DIY Context Guard (Section 19 & 20)
+  if (categoryId === 'already-applying-myself') {
+    // Unrelated use of "myself" or "own" ("wrote the email myself", "own a car", "built my resume myself", "completed assignment myself")
+    // must NOT trigger DIY category without job search / application context.
+    const bareMyselfOrOwn = text.includes('myself') || text.includes('own')
+    if (bareMyselfOrOwn) {
+      const diyJobSearchContext = [
+        'apply',
+        'applying',
+        'application',
+        'interview',
+        'linkedin',
+        'portal',
+        'job search',
+        'try',
+        'get interviews',
+        'doing fine',
+        'need help',
+        'independently',
+        'on my own',
+      ]
+      const hasJobSearchContext = diyJobSearchContext.some((c) => text.includes(c))
+      if (!hasJobSearchContext) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
+    }
+  }
+
+  // 5. Information-Request Deferral Logistical Exchange Guard (Section 16)
+  if (categoryId === 'information-request-deferral') {
+    // Logistical exchanges ("calendar invite", "meeting link", "my resume", "zoom link", "interview schedule", "phone number")
+    // must NOT trigger sales information deferral.
+    const logisticalTerms = [
+      'calendar invite',
+      'meeting link',
+      'my resume',
+      'zoom link',
+      'interview schedule',
+      'phone number',
+      'your phone number',
+    ]
+    if (logisticalTerms.some((t) => text.includes(t))) {
+      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+  }
+
+  // 6. Need-Time-To-Think Non-Sales Task Guard (Section 18)
+  if (categoryId === 'need-time-to-think') {
+    // Unrelated time statements ("finish my assignment", "complete my project", "time to cook", "interview time is", "call time is")
+    // must NOT trigger need-time-to-think.
+    const nonSalesTimeTerms = [
+      'finish my assignment',
+      'complete my project',
+      'time to cook',
+      'interview time',
+      'call time',
+    ]
+    if (nonSalesTimeTerms.some((t) => text.includes(t))) {
+      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+  }
+
+  // 7. Upfront-Payment Resistance Non-Program Context Guard (Section 14)
+  if (categoryId === 'upfront-payment-resistance') {
+    // Unrelated upfront/advance payments ("laptop", "apartment", "electricity bill", "rent")
+    // must NOT trigger upfront payment resistance unless tied to program/placement.
+    const nonProgramPaymentTerms = ['laptop', 'apartment', 'electricity bill', 'rent']
+    if (nonProgramPaymentTerms.some((t) => text.includes(t))) {
+      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+  }
+
+  // --- MATCHING EXECUTION ---
 
   let exactMatches = 0
   let keywordMatches = 0
@@ -59,23 +242,177 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
   }
 
   const keywordsMap: Record<string, string[]> = {
-    'explicit-refusal': ['stop calling', 'remove number', 'do not contact', 'stop contact', 'off your list'],
-    'upfront-payment-resistance': ['pay upfront', 'no upfront', 'upfront fee', 'upfront payment', 'paying upfront', 'pay before', 'after placement', 'once placed', 'pay once', 'risk upfront', 'pay after'],
-    'information-request-deferral': ['email me the details', 'send details', 'mail me details', 'send info', 'send information', 'text details', 'review later', 'email me details'],
-    'price-objection': ['expensive', 'cost', 'price', 'budget', 'fee', 'discount'],
-    'trust-and-credibility': ['trust', 'scam', 'guarantee', 'proof', 'real', 'legit', 'company', 'fake', 'reviews', 'reputation'],
-    'need-time-to-think': ['think about it', 'time to decide', 'call back tomorrow', 'need a few days', 'not ready today', 'call after two weeks', 'maybe later', 'need some time'],
-    'already-applying-myself': ['myself', 'own', 'linkedin', 'apply online', 'try myself', 'apply myself', 'independently', 'on my own'],
-    'already-working-with-consultancy': ['another consultancy', 'placement company', 'another service', 'someone helping me', 'other consultancy'],
-    'parents-spouse-approval': ['parent', 'parents', 'spouse', 'family', 'husband', 'wife', 'father', 'mother'],
-    'not-interested': ['not interested', 'no thanks', 'nah i\'m good', 'nah im good', 'not right now', 'don\'t think i need'],
-  }
-
-  // Safety filter for "not-interested": must NOT trigger if text is "i am interested" / "interested but"
-  if (categoryId === 'not-interested') {
-    if (text.includes('i am interested') || text.includes('i\'m interested but') || text.includes('am interested')) {
-      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
-    }
+    'explicit-refusal': ['stop calling', 'remove number', 'do not contact', 'stop contact', 'off your list', 'dont call', 'do not call', 'stop messaging'],
+    'upfront-payment-resistance': [
+      'pay upfront',
+      'no upfront',
+      'upfront fee',
+      'upfront payment',
+      'paying upfront',
+      'pay before',
+      'after placement',
+      'once placed',
+      'pay once',
+      'risk upfront',
+      'pay after',
+      'advance payment',
+      'no advance payment',
+      'pay after i get a job',
+      'pay after i join',
+      'pay once i start earning',
+      'risk money before',
+      'pay before getting',
+      'can i pay after',
+    ],
+    'information-request-deferral': [
+      'email me the details',
+      'send details',
+      'mail me details',
+      'send info',
+      'send information',
+      'text details',
+      'review later',
+      'email me details',
+      'send me the details',
+      'send everything on whatsapp',
+      'send me the pricing',
+      'send me the agreement',
+      'share the information',
+      'go through the information',
+      'everything written first',
+      'send me something to review',
+    ],
+    'price-objection': [
+      'expensive',
+      'cost',
+      'price',
+      'budget',
+      'fee',
+      'discount',
+      'can\'t afford',
+      'cannot afford',
+      'too much money',
+      'don\'t have the money',
+      'no budget',
+      'low budget',
+      'outside my budget',
+      'can\'t spend that much',
+      'cannot spend that much',
+      'why is it so expensive',
+      'too expensive',
+    ],
+    'trust-and-credibility': [
+      'trust',
+      'scam',
+      'guarantee',
+      'proof',
+      'real',
+      'legit',
+      'fake',
+      'reviews',
+      'reputation',
+      'cheated',
+      'scammed',
+      'fraud',
+      'genuine',
+      'is this real',
+      'isn\'t a scam',
+      'is it a scam',
+      'trust consultancies',
+      'real recruiters',
+      'fake placement',
+      'success stories',
+    ],
+    'need-time-to-think': [
+      'think about it',
+      'time to decide',
+      'call back tomorrow',
+      'need a few days',
+      'not ready today',
+      'call after two weeks',
+      'maybe later',
+      'need some time',
+      'call me next week',
+      'call me next month',
+      'not today',
+      'busy right now',
+      'decide later',
+      'get back to you',
+      'decide tomorrow',
+      'need time to decide',
+    ],
+    'already-applying-myself': [
+      'apply on my own',
+      'doing applications myself',
+      'try myself',
+      'apply myself',
+      'independently',
+      'on my own',
+      'apply online',
+      'applying on linkedin',
+      'already getting interviews',
+      'already have interviews',
+      'handling the job search myself',
+      'applying independently',
+      'do it on my own',
+      'try on my own',
+      'don\'t need help yet',
+      'doing fine myself',
+    ],
+    'already-working-with-consultancy': [
+      'another consultancy',
+      'placement company',
+      'another service',
+      'someone helping me',
+      'other consultancy',
+      'another recruiter',
+      'paid another company',
+      'enrolled somewhere else',
+      'another company is doing',
+      'already signed up',
+      'using another placement',
+      'hired someone for my job search',
+    ],
+    'parents-spouse-approval': [
+      'talk to my parents',
+      'talk to my spouse',
+      'talk to my husband',
+      'talk to my wife',
+      'talk to my family',
+      'father will decide',
+      'discuss it with my husband',
+      'discuss with my wife',
+      'discuss with my parents',
+      'ask my wife',
+      'ask my husband',
+      'ask my parents',
+      'family won\'t agree',
+      'family wont agree',
+      'parents won\'t agree',
+      'parents wont agree',
+      'parents need to approve',
+      'father wants to review',
+      'mother wants to review',
+      'spouse handles',
+      'family agrees',
+      'family decision',
+    ],
+    'not-interested': [
+      'not interested',
+      'no thanks',
+      'nah i\'m good',
+      'nah im good',
+      'not right now',
+      'don\'t think i need',
+      'not interested in this program',
+      'not interested in your program',
+      'not interested in this service',
+      'not interested in your service',
+      'not interested in this package',
+      'not interested in signing up',
+      'not interested in enrolling',
+      'not interested in moving forward',
+    ],
   }
 
   const categoryKeywords = keywordsMap[categoryId] || []
@@ -98,7 +435,7 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 }
 
 /**
- * Sales Copilot Grounded Reasoning Pipeline — Phase 5C Live Objection Hotfix & Truthfulness Remediation
+ * Sales Copilot Grounded Reasoning Pipeline — Phase 5D Precision & Coverage Upgrade
  */
 export async function runCopilotPipeline(
   input: string,
