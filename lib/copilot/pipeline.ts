@@ -122,11 +122,12 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     }
   }
 
-  // 3. Parents / Spouse Approval Decision Context Guard (Section 24)
+  // 3. Parents / Spouse Approval Decision Context Guard (Section 24 & Phase 5D.1 Tightening)
   if (categoryId === 'parents-spouse-approval') {
     const familyWords = ['parents', 'parent', 'spouse', 'husband', 'wife', 'father', 'mother', 'family']
     const hasFamilyWord = familyWords.some((w) => text.includes(w))
     if (hasFamilyWord) {
+      // Loose 'need' removed per Section 7 for clean defense-in-depth ("My spouse needs a vacation" stays NOT family approval)
       const decisionVerbs = [
         'talk',
         'discuss',
@@ -143,7 +144,6 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
         'wants to',
         'won\'t',
         'wont',
-        'need',
       ]
       const hasDecisionContext = decisionVerbs.some((v) => text.includes(v))
       if (!hasDecisionContext) {
@@ -383,6 +383,13 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'discuss with my parents',
       'discuss it with my father',
       'discuss with my father',
+      'discuss it with my spouse',
+      'discuss with my spouse',
+      'talk to my spouse',
+      'ask my spouse',
+      'need to discuss it with my spouse',
+      'need to talk to my spouse',
+      'need to ask my spouse',
       'ask my wife',
       'ask my husband',
       'ask my parents',

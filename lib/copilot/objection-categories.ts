@@ -43,6 +43,7 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       "I can't spend that much",
       "I cannot spend that much",
       "Why is it so expensive?",
+      "price issue",
     ],
     hiddenConcernPatterns: [
       'Fear of unrecovered investment',

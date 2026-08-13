@@ -465,6 +465,9 @@ async function runTests() {
   const fam_p7 = await runCopilotPipeline("My father wants to review it.")
   assert(fam_p7.objectionId === 'parents-spouse-approval', "My father wants to review it. -> parents-spouse-approval")
 
+  const fam_p8 = await runCopilotPipeline("I need to discuss it with my spouse.")
+  assert(fam_p8.objectionId === 'parents-spouse-approval', "I need to discuss it with my spouse. -> parents-spouse-approval")
+
   // Family Near-Misses (Negative)
   const fam_nm1 = await runCopilotPipeline("My parents live in India.")
   assert(fam_nm1.objectionId !== 'parents-spouse-approval', "My parents live in India. -> NOT parents-spouse-approval")
@@ -478,8 +481,11 @@ async function runTests() {
   const fam_nm4 = await runCopilotPipeline("My father lives with us.")
   assert(fam_nm4.objectionId !== 'parents-spouse-approval', "My father lives with us. -> NOT parents-spouse-approval")
 
-  const fam_nm5 = await runCopilotPipeline("My mother is visiting.")
-  assert(fam_nm5.objectionId !== 'parents-spouse-approval', "My mother is visiting. -> NOT parents-spouse-approval")
+  const fam_nm5 = await runCopilotPipeline("My spouse needs a vacation.")
+  assert(fam_nm5.objectionId !== 'parents-spouse-approval', "My spouse needs a vacation. -> NOT parents-spouse-approval")
+
+  const fam_nm6 = await runCopilotPipeline("My mother is visiting.")
+  assert(fam_nm6.objectionId !== 'parents-spouse-approval', "My mother is visiting. -> NOT parents-spouse-approval")
 
   // --- 12. Compound Objections (Section 25 & 44) ---
   console.log('\n--- 12. Compound Objections ---')
