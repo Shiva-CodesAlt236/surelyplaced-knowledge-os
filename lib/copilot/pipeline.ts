@@ -76,8 +76,6 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
   // --- CATEGORY SAFETY FILTERS & EXCLUSION GUARDS (Phase 5D Precision) ---
 
   // 1. Explicit Refusal Near-Miss Safety
-  // Near-misses like "stop the application", "stop the video", "message me the details", "contact me next week", "call me tomorrow", "don't call this API"
-  // must NOT trigger hard refusal or explicit-refusal category unless a hard refusal phrase matched.
   if (categoryId === 'explicit-refusal') {
     const matchesHardRefusal = HARD_REFUSAL_PATTERNS.some((pat) => text.includes(pat))
     if (!matchesHardRefusal) {
@@ -98,7 +96,6 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     }
 
     // Exclusion 2B: "not interested in <object>" contextual guard
-    // If text has "not interested in <object>", treat as topic-specific UNLESS <object> is in program/service disengagement allowlist.
     if (text.includes('not interested in')) {
       const allowedTargets = [
         'this program',
@@ -127,8 +124,6 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 
   // 3. Parents / Spouse Approval Decision Context Guard (Section 24)
   if (categoryId === 'parents-spouse-approval') {
-    // Family words ("parents", "spouse", "husband", "wife", "father", "mother", "family") alone must NOT trigger approval objection.
-    // Must require decision/approval/discussion context.
     const familyWords = ['parents', 'parent', 'spouse', 'husband', 'wife', 'father', 'mother', 'family']
     const hasFamilyWord = familyWords.some((w) => text.includes(w))
     if (hasFamilyWord) {
@@ -159,8 +154,6 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 
   // 4. Already-Applying-Myself DIY Context Guard (Section 19 & 20)
   if (categoryId === 'already-applying-myself') {
-    // Unrelated use of "myself" or "own" ("wrote the email myself", "own a car", "built my resume myself", "completed assignment myself")
-    // must NOT trigger DIY category without job search / application context.
     const bareMyselfOrOwn = text.includes('myself') || text.includes('own')
     if (bareMyselfOrOwn) {
       const diyJobSearchContext = [
@@ -177,6 +170,8 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
         'need help',
         'independently',
         'on my own',
+        'give myself',
+        'another month',
       ]
       const hasJobSearchContext = diyJobSearchContext.some((c) => text.includes(c))
       if (!hasJobSearchContext) {
@@ -187,8 +182,6 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 
   // 5. Information-Request Deferral Logistical Exchange Guard (Section 16)
   if (categoryId === 'information-request-deferral') {
-    // Logistical exchanges ("calendar invite", "meeting link", "my resume", "zoom link", "interview schedule", "phone number")
-    // must NOT trigger sales information deferral.
     const logisticalTerms = [
       'calendar invite',
       'meeting link',
@@ -205,8 +198,6 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 
   // 6. Need-Time-To-Think Non-Sales Task Guard (Section 18)
   if (categoryId === 'need-time-to-think') {
-    // Unrelated time statements ("finish my assignment", "complete my project", "time to cook", "interview time is", "call time is")
-    // must NOT trigger need-time-to-think.
     const nonSalesTimeTerms = [
       'finish my assignment',
       'complete my project',
@@ -221,8 +212,6 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 
   // 7. Upfront-Payment Resistance Non-Program Context Guard (Section 14)
   if (categoryId === 'upfront-payment-resistance') {
-    // Unrelated upfront/advance payments ("laptop", "apartment", "electricity bill", "rent")
-    // must NOT trigger upfront payment resistance unless tied to program/placement.
     const nonProgramPaymentTerms = ['laptop', 'apartment', 'electricity bill', 'rent']
     if (nonProgramPaymentTerms.some((t) => text.includes(t))) {
       return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
@@ -268,6 +257,7 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'email me the details',
       'send details',
       'mail me details',
+      'mail me the details',
       'send info',
       'send information',
       'text details',
@@ -346,6 +336,9 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'doing applications myself',
       'try myself',
       'apply myself',
+      'applying myself',
+      'already applying myself',
+      'already applying',
       'independently',
       'on my own',
       'apply online',
@@ -357,7 +350,12 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'do it on my own',
       'try on my own',
       'don\'t need help yet',
+      'dont need help yet',
       'doing fine myself',
+      'give myself another month',
+      'give myself',
+      'don\'t think i need help',
+      'dont think i need help',
     ],
     'already-working-with-consultancy': [
       'another consultancy',
@@ -383,6 +381,8 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'discuss it with my husband',
       'discuss with my wife',
       'discuss with my parents',
+      'discuss it with my father',
+      'discuss with my father',
       'ask my wife',
       'ask my husband',
       'ask my parents',
@@ -527,7 +527,6 @@ export async function runCopilotPipeline(
   let selectedCategoryId = confidenceResult.categoryId
 
   // Step 5: Repeated Soft-Refusal Escalation Check (Section 7)
-  // If previousObjectionId === 'not-interested' AND current utterance independently classifies as soft 'not-interested'
   if (
     options.previousObjectionId === 'not-interested' &&
     selectedCategoryId === 'not-interested'
@@ -563,7 +562,6 @@ export async function runCopilotPipeline(
   const scripts = getScriptsForObjectionCategory(primaryCategory.id)
   const levelOptions = primaryCategory.id === 'explicit-refusal' ? [] : buildResponseLevelOptions(scripts)
 
-  // Deterministic variation selection based on input phrase hash so identical input yields identical output
   let scriptIndex = 0
   if (scripts.length > 1) {
     let hash = 0
@@ -582,7 +580,6 @@ export async function runCopilotPipeline(
     levelOptions[0]?.response ||
     "I completely respect that you want to evaluate this carefully before taking the next step."
 
-  // Hard exit override for explicit refusal
   if (primaryCategory.id === 'explicit-refusal') {
     recommendedResponse =
       selectedScript?.recommendedAnswer ||
@@ -607,7 +604,6 @@ export async function runCopilotPipeline(
     selectedScript?.managerTip ||
     primaryCategory.whyItWorks
 
-  // Hard refusal MUST NOT have a persuasive next question
   const nextQuestion = primaryCategory.id === 'explicit-refusal' ? '' : primaryCategory.defaultNextQuestion
 
   return {

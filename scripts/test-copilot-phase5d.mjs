@@ -325,6 +325,9 @@ async function runTests() {
   const diy_p1 = await runCopilotPipeline("I'm already applying myself.")
   assert(diy_p1.objectionId === 'already-applying-myself', "I'm already applying myself. -> already-applying-myself")
 
+  const diy_p1_alt = await runCopilotPipeline("I am already applying myself.")
+  assert(diy_p1_alt.objectionId === 'already-applying-myself', "I am already applying myself. (Journey E input) -> already-applying-myself")
+
   const diy_p2 = await runCopilotPipeline("I'm applying on my own.")
   assert(diy_p2.objectionId === 'already-applying-myself', "I'm applying on my own. -> already-applying-myself")
 

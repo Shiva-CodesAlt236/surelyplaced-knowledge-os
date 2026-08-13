@@ -272,6 +272,7 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'I\'m already getting interviews',
       'I\'m doing fine myself',
       'I\'m already applying myself',
+      'I am already applying myself',
       'I\'m applying on my own',
       'I\'m doing applications myself',
       'I\'ll try myself first',
