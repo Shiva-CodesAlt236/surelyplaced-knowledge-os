@@ -60,15 +60,22 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
 
   const keywordsMap: Record<string, string[]> = {
     'explicit-refusal': ['stop calling', 'remove number', 'do not contact', 'stop contact', 'off your list'],
-    'upfront-payment-resistance': ['upfront', 'pay before', 'after placement', 'once placed', 'pay once', 'risk upfront', 'pay after'],
-    'information-request-deferral': ['email me', 'send details', 'mail me', 'send info', 'send information', 'text details', 'review later'],
+    'upfront-payment-resistance': ['pay upfront', 'no upfront', 'upfront fee', 'upfront payment', 'paying upfront', 'pay before', 'after placement', 'once placed', 'pay once', 'risk upfront', 'pay after'],
+    'information-request-deferral': ['email me the details', 'send details', 'mail me details', 'send info', 'send information', 'text details', 'review later', 'email me details'],
     'price-objection': ['expensive', 'cost', 'price', 'budget', 'fee', 'discount'],
     'trust-and-credibility': ['trust', 'scam', 'guarantee', 'proof', 'real', 'legit', 'company', 'fake', 'reviews', 'reputation'],
-    'need-time-to-think': ['think', 'time to decide', 'call back tomorrow', 'need a few days', 'not ready today', 'call after two weeks', 'maybe later'],
+    'need-time-to-think': ['think about it', 'time to decide', 'call back tomorrow', 'need a few days', 'not ready today', 'call after two weeks', 'maybe later', 'need some time'],
     'already-applying-myself': ['myself', 'own', 'linkedin', 'apply online', 'try myself', 'apply myself', 'independently', 'on my own'],
     'already-working-with-consultancy': ['another consultancy', 'placement company', 'another service', 'someone helping me', 'other consultancy'],
     'parents-spouse-approval': ['parent', 'parents', 'spouse', 'family', 'husband', 'wife', 'father', 'mother'],
     'not-interested': ['not interested', 'no thanks', 'nah i\'m good', 'nah im good', 'not right now', 'don\'t think i need'],
+  }
+
+  // Safety filter for "not-interested": must NOT trigger if text is "i am interested" / "interested but"
+  if (categoryId === 'not-interested') {
+    if (text.includes('i am interested') || text.includes('i\'m interested but') || text.includes('am interested')) {
+      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
   }
 
   const categoryKeywords = keywordsMap[categoryId] || []
