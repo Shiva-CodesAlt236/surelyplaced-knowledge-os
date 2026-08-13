@@ -157,6 +157,7 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
           objectionText: input,
           sessionId: activeSessionId,
           advisorId: advisorId,
+          previousObjectionId: copilotResponse?.objectionId,
         }),
       })
 

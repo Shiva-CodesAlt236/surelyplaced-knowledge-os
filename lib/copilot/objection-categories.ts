@@ -26,12 +26,15 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
   'price-objection': {
     id: 'price-objection',
     name: 'Price / Investment Concern',
-    description: 'Candidate hesitates over program fees, payment structure, or upfront investment requirement.',
+    description: 'Candidate hesitates over program fees, payment structure, or overall investment requirement.',
     examplePhrases: [
       "It's too expensive",
       "I don't have the budget right now",
       "The fee is higher than I expected",
       "Can I get a discount?",
+      "It's too expensive for my budget",
+      "I have no budget right now",
+      "too expensive",
     ],
     hiddenConcernPatterns: [
       'Fear of unrecovered investment',
@@ -54,6 +57,85 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'If budget wasn\'t a constraint, do you feel this is the exact skill transformation you need right now?',
   },
 
+  'upfront-payment-resistance': {
+    id: 'upfront-payment-resistance',
+    name: 'Upfront Payment Resistance',
+    description: 'Candidate objects specifically to paying an upfront fee before job outcome or placement.',
+    examplePhrases: [
+      "I don't want to pay any upfront",
+      "I won't pay before I get a job",
+      "I'll pay after placement",
+      "Pay after placement only",
+      "I don't want to pay before I get placed",
+      "Can I pay once I get a job?",
+      "I don't want to take the risk upfront",
+      "I don't want to pay any upfront.",
+      "I'll pay once I get placed",
+      "pay after placement",
+      "pay once placed",
+      "pay when I get a job",
+    ],
+    hiddenConcernPatterns: [
+      'Risk aversion regarding paying before job placement',
+      'Desire for deferred outcome-based payment model',
+      'Uncertainty about active mentorship value prior to hire',
+    ],
+    prohibitedResponsePatterns: [
+      "Don't offer unauthorized pay-after-placement or zero-upfront deals.",
+      "Don't promise Income Share Agreements (ISAs) or unapproved refund guarantees.",
+      "Don't invent unauthorized discounts to bypass upfront payment policy.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/upfront-payment-resistance#roleplay-1',
+      '/docs/objections/upfront-payment-resistance#roleplay-2',
+      '/docs/objections/upfront-payment-resistance#roleplay-3',
+    ],
+    whyItWorks:
+      'Differentiates dedicated 1-on-1 mentorship resources from commission recruiters and offers approved installment structures for upfront enrollment.',
+    defaultNextQuestion:
+      'Would looking at an installment schedule for the upfront fee help make this manageable for you?',
+  },
+
+  'information-request-deferral': {
+    id: 'information-request-deferral',
+    name: 'Information Request Deferral',
+    description: 'Candidate requests written details (email, WhatsApp, brochure) to review offline.',
+    examplePhrases: [
+      "Can you please email me the details so that I can review them and get back to you?",
+      "Can you email me the details?",
+      "Send me the details",
+      "Mail me something",
+      "Can you send me information?",
+      "Let me review it and get back to you",
+      "Send it to me and I'll check",
+      "Text me the details",
+      "I'll review the information later",
+      "send me something",
+      "mail me details",
+      "I'll check and tell you",
+      "email me the details",
+    ],
+    hiddenConcernPatterns: [
+      'Feeling overwhelmed or rushed on live call',
+      'Desire to evaluate details independently',
+      'Polite attempt to move conversation off live call',
+    ],
+    prohibitedResponsePatterns: [
+      "Don't refuse to send requested written information.",
+      "Don't dump generic uncustomized email blasts.",
+      "Don't pressure the candidate to stay on call when they explicitly defer.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/information-request-deferral#roleplay-1',
+      '/docs/objections/information-request-deferral#roleplay-2',
+      '/docs/objections/information-request-deferral#roleplay-3',
+    ],
+    whyItWorks:
+      'Agrees to candidate information requests promptly while diagnosing specific focus areas to keep the evaluation productive.',
+    defaultNextQuestion:
+      'To make sure I include the exact details most relevant to you, what specific area are you hoping to review—mentorship, placement, or installment options?',
+  },
+
   'trust-and-credibility': {
     id: 'trust-and-credibility',
     name: 'Trust / Program Clarity',
@@ -65,6 +147,8 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'Can you guarantee me a job?',
       'How many students actually get hired?',
       'Is there proof your placement rate is real?',
+      'I got scammed already',
+      'how do I know this is real?',
     ],
     hiddenConcernPatterns: [
       'Prior bad experience with recruitment consultancies',
@@ -97,6 +181,10 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'Let me call you back tomorrow',
       'I need a few days to decide',
       'I\'m not ready to make a payment today',
+      'call after two weeks',
+      'I\'ll think about it',
+      'not now',
+      'maybe later',
     ],
     hiddenConcernPatterns: [
       'Unresolved hidden objection (price, spouse approval, or timing)',
@@ -122,11 +210,24 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
   'already-applying-myself': {
     id: 'already-applying-myself',
     name: 'Already Applying Myself',
-    description: 'Candidate believes cold applying on job portals is sufficient to land interviews.',
+    description: 'Candidate believes cold applying on job portals independently is sufficient.',
     examplePhrases: [
       'I\'m already applying on LinkedIn myself',
       'I get plenty of responses on my own',
       'Why do I need a consultancy if I can apply online?',
+      'I want to try on my own for some time.',
+      'I want to try on my own',
+      'I\'ll try myself',
+      'I\'ll apply myself first',
+      'I want to see how it goes myself',
+      'Give me some time to try myself',
+      'I\'m already applying on LinkedIn',
+      'I don\'t need help yet',
+      'I\'m applying independently',
+      'I want to see if I can get interviews myself',
+      'let me try myself',
+      'I\'m already getting interviews',
+      'I\'m doing fine myself',
     ],
     hiddenConcernPatterns: [
       'Underestimating low applicant portal callback rates (<3%)',
@@ -147,6 +248,40 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'Out of your recent direct applications, how many hiring manager interviews have you secured so far?',
   },
 
+  'already-working-with-consultancy': {
+    id: 'already-working-with-consultancy',
+    name: 'Already Working With a Consultancy',
+    description: 'Candidate is already engaged with another program, recruiter, or consultancy.',
+    examplePhrases: [
+      "I'm already working with another consultancy",
+      "I already have a placement company",
+      "I'm already paying another service",
+      "I already have someone helping me",
+      "working with another consultancy",
+      "already hired a consultancy",
+      "already in another program",
+    ],
+    hiddenConcernPatterns: [
+      'Comparison shopping across multiple placement providers',
+      'Uncertainty about program overlap or exclusivity policy',
+      'Prior underwhelming experience with a competitor',
+    ],
+    prohibitedResponsePatterns: [
+      "Don't criticize a named or unnamed competitor.",
+      "Don't guess or improvise an answer on exclusivity/overlap rules.",
+      "Don't make unsubstantiated claims of being objectively better.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/already-working-with-a-consultancy#roleplay-1',
+      '/docs/objections/already-working-with-a-consultancy#roleplay-2',
+      '/docs/objections/already-working-with-a-consultancy#roleplay-3',
+    ],
+    whyItWorks:
+      'Responds to competitor disclosures with genuine curiosity rather than defensiveness or comparative claims.',
+    defaultNextQuestion:
+      'What has that experience been like so far—anything working well, or anything that feels missing?',
+  },
+
   'parents-spouse-approval': {
     id: 'parents-spouse-approval',
     name: 'Parent / Spouse Approval',
@@ -155,6 +290,7 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'I need to talk to my parents first',
       'My spouse handles our financial decisions',
       'I can\'t enroll until my family agrees',
+      'my parents won\'t agree',
     ],
     hiddenConcernPatterns: [
       'Family risk aversion regarding career investments',
@@ -173,5 +309,78 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'Validates family involvement and arms the candidate with verified, objective documentation to present confidently to decision-makers.',
     defaultNextQuestion:
       'What is the main outcome or reassurance your family will be looking for when you discuss this?',
+  },
+
+  'not-interested': {
+    id: 'not-interested',
+    name: 'Soft Disinterest / Brush-off',
+    description: 'Candidate gives a soft initial brush-off or mild disinterest expression.',
+    examplePhrases: [
+      "I'm not interested",
+      "No thanks",
+      "Nah I'm good",
+      "Not right now",
+      "I don't think I need this",
+      "I'm okay",
+      "nah I'm good",
+      "not interested right now",
+    ],
+    hiddenConcernPatterns: [
+      'Reflexive initial phone call deflection',
+      'Unclear value proposition or timing uncertainty',
+      'Hesitation to engage in sales discussion',
+    ],
+    prohibitedResponsePatterns: [
+      "Don't pressure, guilt, or badger the candidate.",
+      "Don't use artificial urgency or claim 'you'll regret it'.",
+      "Don't execute more than ONE diagnostic question probe.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/not-interested#roleplay-1',
+      '/docs/objections/not-interested#roleplay-2',
+      '/docs/objections/not-interested#roleplay-3',
+    ],
+    whyItWorks:
+      'Acknowledges candidate boundary politely and uses ONE diagnostic question to identify whether a real objection exists.',
+    defaultNextQuestion:
+      'Just so I don\'t keep you on the phone unnecessarily, is it mainly because you\'re handling the job search yourself, or is it about timing right now?',
+  },
+
+  'explicit-refusal': {
+    id: 'explicit-refusal',
+    name: 'Explicit Refusal / Do-Not-Contact',
+    description: 'Candidate explicitly demands to stop calls, remove number, or firmly refuses further contact.',
+    examplePhrases: [
+      "Please stop calling",
+      "Don't call me again",
+      "Remove my number",
+      "Take me off your list",
+      "Do not contact me",
+      "I already said I'm not interested",
+      "I'm definitely not interested",
+      "Don't ask me again",
+      "I'm not interested and I don't want to discuss it",
+      "Please stop calling me.",
+      "don't call me again",
+      "remove my number",
+      "take me off your list",
+    ],
+    hiddenConcernPatterns: [
+      'Explicit demand for contact cessation',
+      'Zero openness to further dialogue',
+    ],
+    prohibitedResponsePatterns: [
+      "DO NOT ask any secondary questions or diagnostic probes.",
+      "DO NOT perform any sales pitch or persuasion.",
+      "DO NOT push back or argue in any way.",
+    ],
+    mappingScriptIds: [
+      '/docs/objections/explicit-refusal#roleplay-1',
+      '/docs/objections/explicit-refusal#roleplay-2',
+      '/docs/objections/explicit-refusal#roleplay-3',
+    ],
+    whyItWorks:
+      'Acknowledges explicit candidate refusal immediately with zero persuasion, zero secondary questions, and a clean professional exit.',
+    defaultNextQuestion: '',
   },
 }

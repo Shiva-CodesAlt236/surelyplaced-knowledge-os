@@ -24,6 +24,7 @@ export async function POST(request: Request) {
     const objectionText = body?.objectionText || body?.input || ''
     const advisorIdRaw = body?.advisorId || body?.advisorIdentifier
     const contextModuleId = body?.contextModuleId
+    const previousObjectionId = body?.previousObjectionId
     let sessionId = body?.sessionId
 
     if (typeof objectionText !== 'string' || !objectionText.trim()) {
@@ -84,7 +85,10 @@ export async function POST(request: Request) {
     }
 
     // 1. Run grounded AI reasoning pipeline
-    const pipelineResponse = await runCopilotPipeline(objectionText)
+    const pipelineResponse = await runCopilotPipeline(objectionText, {
+      contextModuleId,
+      previousObjectionId,
+    })
 
     // 2. Attempt runtime persistence if DATABASE_URL is available
     if (process.env.DATABASE_URL) {

@@ -20,6 +20,7 @@ export interface CopilotRequest {
   contextModuleId?: string
   advisorId?: string
   sessionId?: string
+  previousObjectionId?: string
 }
 
 export interface CopilotResponseLevelOption {
