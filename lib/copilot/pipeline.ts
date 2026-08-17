@@ -393,6 +393,7 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'fake placement', 'success stories',
       'real recruiters', 'real success',
       'proof that', 'proof this', 'need proof before', 'need proof of placement', 'need proof of results',
+      'placement guarantee', 'job guarantee', 'guarantee me', 'guarantee a job',
       'placements are real',
     ]
     const hasTrustContext = trustQuestioningContext.some((t) => text.includes(t))
@@ -559,6 +560,10 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'need proof before',
       'need proof of placement',
       'proof before paying',
+      'placement guarantee',
+      'job guarantee',
+      'guarantee me',
+      'guarantee a job',
       'bad experience',
       'legitimate',
       'placements are real',
