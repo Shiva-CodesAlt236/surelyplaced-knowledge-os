@@ -4,9 +4,9 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 5D Complete — Classification Precision Sprint Verified — Level B Pilot Continues
+**Current Phase:** Phase 5E Complete — Compound Classifier Hardening Verified — Level B Pilot Continues
 **Branch:** `feature/sales-copilot-mvp`
-**Authoritative Implementation Freeze SHA:** `cf3e9a4a5f88951244d1fa3c2d8b7bcd06b2543c`
+**Authoritative Implementation Freeze SHA:** `4c991092dd6360dff0d2bc006129b45fc34e7219`
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
 ---
@@ -17,11 +17,11 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
 
 ### Active Components & Modules:
 - `lib/scripts-registry.ts`: Primary scripts registry (396 entries across 8 modules).
-- `lib/copilot/objection-categories.ts`: Objection taxonomy metadata.
+- `lib/copilot/objection-categories.ts`: Objection taxonomy metadata (10 active categories with expanded example phrases).
 - `lib/copilot/scripts-library-adapter.ts`: Read-only query layer bridging Sales Copilot to `SCRIPTS_REGISTRY`.
 - `lib/copilot/confidence.ts`: Multi-signal confidence reconciliation engine.
 - `lib/copilot/content-scanner.ts`: Direct final-output content safety scanner (`scanContentSafety`).
-- `lib/copilot/pipeline.ts`: Server-side grounded reasoning pipeline with Phase 5D precision filters.
+- `lib/copilot/pipeline.ts`: Server-side grounded reasoning pipeline with Phase 5E compound classification & hardening rules.
 - `lib/copilot/limits.ts`: Canonical application limits (`MAX_OBJECTION_TEXT_LENGTH = 4000`).
 - `lib/copilot/advisor.ts`: Advisor attribution normalization & validation utilities (`surelyplaced_advisor_identifier`).
 - `lib/copilot/session.ts`: Session storage continuity & stale session recovery helpers (`surelyplaced_copilot_session_id`).
@@ -72,6 +72,12 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
 - Test Suite Truthfulness & Reclassification: `scripts/test-copilot-phase5a.mjs` executes 13 total assertions: 1 unit/constant assertion (`MAX_OBJECTION_TEXT_LENGTH === 4000`), 3 real server route tests (4000 chars accepted, 4001 chars rejected, empty input rejected), and 9 static source assertions (sanitized outcome 500, no client provider import, no browser fallback, feedback throw guard, PII warning, client maxLength, visible not-persisted banner, OutcomeRecorder disabled behavior, valid feedback Content-Type header).
 - Zero Database Schema / Dependency Changes: Zero changes made to `lib/db/`, `drizzle/`, `package.json`, `pnpm-lock.yaml`, or database persistence functions.
 
+### Phase 5B Deployment & Protection Architecture:
+- Path A Vercel Authentication Architecture: Standard Vercel Deployment Protection ("Vercel Authentication") enabled on target Preview deployment (`https://surelyplaced-knowledge-h6vflq3io-spartans-53e3.vercel.app` / `dpl_GR7zUFyFac3PxuQwXDzK6pwwx9xh`). Anonymous requests to `/`, `/docs/scripts`, `/api/copilot`, `/api/copilot/feedback`, `/api/copilot/outcome` receive HTTP `302 Found` redirects to Vercel SSO challenge before application execution.
+- Non-Production Database Isolation: Target Preview verified against a non-production Neon database (`COPILOT_DB_ENV=preview`). Zero live CRM or production database connections.
+- Automation Bypass Security & Credential Rotation: Protection Bypass for Automation enabled in project settings. During initial operational testing, one exposed bypass secret was immediately revoked/invalidated and replaced. All 3/3 Preview Playwright tests executed successfully using the regenerated credential. Zero secret values committed to repository.
+- Operational Verification Suite: Local Playwright 8/8 PASSED; Preview Playwright 3/3 PASSED (0 failed, 0 flaky, 0 skipped); content audit 376 scripts / 1698 fields / 14 findings / 320 hints triaged by product owner as 14/14 acceptable context (0 content remediation required); two-advisor manual smoke PASSED (`phase5b-manual-advisor-a` `active` session `ef26b969...` vs `phase5b-manual-advisor-b` `completed` session `2e3326aa...`) with 100% session, exchange, and feedback isolation; operational privacy briefing delivered and acknowledged.
+
 ### Phase 5C Live Objection Coverage & Classification Quality Hotfix Architecture:
 - Taxonomy Expansion: Added 4 new objection categories (`upfront-payment-resistance`, `information-request-deferral`, `not-interested`, `explicit-refusal`) and activated 1 existing content-backed category (`already-working-with-consultancy`). `call-me-later` and `pay-after-placement-only` remain variants under existing taxonomy and were NOT made separate categories.
 - Primary Live Issue Fixes: (1) "I don't want to pay any upfront" — formerly Classification Deferred, now `upfront-payment-resistance`. (2) "Can you please email me the details so that I can review them and get back to you?" — formerly Classification Deferred, now `information-request-deferral`. (3) "I want to try on my own for some time" — formerly `need-time-to-think` primary, now correctly `already-applying-myself` primary. (4) Soft vs hard "not interested" behavior implemented. (5) Deterministic response differentiation improved across all categories.
@@ -84,12 +90,6 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
 - Frozen Areas: Zero schema changes, zero migration changes, zero persistence-layer changes, zero dependency changes, zero auth/Vercel architecture changes, zero Level-B protection changes, zero release-document changes during implementation.
 - Phase 5C Commit History: `713ada31f0cc0e8565109cbd7007452e51e1c058` feat(copilot): expand live objection classification coverage; `0dfbf8cf15901d79c045d51dc08341b99befbab3` test(copilot): add phase5c live objection regressions; `be72636aee4b8e8021500f47eceb6922d7d391bc` fix(copilot): refine near-miss keyword precision in pipeline classification; `f8142f8edad45e5784e6baab157e62d48f80da34` fix(copilot): make explicit-refusal responses name-neutral and truthful.
 - Operational Verification Suite: Phase 5C 73/73 PASS; Phase 3 35/35 PASS; Phase 4A 37/37 PASS; Phase 5A 13/13 PASS; Lint PASS (0 errors, 0 warnings); Typecheck PASS (0 errors); Local Playwright 8/8 was executed and reported PASS by Antigravity (Claude could not independently rerun Chromium due to sandbox browser download restrictions); Preview Playwright was NOT RERUN for Phase 5C because current replacement automation bypass secret was not available in the Antigravity verification runtime (historical Phase 5B Preview result remains 3/3 PASS); content audit 396 scripts / 1806 text fields / 14 findings / 348 hint items; 14 scanner/audit findings remain, all pre-existing and already triaged as acceptable context; Phase 5C introduced 0 new findings.
-
-### Phase 5B Deployment & Protection Architecture:
-- Path A Vercel Authentication Architecture: Standard Vercel Deployment Protection ("Vercel Authentication") enabled on target Preview deployment (`https://surelyplaced-knowledge-h6vflq3io-spartans-53e3.vercel.app` / `dpl_GR7zUFyFac3PxuQwXDzK6pwwx9xh`). Anonymous requests to `/`, `/docs/scripts`, `/api/copilot`, `/api/copilot/feedback`, `/api/copilot/outcome` receive HTTP `302 Found` redirects to Vercel SSO challenge before application execution.
-- Non-Production Database Isolation: Target Preview verified against a non-production Neon database (`COPILOT_DB_ENV=preview`). Zero live CRM or production database connections.
-- Automation Bypass Security & Credential Rotation: Protection Bypass for Automation enabled in project settings. During initial operational testing, one exposed bypass secret was immediately revoked/invalidated and replaced. All 3/3 Preview Playwright tests executed successfully using the regenerated credential. Zero secret values committed to repository.
-- Operational Verification Suite: Local Playwright 8/8 PASSED; Preview Playwright 3/3 PASSED (0 failed, 0 flaky, 0 skipped); content audit 376 scripts / 1698 fields / 14 findings / 320 hints triaged by product owner as 14/14 acceptable context (0 content remediation required); two-advisor manual smoke PASSED (`phase5b-manual-advisor-a` `active` session `ef26b969...` vs `phase5b-manual-advisor-b` `completed` session `2e3326aa...`) with 100% session, exchange, and feedback isolation; operational privacy briefing delivered and acknowledged.
 
 ### Phase 5D Live Classification Precision Architecture:
 - Purpose: Phase 5D was a narrow live-quality precision sprint based on advisor feedback. It focused on hard explicit-refusal coverage, contextual false-positive reduction, false-negative phrase coverage across all 10 categories, compound objection quality, and deterministic classifier precision. It was NOT a taxonomy expansion, content authoring sprint, schema change, persistence change, UI change, Level C launch, or Production launch.
@@ -123,6 +123,73 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
   - Scripts Registry Audit: 396 scripts / 1806 text fields / 14 findings / 348 registry hint items.
   - 14 pre-existing scanner/audit findings remain triaged as acceptable context. Phase 5D introduced **0 new content findings** because zero MDX files or registry entries were modified.
   - Source of Truth preserved: `content/docs/objections/*.mdx` = authoring source; `lib/scripts-registry.ts` = generated runtime source.
+
+### Phase 5E Compound Objection Precision & Classifier Hardening Architecture:
+- Purpose: Phase 5E was a focused deterministic classifier-hardening sprint addressing compound objection precision, secondary-objection recall, natural-language phrase robustness, explicit-refusal/DNC coverage, family-approval phrase symmetry, price informational false positives, trust informational false positives, consultancy recall, contextual not-interested coverage, and intentional substantive-over-soft-not-interested ranking.
+- Explicit Non-Goals: Phase 5E was NOT a taxonomy expansion, confidence-engine redesign, severity-weight change, secondary-margin change, schema change, persistence change, UI change, content-authoring sprint, Level C launch, or Production launch.
+- Locked Product Owner Decisions:
+  - Decision A: `"What is the price?"` → unclassified informational (NOT `price-objection`, NOT automatically `information-request-deferral`).
+  - Decision B: `"What does the fee include?"` → unclassified informational.
+  - Decision C: `"I'm not interested because it's expensive."` → substantive objection (`price-objection`) intentionally outranks soft `not-interested`. General policy: substantive objection outranks soft `not-interested` when both are genuinely present.
+  - Decision D: `"I'm not interested in paying upfront."` → `upfront-payment-resistance` remains primary. Explicit-refusal remains absolute override.
+- Taxonomy & Scoring Engine Freeze:
+  - Taxonomy: Unchanged at 10 categories (no categories added or removed).
+  - Confidence Engine: Unchanged (`lib/copilot/confidence.ts` frozen; formula, thresholds HIGH/MEDIUM, reconciliation architecture untouched).
+  - Severity Weights: Unchanged (`SEVERITY_WEIGHTS` frozen; ranking rules implemented via explicit routing logic, not weight manipulation).
+  - Secondary Signals: Validity floor (>0.35) and secondary margin (<=0.35) unchanged.
+- Hard Refusal Expansion & Contextual Safety:
+  - DNC Wording Expansion: Natural refusal wording expanded (`"Please don't reach out again"`, `"Do not reach out to me again"`, `"Stop reaching out"`, `"Take me off the calling list"`, `"Delete my contact"`, `"Remove me from your database"`, `"Don't text me anymore"`, `"Stop texting me"`, `"No more calls"`, `"I've told you before, stop calling"`).
+  - Hard-Refusal Behavior: No persuasion, no secondary objections, empty `nextQuestion`.
+  - Tech-Context Local Guard (Correction #2): Refusal wording targeting technical objects (`"Stop calling the API"`, `"Don't call this function again"`, `"Stop the screen share"`, `"Stop the application"`) is suppressed ONLY when no independent person-directed DNC statement exists. Mixed statements with candidate-directed refusal (`"Stop calling the API and don't contact me again"`) remain `explicit-refusal`.
+- Typed Family Decision Phrase Family:
+  - Implemented typed deterministic template generator `generateFamilyDecisionKeywords()` (Correction #1) with interaction templates (`"talk to my {family}"`, `"discuss with my {family}"`), subject templates (`"my {family} has to approve"`, `"my {family} needs to agree"`), and context templates (`"{family} approval"`). Avoided blind Cartesian generation.
+  - Symmetric Family Precision: Positives now reliably classify (`"My wife has to approve this"`, `"My husband needs to agree before I enroll"`, `"My parents want to decide together"`, `"I have to check with my family"`, `"My spouse wants to review the plan"`, `"My father handles these decisions"`, `"I need to discuss it with my spouse"`). Near-miss negatives remain protected (`"My wife applied yesterday"`, `"My husband works in IT"`, `"My parents need a flight ticket"`, `"My spouse works at Google"`, `"My spouse needs a vacation"`, `"My parents live in India"`).
+- DIY + Time Compound Gap Resolution:
+  - Compound input *"I want to try myself for another month, then I'll think about your program."* now classifies as `already-applying-myself` primary + `need-time-to-think` secondary.
+  - Expanded delay phrase coverage (`"give me a few days"`, `"give me some days"`, `"then decide"`, `"think about your program"`, `"call me after that"`, `"circle back"`, `"reach out next month"`).
+  - Preserved task-timing near-miss protection (`"interview is next month"` -> NOT timing) unless an independent genuine sales delay signal co-exists (`"My interview is next month, so call me after that"` -> `need-time-to-think`, Correction #3).
+- Price & Trust Informational Precision:
+  - Price Informational Guard: Bare pricing/cost/fee terms in factual questions (`"What is the price?"`, `"What does the fee include?"`, `"Send me the price"`, `"My project has a cost field"`, `"The API returns a price"`, `"My employer gives me a training budget"`, `"The database has a price field"`, `"The product has a pricing issue in the database"`) score 0 for `price-objection` and stay unclassified. Genuine price objections (`"This is too expensive"`, `"I can't afford this"`, `"My budget is too low"`) score high for `price-objection`.
+  - Trust Contextual Guard: Bare terms `real`, `proof`, `guarantee`, `reviews` no longer trigger trust alone (`"I have real work experience"`, `"This is a real interview"`, `"I work on real-time projects"`, `"I need proof of address"`, `"Can you guarantee delivery by Friday?"`, `"I read reviews for this course"` -> unclassified/neutral). Genuine credibility questions (`"How do I know this is genuine?"`, `"Is this legitimate?"`, `"I was scammed before"`, `"I don't trust placement companies"`, `"Can you prove this actually works?"`) score high for `trust-and-credibility`.
+  - Placement-Guarantee Follow-Up Fix: Follow-up commit `4c991092dd6360dff0d2bc006129b45fc34e7219` (`fix(copilot): include placement guarantee keywords in trust precision guard`) added targeted placement/job-guarantee keywords to trust context without reopening neutral guarantee false positives (`"Can you guarantee delivery by Friday?"` stays neutral). Local Journey E input `"Can you explain the placement guarantee?"` classifies as `trust-and-credibility`.
+- Upfront, Info-Request & Consultancy Precision:
+  - Upfront: Expanded advance payment & pay-after coverage (`advance payment`, `pay before results`, `pay before placement`, `pay after placement`, `pay after getting a job`, `pay after joining`, `pay once earning`, `paying anything upfront`). Preserved neutral payment near-misses (`"I paid my apartment upfront"`).
+  - Info-Request: Expanded written material requests (`Send me the agreement`, `Email me the agreement`, `Send me the pricing`, `Send me the pricing breakdown`, `Send me the brochure`, `Send me the proposal`, `Send me the plan details`, `Send me everything in writing`). Pure pricing questions remain unclassified.
+  - Consultancy: Expanded competitor terms (`already hired a recruiter`, `placement agency`, `another agency marketing profile`, `another career service`, `another recruiter helping`, `already paid another company`, `already enrolled elsewhere`, `another placement company`). Preserved neutral employment exclusions (`"I work at a consultancy"`, `"My recruiter works for another company"`).
+- Substantive-Over-Soft-Not-Interested Primary Ranking:
+  - Explicit ranking rule in `pipeline.ts` (Step 4.5) promotes a substantive valid signal (>0.35) over soft `not-interested` (Correction #4).
+  - Examples: `"I'm not interested because it's too expensive"` -> `price-objection` primary; `"I'm not interested because I already have another consultancy"` -> `already-working-with-consultancy` primary; `"I'm not interested because I don't trust consultancies"` -> `trust-and-credibility` primary; `"I'm not interested because I need to talk to my wife"` -> `parents-spouse-approval` primary; `"I'm not interested, I want to try myself"` -> `already-applying-myself` primary. Bare `"I'm not interested"` -> `not-interested` primary. Explicit refusal overrides everything.
+- Verification Matrix & Test Truth:
+  - Phase 3 Reasoning & Safety Suite: **35/35 PASS**
+  - Phase 4A Schema & Client Suite: **37/37 PASS**
+  - Phase 5A Pilot Correctness Suite: **13/13 PASS**
+  - Phase 5C Live Objection Hotfix Suite: **73/73 PASS**
+  - Phase 5D Precision & Regression Suite: **170/170 PASS**
+  - Phase 5E Classifier Hardening Suite: **214/214 PASS**
+  - *Test-Quality Nuance:* 214/214 is truthful assertion count. Approx 13 compound assertions use `A OR B primary` pattern without explicitly confirming secondary presence. Carried as SHOULD-FIX future test-hardening work.
+  - Code Quality: `pnpm lint` **PASS** (0 errors, 0 warnings); `npx tsc --noEmit` **PASS** (0 errors).
+- Playwright E2E & Content Audit Provenance:
+  - *Antigravity Local Playwright:* **8/8 PASS** (Journeys A through H verified against local dev server and non-production Neon database).
+  - *Claude Playwright Verification Stance:* Not independently reproducible by Claude in verification environment due to network allowlist 403 blocks during Chromium download (`403 Connection blocked by network allowlist`).
+  - *Preview Playwright Stance for Phase 5E:* NOT RERUN — current replacement automation bypass secret was not available in runtime environment. Historical Phase 5B Preview result remains 3/3 PASS.
+  - *Content Audit & Source of Truth:* 396 scripts / 1806 text fields / 14 findings / 348 registry hint items. 14 pre-existing scanner findings remain triaged as acceptable context. Phase 5E introduced **0 new content findings** because zero MDX files or registry entries were modified. `content/docs/objections/*.mdx` = authoring source; `lib/scripts-registry.ts` = generated runtime source. Grounded response architecture unchanged.
+- Implementation Scope:
+  - Changed paths: `lib/copilot/objection-categories.ts`, `lib/copilot/pipeline.ts`, `scripts/test-copilot-phase5e.mjs`.
+  - Zero changes to schema, migrations, persistence, UI, API contract files, MDX, scripts registry, dependencies, Vercel/auth, deployment.
+- Policy Safety & Response Grounding:
+  - All outputs remain registry-backed. No free-form AI response generation. Zero unauthorized discounts, zero-upfront promises, pay-after-placement promises, ISAs, refund guarantees, job guarantees, visa guarantees, proxy interviews, or fake experience.
+- Phase 5E Non-Blocking / Should-Fix Items:
+  - *Trust Substring Collision (Should-Fix):* `"approve this"` contains `"prove this"`. In `"My wife has to approve this"`, primary is correctly `parents-spouse-approval`, but may produce a spurious `trust-and-credibility` secondary. Anchor/refine trust phrase in future hardening.
+  - *Secondary-Selection After Primary Promotion (Should-Fix):* Step 4.5 promotes a substantive category over `not-interested`. Later secondary logic assumes `sortedSignals[0]` is primary, so `not-interested` may be skipped as secondary.
+  - *Compound Test Quality Refinement (Should-Fix):* Approx 13 compound Phase 5E assertions use `A OR B primary` without confirming secondary presence.
+  - *Reversed Guarantee Wording (Non-Blocking):* `"Do you guarantee placement?"` remains unclassified due to reversed wording.
+  - *Info+Time Secondary Surface (Non-Blocking):* `"Email the pricing and I'll decide next week."` identifies `information-request-deferral` primary but may not surface `need-time-to-think` secondary.
+  - *Family Generator Readability (Non-Blocking):* Family typed-template generator includes singular/plural suffix variations (some grammatically odd match strings, zero false-positive impact).
+- Phase 5E Commit History:
+  - Commit 1: `ee8f3f88bb9108f11f38344e84766de0e9493308` `fix(copilot): improve phase5e compound classification precision`
+  - Commit 2: `4d07453758afea9aa103310c87ec7200dc8f5d17` `test(copilot): add phase5e classifier hardening regressions`
+  - Commit 3: `4c991092dd6360dff0d2bc006129b45fc34e7219` `fix(copilot): include placement guarantee keywords in trust precision guard`
+  - Authoritative Phase 5E implementation freeze SHA: `4c991092dd6360dff0d2bc006129b45fc34e7219`.
 
 ---
 
@@ -245,11 +312,21 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
   - Commit 4: `cf3e9a4a5f88951244d1fa3c2d8b7bcd06b2543c` `fix(copilot): restore spouse approval secondary detection`
   - Implementation verified and frozen at SHA: `cf3e9a4a5f88951244d1fa3c2d8b7bcd06b2543c`.
 
+- [x] **Phase 5E — Compound Objection Precision & Classifier Hardening — COMPLETE**
+  - Commit 1: `ee8f3f88bb9108f11f38344e84766de0e9493308` `fix(copilot): improve phase5e compound classification precision`
+  - Commit 2: `4d07453758afea9aa103310c87ec7200dc8f5d17` `test(copilot): add phase5e classifier hardening regressions`
+  - Commit 3: `4c991092dd6360dff0d2bc006129b45fc34e7219` `fix(copilot): include placement guarantee keywords in trust precision guard`
+  - Phase 5E regression & hardening suite: 214/214 PASS; Phase 3/4A/5A/5C/5D suites: 328/328 PASS (542/542 total assertions PASS).
+  - Code Quality: `pnpm lint` 0 errors, 0 warnings; `npx tsc --noEmit` 0 errors.
+  - Local Playwright 8/8 PASS; Preview Playwright not rerun for Phase 5E (bypass secret unavailable).
+  - Content audit: 396 scripts / 1806 fields / 14 findings / 348 hints; 0 new Phase 5E content findings.
+  - Implementation verified and frozen at SHA: `4c991092dd6360dff0d2bc006129b45fc34e7219`.
+
 ---
 
 ## Current Release Stance
 
-**PHASE 5D IMPLEMENTATION VERIFIED AND FROZEN.**
+**PHASE 5E IMPLEMENTATION VERIFIED AND FROZEN.**
 
 **LEVEL B CONTROLLED INTERNAL ADVISOR PILOT CONTINUES.**
 
@@ -279,6 +356,9 @@ The following items are deferred to future Level C / post-pilot phases and do NO
 7. **Observability & Telemetry:** Implement production telemetry, error monitoring, and reasoning performance metrics.
 8. **Transactional & Idempotency Hardening:** Add transactional database operations for multi-step exchange/feedback flows.
 9. **Production Launch Planning:** Establish full production infrastructure, domain routing, and go-live deployment procedures.
-10. **Phase 5C Classifier Precision Hardening (Should-Fix, Non-Blocking):** Add contextual exclusion / near-miss guard for unrelated uses of "not interested" that are not actual sales disengagement. Example: "I'm not interested in changing my resume format" currently classifies as `not-interested` at high confidence because the bare phrase matches without enough semantic context. This is a deferred hardening item, not a Level-B blocker.
-11. **Compound DIY + Timing Secondary Recognition (Non-Blocking):** Compound input *"I want to try myself for another month, then I'll think about your program."* classifies `already-applying-myself` as primary, but `need-time-to-think` is not surfaced as secondary because the classifier covers "think about it" more directly than "think about your program." Accepted as a non-blocking future precision refinement.
+10. **Resume-Format Disinterest Contextual Guard (RESOLVED IN PHASE 5D):** Contextual not-interested exclusions now prevent resume-format disinterest ("I'm not interested in changing my resume format") from being treated as sales disengagement.
+11. **Compound DIY + Timing Secondary Recognition (RESOLVED IN PHASE 5E):** Compound input *"I want to try myself for another month, then I'll think about your program"* now classifies as `already-applying-myself` primary + `need-time-to-think` secondary.
 12. **Dead Classifier Function Cleanup (Non-Blocking):** `findMatchingObjectionCategory` in `lib/copilot/pipeline.ts` remains uncalled technical debt with 0 call sites. Kept as non-blocking cleanup.
+13. **Trust Substring Collision Refinement (Should-Fix, Non-Blocking):** `"approve this"` contains `"prove this"`. In `"My wife has to approve this"`, primary is correctly `parents-spouse-approval`, but may produce a spurious `trust-and-credibility` secondary. Anchor/refine trust phrase in future hardening.
+14. **Secondary-Selection After Primary Promotion (Should-Fix, Non-Blocking):** Step 4.5 promotes a substantive category over `not-interested`. Later secondary logic assumes `sortedSignals[0]` is primary, so `not-interested` may be skipped as secondary.
+15. **Compound Test Quality Refinement (Should-Fix, Non-Blocking):** Approx 13 compound Phase 5E assertions use `A OR B primary` without explicitly confirming secondary presence. Future test-hardening should strengthen these assertions.
