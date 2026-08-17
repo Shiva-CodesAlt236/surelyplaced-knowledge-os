@@ -23,7 +23,7 @@ const SEVERITY_WEIGHTS: Record<string, number> = {
   'need-time-to-think': 0.95,
 }
 
-// Explicit Hard Refusal Patterns for Deterministic Pre-Check (Phase 5D Expanded Coverage)
+// Explicit Hard Refusal Patterns for Deterministic Pre-Check (Phase 5E Expanded DNC Coverage)
 const HARD_REFUSAL_PATTERNS = [
   'stop calling',
   "don't call me",
@@ -62,7 +62,98 @@ const HARD_REFUSAL_PATTERNS = [
   "already said i'm not interested",
   "already said im not interested",
   "already said i am not interested",
+  // Phase 5E DNC Natural Wording Expansion
+  "don't reach out again",
+  "dont reach out again",
+  'do not reach out again',
+  "don't reach out to me",
+  "dont reach out to me",
+  'do not reach out to me',
+  'stop reaching out',
+  "don't text me anymore",
+  "dont text me anymore",
+  'do not text me anymore',
+  "don't text me again",
+  "dont text me again",
+  'do not text me again',
+  'stop texting me',
+  'no more calls',
+  'take me off the calling list',
+  'delete my contact',
+  'remove me from your database',
+  'remove me from the database',
 ]
+
+// Phase 5E: Tech-context indicators that can make ambiguous refusal patterns non-person-directed
+const TECH_CONTEXT_INDICATORS = [
+  'the api', 'this api', 'an api',
+  'this function', 'the function', 'a function',
+  'the screen share', 'screen share',
+]
+
+// Phase 5E: Person-directed signals that override tech-context suppression
+const PERSON_DIRECTED_REFUSAL_SIGNALS = [
+  'contact me', 'reach out to me', 'reach out again',
+  'message me', 'text me', 'call me', 'calling me',
+  'my number', 'my contact', 'your list', 'the calling list',
+  'your database', 'the database', 'off your list', 'off list',
+  'off the list', "don't contact", 'do not contact',
+  "don't message", 'do not message', "don't reach out",
+  'do not reach out', 'stop contacting', 'stop messaging',
+  'stop reaching', 'no more calls', 'remove my',
+  'delete my', 'take me off',
+]
+
+/**
+ * Phase 5E: Generate family decision keywords from typed deterministic templates.
+ * Uses interaction templates ("talk to my {family}") and subject templates ("my {family} has to approve")
+ * to produce auditable, grammatically valid combinations with symmetric family coverage.
+ */
+function generateFamilyDecisionKeywords(): string[] {
+  const familyNouns = ['parents', 'parent', 'wife', 'husband', 'spouse', 'father', 'mother', 'family']
+  const keywords: string[] = []
+
+  // Interaction templates: "... my {family}"
+  const interactionPrefixes = [
+    'talk to my', 'talk with my', 'talking to my',
+    'discuss with my', 'discuss it with my', 'discuss them with my',
+    'ask my', 'check with my',
+  ]
+  for (const prefix of interactionPrefixes) {
+    for (const noun of familyNouns) {
+      keywords.push(`${prefix} ${noun}`)
+    }
+  }
+
+  // Family-as-subject templates: "my {family} ..."
+  // Include both singular and plural verb forms for coverage
+  const subjectSuffixes = [
+    'has to approve', 'have to approve',
+    'needs to approve', 'need to approve',
+    'needs to agree', 'need to agree',
+    'wants to review', 'want to review',
+    'wants to decide', 'want to decide',
+    'handles these decisions', 'handle these decisions',
+    'handles the decision', 'handle the decision',
+    'will decide',
+    "won't agree", 'wont agree',
+    "won't approve", 'wont approve',
+  ]
+  for (const noun of familyNouns) {
+    for (const suffix of subjectSuffixes) {
+      keywords.push(`my ${noun} ${suffix}`)
+    }
+  }
+
+  // Context/noun templates (separately scoped)
+  for (const noun of familyNouns) {
+    keywords.push(`${noun} approval`)
+    keywords.push(`${noun} permission`)
+  }
+  keywords.push('family decision')
+
+  return [...new Set(keywords)] // deduplicate
+}
 
 /**
  * Calculates candidate match score for a given category based on phrase matching and keyword density.
@@ -80,6 +171,16 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     const matchesHardRefusal = HARD_REFUSAL_PATTERNS.some((pat) => text.includes(pat))
     if (!matchesHardRefusal) {
       return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+    // Phase 5E: Tech-context local guard (Correction #2)
+    // Only suppress when ALL matched refusal wording targets a technical object
+    // and no independent person-directed DNC statement exists
+    const hasTechContext = TECH_CONTEXT_INDICATORS.some((t) => text.includes(t))
+    if (hasTechContext) {
+      const hasPersonDirected = PERSON_DIRECTED_REFUSAL_SIGNALS.some((p) => text.includes(p))
+      if (!hasPersonDirected) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
     }
   }
 
@@ -114,6 +215,13 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
         'using your service',
         'this consultancy',
         'your consultancy',
+        // Phase 5E: Sales-object coverage expansion
+        'the premium package',
+        'your elite plan',
+        'this placement service',
+        'this opportunity',
+        'continuing',
+        'proceeding',
       ]
       const hasAllowedTarget = allowedTargets.some((target) => text.includes(`not interested in ${target}`))
       if (!hasAllowedTarget) {
@@ -122,12 +230,13 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     }
   }
 
-  // 3. Parents / Spouse Approval Decision Context Guard (Section 24 & Phase 5D.1 Tightening)
+  // 3. Parents / Spouse Approval Decision Context Guard (Phase 5E Symmetric Family Coverage)
   if (categoryId === 'parents-spouse-approval') {
     const familyWords = ['parents', 'parent', 'spouse', 'husband', 'wife', 'father', 'mother', 'family']
     const hasFamilyWord = familyWords.some((w) => text.includes(w))
     if (hasFamilyWord) {
-      // Loose 'need' removed per Section 7 for clean defense-in-depth ("My spouse needs a vacation" stays NOT family approval)
+      // Decision verbs/concepts that signal family-approval context
+      // Loose 'need' excluded per Phase 5D.1 ("My spouse needs a vacation" stays NOT family approval)
       const decisionVerbs = [
         'talk',
         'discuss',
@@ -142,8 +251,10 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
         'handles',
         'approval',
         'wants to',
+        'want to',
         'won\'t',
         'wont',
+        'check with',
       ]
       const hasDecisionContext = decisionVerbs.some((v) => text.includes(v))
       if (!hasDecisionContext) {
@@ -196,7 +307,7 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     }
   }
 
-  // 6. Need-Time-To-Think Non-Sales Task Guard (Section 18)
+  // 6. Need-Time-To-Think Non-Sales Task Guard (Phase 5E: Correction #3 — preserve genuine sales delay)
   if (categoryId === 'need-time-to-think') {
     const nonSalesTimeTerms = [
       'finish my assignment',
@@ -204,9 +315,30 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'time to cook',
       'interview time',
       'call time',
+      // Phase 5E near-miss expansion
+      'finish my coding assessment',
+      'finish the assessment',
+      'interview is next month',
+      'call lasts',
+      'lasts five minutes',
+      'few days to complete the project',
+      'few days to complete',
     ]
     if (nonSalesTimeTerms.some((t) => text.includes(t))) {
-      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      // Correction #3: Only suppress if no independent genuine sales-delay signal co-exists
+      const genuineDelaySignals = [
+        'call me after', 'call me after that', 'call after that', 'call me next', 'reach out next', 'reach out after',
+        'then decide', "then i'll decide", "then i\'ll decide",
+        'get back to you', 'think about your program', 'think about this program',
+        'decide about your program', 'decide about this',
+        'talk next month', 'circle back',
+        'decide later', 'think about it',
+        "i'll decide", "i\'ll decide",
+      ]
+      const hasGenuineDelay = genuineDelaySignals.some((d) => text.includes(d))
+      if (!hasGenuineDelay) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
     }
   }
 
@@ -215,6 +347,85 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     const nonProgramPaymentTerms = ['laptop', 'apartment', 'electricity bill', 'rent']
     if (nonProgramPaymentTerms.some((t) => text.includes(t))) {
       return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+  }
+
+  // 8. Price-Objection Factual/Informational Guard (Phase 5E Section 15)
+  if (categoryId === 'price-objection') {
+    const factualPricePatterns = [
+      'what is the price', 'what is the cost', 'what is the fee',
+      'what does the fee', 'what does the price', 'what does the cost',
+      'what are the fees', 'what are the costs',
+      'send me the price', 'send the price',
+      'has a price field', 'has a cost field', 'has a fee field',
+      'returns a price', 'returns a cost',
+      'price field', 'cost field',
+      'pricing issue in the database', 'pricing issue in the',
+      'training budget', 'project budget',
+      'the database has a price', 'the product has a pricing',
+    ]
+    const isFactualContext = factualPricePatterns.some((p) => text.includes(p))
+    if (isFactualContext) {
+      const genuinePriceObjectionMarkers = [
+        'too expensive', 'too much', 'too high', 'too low',
+        'can\'t afford', 'cannot afford', 'can\'t spend', 'cannot spend',
+        'outside my budget', 'don\'t have the budget', 'don\'t have the money',
+        'do not have the budget', 'do not have the money',
+        'no budget', 'financially difficult', 'expensive',
+      ]
+      const hasGenuineObjection = genuinePriceObjectionMarkers.some((m) => text.includes(m))
+      if (!hasGenuineObjection) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
+    }
+  }
+
+  // 9. Trust-and-Credibility Neutral Context Guard (Phase 5E Section 19)
+  if (categoryId === 'trust-and-credibility') {
+    const trustQuestioningContext = [
+      'scam', 'scammed', 'cheat', 'cheated', 'fraud',
+      'fake', 'legit', 'legitimate', 'genuine',
+      'don\'t trust', 'do not trust', 'dont trust',
+      'is this real', 'is it real', 'are real',
+      'how do i know', 'can you prove', 'prove this', 'prove that',
+      'bad experience', 'trust consultancies', 'trust placement',
+      'isn\'t a scam', 'is it a scam',
+      'fake placement', 'success stories',
+      'real recruiters', 'real success',
+      'proof that', 'proof this', 'need proof before', 'need proof of placement', 'need proof of results',
+      'placements are real',
+    ]
+    const hasTrustContext = trustQuestioningContext.some((t) => text.includes(t))
+    if (!hasTrustContext) {
+      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+  }
+
+  // 10. Already-Working-With-Consultancy Employment Context Guard (Phase 5E Section 28)
+  if (categoryId === 'already-working-with-consultancy') {
+    const employmentContext = [
+      'i work at a consultancy',
+      'i work at a consulting',
+      'i work for a consultancy',
+      'i work for a consulting',
+      'applying to consulting',
+      'applying to consultancies',
+      'my company has internal',
+      'internal recruiters',
+    ]
+    const isEmploymentContext = employmentContext.some((e) => text.includes(e))
+    if (isEmploymentContext) {
+      // Check if there's also a genuine "engaged with another service" signal
+      const genuineConsultancySignals = [
+        'another consultancy', 'another recruiter', 'another service',
+        'another company', 'enrolled somewhere else', 'paid another',
+        'hired a recruiter', 'placement agency', 'another agency',
+        'using another placement', 'hired someone for',
+      ]
+      const hasGenuineSignal = genuineConsultancySignals.some((s) => text.includes(s))
+      if (!hasGenuineSignal) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
     }
   }
 
@@ -231,7 +442,15 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
   }
 
   const keywordsMap: Record<string, string[]> = {
-    'explicit-refusal': ['stop calling', 'remove number', 'do not contact', 'stop contact', 'off your list', 'dont call', 'do not call', 'stop messaging'],
+    'explicit-refusal': [
+      'stop calling', 'remove number', 'do not contact', 'stop contact',
+      'off your list', 'dont call', 'do not call', 'stop messaging',
+      // Phase 5E DNC keyword expansion
+      'stop reaching out', 'reach out again', 'reach out to me',
+      'stop texting', 'text me anymore', 'text me again',
+      'no more calls', 'calling list', 'delete my contact',
+      'remove me from your database', 'remove me from the database',
+    ],
     'upfront-payment-resistance': [
       'pay upfront',
       'no upfront',
@@ -252,6 +471,10 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'risk money before',
       'pay before getting',
       'can i pay after',
+      // Phase 5E coverage
+      'pay before results',
+      'pay before getting placed',
+      'paying anything upfront',
     ],
     'information-request-deferral': [
       'email me the details',
@@ -271,14 +494,20 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'go through the information',
       'everything written first',
       'send me something to review',
+      // Phase 5E coverage expansion
+      'email me the agreement',
+      'send me the pricing breakdown',
+      'send me the brochure',
+      'send me the proposal',
+      'send me the plan details',
+      'send me the information',
+      'send me everything in writing',
+      'email me the details',
+      'email the pricing',
+      'email pricing',
     ],
     'price-objection': [
       'expensive',
-      'cost',
-      'price',
-      'budget',
-      'fee',
-      'discount',
       'can\'t afford',
       'cannot afford',
       'too much money',
@@ -288,18 +517,27 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'outside my budget',
       'can\'t spend that much',
       'cannot spend that much',
+      'can\'t spend this much',
+      'cannot spend this much',
       'why is it so expensive',
       'too expensive',
+      'too high',
+      'too much',
+      'too low',
+      'costs too much',
+      'financially difficult',
+      'budget is tight',
+      'price is high',
+      // Phase 5E: Removed bare 'cost', 'price', 'fee', 'budget', 'discount'
+      // to prevent factual/informational false positives.
+      // Kept in genuine objection forms above.
+      'discount',
     ],
     'trust-and-credibility': [
       'trust',
       'scam',
-      'guarantee',
-      'proof',
-      'real',
       'legit',
       'fake',
-      'reviews',
       'reputation',
       'cheated',
       'scammed',
@@ -312,6 +550,21 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'real recruiters',
       'fake placement',
       'success stories',
+      // Phase 5E: Removed bare 'guarantee', 'proof', 'real', 'reviews'
+      // to prevent neutral false positives. Kept specific compound forms.
+      'prove this',
+      'prove that',
+      'proof that',
+      'proof this',
+      'need proof before',
+      'need proof of placement',
+      'proof before paying',
+      'bad experience',
+      'legitimate',
+      'placements are real',
+      'real success',
+      'can you prove',
+      'how do i know',
     ],
     'need-time-to-think': [
       'think about it',
@@ -330,6 +583,20 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'get back to you',
       'decide tomorrow',
       'need time to decide',
+      // Phase 5E time/delay expansion
+      'give me a few days',
+      'give me some days',
+      'then decide',
+      'think about your program',
+      'think about this program',
+      'talk next month',
+      'see how things go',
+      'circle back',
+      'reach out next month',
+      'call me after that',
+      'call after that',
+      'busy today',
+      'occupied today',
     ],
     'already-applying-myself': [
       'apply on my own',
@@ -356,6 +623,12 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'give myself',
       'don\'t think i need help',
       'dont think i need help',
+      // Phase 5E: compound DIY+time support
+      'try myself for another',
+      'apply myself for',
+      'keep applying myself',
+      'manage the job search myself',
+      'continue on my own',
     ],
     'already-working-with-consultancy': [
       'another consultancy',
@@ -370,40 +643,17 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'already signed up',
       'using another placement',
       'hired someone for my job search',
+      // Phase 5E consultancy synonym expansion
+      'hired a recruiter',
+      'placement agency',
+      'marketing my profile',
+      'another career service',
+      'contract with another',
+      'another agency',
+      'enrolled elsewhere',
     ],
-    'parents-spouse-approval': [
-      'talk to my parents',
-      'talk to my spouse',
-      'talk to my husband',
-      'talk to my wife',
-      'talk to my family',
-      'father will decide',
-      'discuss it with my husband',
-      'discuss with my wife',
-      'discuss with my parents',
-      'discuss it with my father',
-      'discuss with my father',
-      'discuss it with my spouse',
-      'discuss with my spouse',
-      'talk to my spouse',
-      'ask my spouse',
-      'need to discuss it with my spouse',
-      'need to talk to my spouse',
-      'need to ask my spouse',
-      'ask my wife',
-      'ask my husband',
-      'ask my parents',
-      'family won\'t agree',
-      'family wont agree',
-      'parents won\'t agree',
-      'parents wont agree',
-      'parents need to approve',
-      'father wants to review',
-      'mother wants to review',
-      'spouse handles',
-      'family agrees',
-      'family decision',
-    ],
+    // Phase 5E: Use generated family decision keywords from deterministic templates
+    'parents-spouse-approval': generateFamilyDecisionKeywords(),
     'not-interested': [
       'not interested',
       'no thanks',
@@ -419,6 +669,13 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'not interested in signing up',
       'not interested in enrolling',
       'not interested in moving forward',
+      // Phase 5E: sales-object coverage expansion
+      'not interested in the premium package',
+      'not interested in your elite plan',
+      'not interested in this placement service',
+      'not interested in this opportunity',
+      'not interested in continuing',
+      'not interested in proceeding',
     ],
   }
 
@@ -469,9 +726,21 @@ export async function runCopilotPipeline(
     }
   }
 
-  // Step 2: Deterministic Hard Refusal Pre-Check (Section 6)
+  // Step 2: Deterministic Hard Refusal Pre-Check (Phase 5E: with local tech-context guard)
   const isHardRefusalPattern = HARD_REFUSAL_PATTERNS.some((pat) => text.includes(pat))
+  let isPersonDirectedRefusal = isHardRefusalPattern
   if (isHardRefusalPattern) {
+    // Phase 5E Correction #2: Only suppress when refusal wording targets a technical object
+    // AND no independent person-directed DNC statement exists in the same text
+    const hasTechContext = TECH_CONTEXT_INDICATORS.some((t) => text.includes(t))
+    if (hasTechContext) {
+      const hasPersonDirected = PERSON_DIRECTED_REFUSAL_SIGNALS.some((p) => text.includes(p))
+      if (!hasPersonDirected) {
+        isPersonDirectedRefusal = false
+      }
+    }
+  }
+  if (isPersonDirectedRefusal) {
     const explicitMeta = COPILOT_OBJECTION_CATEGORIES['explicit-refusal']
     const scripts = getScriptsForObjectionCategory('explicit-refusal')
     const primaryScript = scripts[0] || null
@@ -532,6 +801,19 @@ export async function runCopilotPipeline(
   }
 
   let selectedCategoryId = confidenceResult.categoryId
+
+  // Step 4.5: Phase 5E Substantive-Over-Soft-Not-Interested Ranking Rule (Correction #4)
+  // When primary is soft not-interested and a substantive valid signal exists,
+  // promote the highest-scoring substantive category to primary.
+  // NOT sort-order dependent — explicit deterministic rule.
+  if (selectedCategoryId === 'not-interested') {
+    const substantiveSignals = validSignals
+      .filter((s) => s.categoryId !== 'not-interested' && s.categoryId !== 'explicit-refusal' && s.providerScore > 0.35)
+      .sort((a, b) => b.providerScore - a.providerScore)
+    if (substantiveSignals.length > 0) {
+      selectedCategoryId = substantiveSignals[0].categoryId
+    }
+  }
 
   // Step 5: Repeated Soft-Refusal Escalation Check (Section 7)
   if (
