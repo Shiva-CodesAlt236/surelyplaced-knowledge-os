@@ -55,6 +55,10 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       "That's too much for me",
       "I have a price issue with this offer",
       "My budget is tight",
+      "don't want another fee",
+      "do not want another fee",
+      "budget is limited",
+      "my budget is limited",
     ],
     hiddenConcernPatterns: [
       'Fear of unrecovered investment',
@@ -160,6 +164,7 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       "Email me the details and I'll decide",
       "Send me everything in writing",
       "Email the pricing",
+      "Send the pricing",
     ],
     hiddenConcernPatterns: [
       'Feeling overwhelmed or rushed on live call',
@@ -211,6 +216,11 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'Do you have genuine success stories?',
       'I had a bad experience with another agency',
       'I need proof',
+      'Do you guarantee placement?',
+      'Do you guarantee placements?',
+      'Can you guarantee placement?',
+      'Do you guarantee results?',
+      'Can you guarantee interview calls?',
     ],
     hiddenConcernPatterns: [
       'Prior bad experience with recruitment consultancies',
@@ -263,6 +273,10 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'Think about your program',
       'Think about this program',
       'Call me after that',
+      'Decide next week',
+      'Decide next month',
+      'I\'ll decide next week',
+      'I\'ll decide next month',
     ],
     hiddenConcernPatterns: [
       'Unresolved hidden objection (price, spouse approval, or timing)',

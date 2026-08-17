@@ -380,8 +380,25 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     }
   }
 
-  // 9. Trust-and-Credibility Neutral Context Guard (Phase 5E Section 19)
+/**
+ * Helper to match phrases with word-boundary awareness.
+ * Prevents "prove this" from matching inside "approve this" or "improve this".
+ */
+function hasBoundaryMatch(text: string, phrase: string): boolean {
+  const pLower = phrase.toLowerCase().trim()
+  const escaped = pLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const regex = new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, 'i')
+  return regex.test(text)
+}
+
+  // 9. Trust-and-Credibility Neutral Context Guard (Phase 5E Section 19 & Phase 5F Word-Boundary Safety)
   if (categoryId === 'trust-and-credibility') {
+    // Non-program guarantee/delivery exclusions ("Can you guarantee delivery by Friday?")
+    const nonProgramTerms = ['delivery', 'shipping', 'uptime', 'flight', 'address']
+    if (nonProgramTerms.some((t) => text.includes(t))) {
+      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+    }
+
     const trustQuestioningContext = [
       'scam', 'scammed', 'cheat', 'cheated', 'fraud',
       'fake', 'legit', 'legitimate', 'genuine',
@@ -394,9 +411,21 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'real recruiters', 'real success',
       'proof that', 'proof this', 'need proof before', 'need proof of placement', 'need proof of results',
       'placement guarantee', 'job guarantee', 'guarantee me', 'guarantee a job',
+      'guarantee placement', 'guarantee placements', 'guarantee results', 'guarantee interview',
       'placements are real',
     ]
-    const hasTrustContext = trustQuestioningContext.some((t) => text.includes(t))
+
+    // Boundary-safe checking: collision-prone phrases ("prove this", "prove that", "proof this")
+    // must not match inside larger words like "approve this" or "improve this"
+    const collisionPhrases = ['prove this', 'prove that', 'proof this', 'proof that']
+
+    const hasTrustContext = trustQuestioningContext.some((t) => {
+      if (collisionPhrases.includes(t)) {
+        return hasBoundaryMatch(text, t)
+      }
+      return text.includes(t)
+    })
+
     if (!hasTrustContext) {
       return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
     }
@@ -506,6 +535,7 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'email me the details',
       'email the pricing',
       'email pricing',
+      'send the pricing',
     ],
     'price-objection': [
       'expensive',
@@ -533,6 +563,12 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       // to prevent factual/informational false positives.
       // Kept in genuine objection forms above.
       'discount',
+      // Phase 5F narrow price coverage
+      'don\'t want another fee',
+      'do not want another fee',
+      'dont want another fee',
+      'budget is limited',
+      'my budget is limited',
     ],
     'trust-and-credibility': [
       'trust',
@@ -570,6 +606,12 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'real success',
       'can you prove',
       'how do i know',
+      // Phase 5F guarantee verb phrase additions
+      'guarantee placement',
+      'guarantee placements',
+      'guarantee results',
+      'guarantee interview',
+      'guarantee interview calls',
     ],
     'need-time-to-think': [
       'think about it',
@@ -602,6 +644,11 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
       'call after that',
       'busy today',
       'occupied today',
+      // Phase 5F time additions
+      'decide next week',
+      'decide next month',
+      'i\'ll decide next week',
+      'i\'ll decide next month',
     ],
     'already-applying-myself': [
       'apply on my own',
@@ -684,9 +731,14 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     ],
   }
 
+  const collisionPhrases = ['prove this', 'prove that', 'proof this', 'proof that']
   const categoryKeywords = keywordsMap[categoryId] || []
   for (const kw of categoryKeywords) {
-    if (text.includes(kw.toLowerCase())) {
+    const kwLower = kw.toLowerCase()
+    const matches = collisionPhrases.includes(kwLower)
+      ? hasBoundaryMatch(text, kwLower)
+      : text.includes(kwLower)
+    if (matches) {
       keywordMatches += 1
     }
   }
@@ -820,6 +872,16 @@ export async function runCopilotPipeline(
     }
   }
 
+  // Step 4.6: Phase 5F Product Owner Rule for Competitor Payment + Fee Concern (Section 1, 18)
+  // "I already paid another company, so I don't want another fee."
+  // Competitor commitment is primary, fee objection is secondary.
+  if (
+    (text.includes('already paid another company') || text.includes('already paid another')) &&
+    validSignals.some((s) => s.categoryId === 'already-working-with-consultancy')
+  ) {
+    selectedCategoryId = 'already-working-with-consultancy'
+  }
+
   // Step 5: Repeated Soft-Refusal Escalation Check (Section 7)
   if (
     options.previousObjectionId === 'not-interested' &&
@@ -830,15 +892,18 @@ export async function runCopilotPipeline(
 
   const primaryCategory = COPILOT_OBJECTION_CATEGORIES[selectedCategoryId] || COPILOT_OBJECTION_CATEGORIES['explicit-refusal']
 
-  // Step 6: Extract Secondary Objections for Compound Statements
+  // Step 6: Extract Secondary Objections for Compound Statements (Phase 5F Fix #2)
   const secondaryObjections: SecondaryObjectionInfo[] = []
   if (primaryCategory.id !== 'explicit-refusal') {
     const sortedSignals = [...validSignals].sort((a, b) => b.providerScore - a.providerScore)
     if (sortedSignals.length > 1) {
       const topScore = sortedSignals[0].providerScore
-      for (let i = 1; i < sortedSignals.length; i++) {
-        const signal = sortedSignals[i]
-        if (topScore - signal.providerScore <= 0.35 && signal.categoryId !== primaryCategory.id && signal.categoryId !== 'explicit-refusal') {
+      for (const signal of sortedSignals) {
+        if (
+          signal.categoryId !== primaryCategory.id &&
+          signal.categoryId !== 'explicit-refusal' &&
+          topScore - signal.providerScore <= 0.35
+        ) {
           const catMeta = COPILOT_OBJECTION_CATEGORIES[signal.categoryId]
           if (catMeta) {
             secondaryObjections.push({
