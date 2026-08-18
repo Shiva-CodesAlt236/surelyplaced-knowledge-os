@@ -265,6 +265,204 @@ async function runPhase5FTests() {
     assert(rA.recommendedResponse === rB.recommendedResponse, 'Determinism 2: recommendedResponse stable');
   }
 
+  // --- 9. Phase 5F.1: SUB2/SUB3 Step 4.5 Promotion Coverage (previously missing) ---
+  console.log('\n--- 9. SUB2/SUB3 Step 4.5 Promotion Coverage ---');
+  {
+    const sub2 = await runCopilotPipeline("I'm not interested because I already have another consultancy.");
+    assert(sub2.objectionId === 'already-working-with-consultancy', 'SUB2: Primary is already-working-with-consultancy');
+    const sub2Sec = sub2.secondaryObjections?.map((s) => s.objectionId) || [];
+    assert(sub2Sec.includes('not-interested'), 'SUB2: not-interested is secondary');
+
+    const sub3 = await runCopilotPipeline("I'm not interested because I don't trust consultancies.");
+    assert(sub3.objectionId === 'trust-and-credibility', 'SUB3: Primary is trust-and-credibility');
+    const sub3Sec = sub3.secondaryObjections?.map((s) => s.objectionId) || [];
+    assert(sub3Sec.includes('not-interested'), 'SUB3: not-interested is secondary');
+  }
+
+  // --- 10. Phase 5F.1 Blocker 1: nonProgramTerms Trust Guard Adversarial Matrix ---
+  console.log('\n--- 10. nonProgramTerms Trust Guard Adversarial Matrix (A1-A13) ---');
+  {
+    const trustMustSurface = [
+      ['A1', 'I was scammed before and I need proof of address.'],
+      ['A2', "I don't trust this company, and separately I need help with my address."],
+      ['A3', 'How do I know this is genuine? Also, can you guarantee delivery by Friday?'],
+      ['A4', 'I was cheated before; can you guarantee shipping by Monday?'],
+      ['A5', 'This looks fake, and my address also needs updating.'],
+      ['A6', "I don't trust these services and my flight is tomorrow."],
+      ['A7', 'I was scammed before and uptime is also important.'],
+    ];
+    for (const [label, text] of trustMustSurface) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'trust-and-credibility', `${label}: "${text}" -> trust-and-credibility (genuine trust signal must survive non-program term)`);
+    }
+
+    const trustMustStayNeutral = [
+      ['A8', 'Can you guarantee delivery by Friday?'],
+      ['A9', 'Can you guarantee shipping by Monday?'],
+      ['A10', 'Can you guarantee uptime?'],
+      ['A11', 'I need proof of address.'],
+      ['A12', 'Can you guarantee my flight booking?'],
+      ['A13', 'Can you guarantee address verification?'],
+    ];
+    for (const [label, text] of trustMustStayNeutral) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'unclassified', `${label}: "${text}" -> unclassified (neutral non-program term, no genuine trust signal)`);
+    }
+  }
+
+  // --- 11. Phase 5F.1 Blocker 2: Budget Context Guard Adversarial Matrix ---
+  console.log('\n--- 11. Budget Context Guard Adversarial Matrix (B1-B10) ---');
+  {
+    const b1 = await runCopilotPipeline("My budget is limited and I can't afford this service.");
+    assert(b1.objectionId === 'price-objection', 'B1: "My budget is limited and I can\'t afford this service." -> price-objection');
+
+    const b2 = await runCopilotPipeline('My budget is limited and my parents need to approve it.');
+    assert(b2.objectionId === 'price-objection', 'B2: Primary is price-objection');
+    const b2Sec = b2.secondaryObjections?.map((s) => s.objectionId) || [];
+    assert(b2Sec.includes('parents-spouse-approval'), 'B2: Secondary includes parents-spouse-approval');
+
+    const bProgram = await runCopilotPipeline('My budget is limited for this program.');
+    assert(bProgram.objectionId === 'price-objection', 'B_program: "My budget is limited for this program." -> price-objection');
+
+    const budgetMustStayNeutral = [
+      ['B3', 'The project budget is limited.'],
+      ['B4', 'Our marketing budget is limited.'],
+      ['B5', 'The department budget is limited.'],
+      ['B6', "My employer's training budget is limited."],
+      ['B7', "The client's budget is limited."],
+      ['B8', 'The API budget is limited.'],
+      ['B9', 'The campaign budget is limited this month.'],
+      ['B10', 'The infrastructure budget is limited.'],
+    ];
+    for (const [label, text] of budgetMustStayNeutral) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'unclassified', `${label}: "${text}" -> unclassified (non-candidate/organizational budget)`);
+    }
+  }
+
+  // --- 12. Phase 5F.1 Blocker 3: Fee Context Guard Adversarial Matrix ---
+  console.log('\n--- 12. Fee Context Guard Adversarial Matrix (C1-C8) ---');
+  {
+    const c2 = await runCopilotPipeline("I don't want another fee for this program.");
+    assert(c2.objectionId === 'price-objection', 'C2: "I don\'t want another fee for this program." -> price-objection');
+
+    const c3 = await runCopilotPipeline("I don't want to pay another fee.");
+    assert(c3.objectionId === 'price-objection', 'C3: "I don\'t want to pay another fee." -> price-objection');
+
+    const feeMustStayNeutral = [
+      ['C4', "I don't want another fee field in the database."],
+      ['C5', "The customer said they don't want another fee field."],
+      ['C6', "I don't want another fee column in the spreadsheet."],
+      ['C7', "We don't want another fee added to the API response."],
+      ['C8', 'Remove another fee property from the JSON.'],
+    ];
+    for (const [label, text] of feeMustStayNeutral) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'unclassified', `${label}: "${text}" -> unclassified (technical/data-schema fee mention)`);
+    }
+  }
+
+  // --- 13. Phase 5F.1 Blocker 4: Send-The-Pricing Context Guard Adversarial Matrix ---
+  console.log('\n--- 13. Send-The-Pricing Context Guard Adversarial Matrix (D1-D10) ---');
+  {
+    const pricingMustSurface = [
+      ['D2', 'Send the pricing.'],
+      ['D3', 'Please send the pricing.'],
+      ['D4', 'Can you send the pricing?'],
+      ['D5', 'Send the pricing breakdown.'],
+    ];
+    for (const [label, text] of pricingMustSurface) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'information-request-deferral', `${label}: "${text}" -> information-request-deferral`);
+    }
+
+    const pricingMustStayNeutral = [
+      ['D6', 'Send the pricing field to the API.'],
+      ['D7', 'Send the pricing column to engineering.'],
+      ['D8', 'Send the pricing payload to the database.'],
+      ['D9', 'The recruiter will send the pricing spreadsheet.'],
+      ['D10', 'Send the pricing object in JSON.'],
+    ];
+    for (const [label, text] of pricingMustStayNeutral) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'unclassified', `${label}: "${text}" -> unclassified (technical/data-transfer pricing mention)`);
+    }
+  }
+
+  // --- 14. Phase 5F.1 Should-Fix #5: Decide-Next-Week/Month Candidate-Subject Guard ---
+  console.log('\n--- 14. Decide-Next-Week/Month Candidate-Subject Guard (E1-E12) ---');
+  {
+    const timingMustSurface = [
+      ['E1', "I'll decide next week."],
+      ['E2', 'I will decide next week.'],
+      ['E3', "I'll decide next month."],
+      ['E4', 'Let me decide next week.'],
+    ];
+    for (const [label, text] of timingMustSurface) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'need-time-to-think', `${label}: "${text}" -> need-time-to-think`);
+    }
+
+    const e5 = await runCopilotPipeline("Email the pricing and I'll decide next week.");
+    assert(e5.objectionId === 'information-request-deferral', 'E5: Primary is information-request-deferral');
+    const e5Sec = e5.secondaryObjections?.map((s) => s.objectionId) || [];
+    assert(e5Sec.includes('need-time-to-think'), 'E5: Secondary includes need-time-to-think');
+
+    const timingMustStayNeutral = [
+      ['E6', 'The project decision is next week.'],
+      ['E7', 'Our hiring decision is next week.'],
+      ['E8', 'The committee will decide next week.'],
+      ['E9', 'The team will decide next week which database to use.'],
+      ['E10', 'The customer will decide next week.'],
+      ['E11', 'The engineering group will decide next month.'],
+      ['E12', 'My manager will decide next week.'],
+    ];
+    for (const [label, text] of timingMustStayNeutral) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'unclassified', `${label}: "${text}" -> unclassified (third-party/organizational decision, not candidate's own delay)`);
+    }
+  }
+
+  // --- 15. Phase 5F.1 Should-Fix #6: Step 4.6 Narrowing & Normal Consultancy Regression ---
+  console.log('\n--- 15. Step 4.6 Narrowing & Normal Consultancy Regression (F1-F5) ---');
+  {
+    const f1 = await runCopilotPipeline("I already paid another company, so I don't want another fee.");
+    assert(f1.objectionId === 'already-working-with-consultancy', 'F1: Primary is already-working-with-consultancy');
+    const f1Sec = f1.secondaryObjections?.map((s) => s.objectionId) || [];
+    assert(f1Sec.includes('price-objection'), 'F1: Secondary includes price-objection');
+
+    const f2 = await runCopilotPipeline("I already paid another company and I don't want to pay another fee.");
+    assert(f2.objectionId === 'already-working-with-consultancy', 'F2: Primary is already-working-with-consultancy');
+    const f2Sec = f2.secondaryObjections?.map((s) => s.objectionId) || [];
+    assert(f2Sec.includes('price-objection'), 'F2: Secondary includes price-objection');
+
+    // F3/F4: Step 4.6 must NOT be the mechanism forcing consultancy primary here (no fee
+    // concern phrase present, so the forced-override rule must not engage).
+    const f3 = await runCopilotPipeline('I already paid another company because they designed my website.');
+    const f3Sec = f3.secondaryObjections?.map((s) => s.objectionId) || [];
+    assert(!f3Sec.includes('price-objection'), 'F3: No price-objection secondary (Step 4.6 fee rule did not engage)');
+
+    const f4 = await runCopilotPipeline('I already paid another company for tax filing.');
+    const f4Sec = f4.secondaryObjections?.map((s) => s.objectionId) || [];
+    assert(!f4Sec.includes('price-objection'), 'F4: No price-objection secondary (Step 4.6 fee rule did not engage)');
+
+    const f5 = await runCopilotPipeline('I already paid another company and don\'t contact me again.');
+    assert(f5.objectionId === 'explicit-refusal', 'F5: explicit-refusal absolute override holds');
+    assert(f5.secondaryObjections === undefined, 'F5: no secondary objections on explicit refusal');
+
+    // Normal consultancy detection must remain unaffected by the Step 4.6 narrowing.
+    const normalConsultancy = [
+      'I already hired another recruiter.',
+      "I'm already with another consultancy.",
+      'I already paid another placement company.',
+      'Another career service is helping me.',
+    ];
+    for (const text of normalConsultancy) {
+      const r = await runCopilotPipeline(text);
+      assert(r.objectionId === 'already-working-with-consultancy', `Normal consultancy regression: "${text}" -> already-working-with-consultancy`);
+    }
+  }
+
   console.log('\n=====================================================');
   console.log(`RESULTS: Passed ${passed}/${total} Phase 5F assertions`);
   console.log('=====================================================\n');
