@@ -273,10 +273,15 @@ export const COPILOT_OBJECTION_CATEGORIES: Record<string, ObjectionCategoryMetad
       'Think about your program',
       'Think about this program',
       'Call me after that',
-      'Decide next week',
-      'Decide next month',
+      // Phase 5F.1: bare "Decide next week"/"Decide next month" removed — they matched
+      // inside third-party/organizational statements ("The committee will decide next week.").
+      // Restricted to first-person candidate framing below.
       'I\'ll decide next week',
       'I\'ll decide next month',
+      'I will decide next week',
+      'I will decide next month',
+      'Let me decide next week',
+      'Let me decide next month',
     ],
     hiddenConcernPatterns: [
       'Unresolved hidden objection (price, spouse approval, or timing)',

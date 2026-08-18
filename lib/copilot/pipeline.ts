@@ -104,6 +104,15 @@ const PERSON_DIRECTED_REFUSAL_SIGNALS = [
   'delete my', 'take me off',
 ]
 
+// Phase 5F.1: Shared technical/data-schema context markers used to distinguish genuine
+// candidate requests (fee concerns, pricing requests) from unrelated technical/data-transfer
+// statements that happen to contain the same short trigger phrase.
+const DATA_SCHEMA_CONTEXT_TERMS = [
+  'field', 'column', 'database', 'spreadsheet', 'api',
+  'payload', 'schema', 'json', 'response', 'property',
+  'table', 'object',
+]
+
 /**
  * Phase 5E: Generate family decision keywords from typed deterministic templates.
  * Uses interaction templates ("talk to my {family}") and subject templates ("my {family} has to approve")
@@ -305,6 +314,14 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
     if (logisticalTerms.some((t) => text.includes(t))) {
       return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
     }
+
+    // Phase 5F.1 (Blocker 4): "send the pricing" must reflect a candidate information
+    // request, not a technical/data-transfer instruction ("Send the pricing field to the API.").
+    if (text.includes('send the pricing')) {
+      if (DATA_SCHEMA_CONTEXT_TERMS.some((t) => text.includes(t))) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
+    }
   }
 
   // 6. Need-Time-To-Think Non-Sales Task Guard (Phase 5E: Correction #3 — preserve genuine sales delay)
@@ -378,6 +395,33 @@ function scoreCategoryMatch(text: string, categoryId: string): CategoryScoreSign
         return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
       }
     }
+
+    // Phase 5F.1 (Blocker 2): "budget is limited" must reflect the candidate's own
+    // affordability concern, not a third-party/organizational/technical budget mentioned
+    // in passing ("The API budget is limited.", "Our marketing budget is limited.").
+    const bareBudgetPhrases = ['budget is limited', 'my budget is limited']
+    if (bareBudgetPhrases.some((p) => text.includes(p))) {
+      const candidateBudgetContext = [
+        'my budget', 'afford', 'service', 'program', 'enroll',
+        'pay', 'spend', 'investment', 'price', 'fee', 'cost',
+      ]
+      const hasCandidateContext = candidateBudgetContext.some((c) => text.includes(c))
+      if (!hasCandidateContext) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
+    }
+
+    // Phase 5F.1 (Blocker 3): "another fee" objections must reflect a genuine candidate
+    // payment concern, not a technical/data-schema mention of a "fee" field/column/property.
+    const anotherFeePhrases = [
+      'don\'t want another fee', 'do not want another fee', 'dont want another fee',
+      'don\'t want to pay another fee', 'do not want to pay another fee', 'dont want to pay another fee',
+    ]
+    if (anotherFeePhrases.some((p) => text.includes(p))) {
+      if (DATA_SCHEMA_CONTEXT_TERMS.some((t) => text.includes(t))) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
+      }
+    }
   }
 
 /**
@@ -391,14 +435,10 @@ function hasBoundaryMatch(text: string, phrase: string): boolean {
   return regex.test(text)
 }
 
-  // 9. Trust-and-Credibility Neutral Context Guard (Phase 5E Section 19 & Phase 5F Word-Boundary Safety)
+  // 9. Trust-and-Credibility Neutral Context Guard (Phase 5E Section 19, Phase 5F Word-Boundary
+  //    Safety, & Phase 5F.1 Blocker 1 Correction — non-program terms must not hard-suppress
+  //    trust when an independent genuine trust signal is also present)
   if (categoryId === 'trust-and-credibility') {
-    // Non-program guarantee/delivery exclusions ("Can you guarantee delivery by Friday?")
-    const nonProgramTerms = ['delivery', 'shipping', 'uptime', 'flight', 'address']
-    if (nonProgramTerms.some((t) => text.includes(t))) {
-      return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
-    }
-
     const trustQuestioningContext = [
       'scam', 'scammed', 'cheat', 'cheated', 'fraud',
       'fake', 'legit', 'legitimate', 'genuine',
@@ -418,14 +458,28 @@ function hasBoundaryMatch(text: string, phrase: string): boolean {
     // Boundary-safe checking: collision-prone phrases ("prove this", "prove that", "proof this")
     // must not match inside larger words like "approve this" or "improve this"
     const collisionPhrases = ['prove this', 'prove that', 'proof this', 'proof that']
+    const matchesTrustPhrase = (t: string) =>
+      collisionPhrases.includes(t) ? hasBoundaryMatch(text, t) : text.includes(t)
 
-    const hasTrustContext = trustQuestioningContext.some((t) => {
-      if (collisionPhrases.includes(t)) {
-        return hasBoundaryMatch(text, t)
+    // Phase 5F.1 (Blocker 1): "delivery"/"shipping"/"uptime"/"flight"/"address" alone must
+    // NOT suppress trust when an independent genuine trust signal is also present. Guarantee-only
+    // phrasing ("can you guarantee delivery") is deliberately NOT treated as an independent
+    // trust signal here — that is exactly the neutral pattern this guard must still suppress.
+    const nonProgramTerms = ['delivery', 'shipping', 'uptime', 'flight', 'address']
+    const guaranteeOnlyPhrases = [
+      'placement guarantee', 'job guarantee', 'guarantee me', 'guarantee a job',
+      'guarantee placement', 'guarantee placements', 'guarantee results', 'guarantee interview',
+    ]
+    const genuineTrustIndicators = trustQuestioningContext.filter((t) => !guaranteeOnlyPhrases.includes(t))
+
+    if (nonProgramTerms.some((t) => text.includes(t))) {
+      const hasGenuineTrustSignal = genuineTrustIndicators.some(matchesTrustPhrase)
+      if (!hasGenuineTrustSignal) {
+        return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
       }
-      return text.includes(t)
-    })
+    }
 
+    const hasTrustContext = trustQuestioningContext.some(matchesTrustPhrase)
     if (!hasTrustContext) {
       return { categoryId, providerScore: 0, vectorScore: 0, keywordScore: 0 }
     }
@@ -567,6 +621,9 @@ function hasBoundaryMatch(text: string, phrase: string): boolean {
       'don\'t want another fee',
       'do not want another fee',
       'dont want another fee',
+      'don\'t want to pay another fee',
+      'do not want to pay another fee',
+      'dont want to pay another fee',
       'budget is limited',
       'my budget is limited',
     ],
@@ -644,11 +701,16 @@ function hasBoundaryMatch(text: string, phrase: string): boolean {
       'call after that',
       'busy today',
       'occupied today',
-      // Phase 5F time additions
-      'decide next week',
-      'decide next month',
+      // Phase 5F.1: candidate-subject decide-next-week/month phrasing only (Should-Fix #5).
+      // Bare "decide next week"/"decide next month" removed — they matched inside third-party/
+      // organizational statements ("The committee will decide next week."). Restricted to
+      // first-person candidate framing so the delay is attributable to the candidate.
       'i\'ll decide next week',
+      'i will decide next week',
+      'let me decide next week',
       'i\'ll decide next month',
+      'i will decide next month',
+      'let me decide next month',
     ],
     'already-applying-myself': [
       'apply on my own',
@@ -875,8 +937,16 @@ export async function runCopilotPipeline(
   // Step 4.6: Phase 5F Product Owner Rule for Competitor Payment + Fee Concern (Section 1, 18)
   // "I already paid another company, so I don't want another fee."
   // Competitor commitment is primary, fee objection is secondary.
+  // Narrowed in Phase 5F.1 (Should-Fix #6): only applies when an explicit fee concern
+  // also co-occurs, not merely because "already paid another company/[X]" appears for any
+  // reason ("I already paid another company because they designed my website." must NOT be
+  // forcibly promoted to consultancy by this rule).
+  const feeConcernPhrases = [
+    'don\'t want another fee', 'do not want another fee', 'dont want another fee',
+    'don\'t want to pay another fee', 'do not want to pay another fee', 'dont want to pay another fee',
+  ]
   if (
-    (text.includes('already paid another company') || text.includes('already paid another')) &&
+    feeConcernPhrases.some((p) => text.includes(p)) &&
     validSignals.some((s) => s.categoryId === 'already-working-with-consultancy')
   ) {
     selectedCategoryId = 'already-working-with-consultancy'
