@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server'
-import { updateCopilotOutcome, isValidUuid } from '@/lib/copilot/persistence'
+import {
+  updateCopilotOutcome,
+  getActiveCopilotSession,
+  getCopilotExchangeOwnership,
+  isValidUuid,
+} from '@/lib/copilot/persistence'
 import { isLevelCEnabled, isLegacyIdentityModeEnabled } from '@/lib/auth/level-c-flags'
 import { resolveAuthorizedAdvisor, accessDenialMessage } from '@/lib/auth/access'
+import { isOwnerOrAdmin, type OwnershipActor } from '@/lib/auth/ownership'
 
 export async function POST(request: Request) {
   try {
@@ -18,14 +24,16 @@ export async function POST(request: Request) {
     // Phase 6A: Advisor Identity/Access Gate (see app/api/copilot/route.ts for the
     // full three-mode explanation). The outcome record itself carries no per-call
     // advisor field today (only the session it belongs to does, set at session
-    // creation), so this gate is purely an access-control check — it does not
-    // change what gets persisted.
+    // creation), so this gate was originally purely an access-control check.
+    // Phase 6A.1 adds an object-ownership check below using this actor identity.
+    let levelCActor: OwnershipActor | null = null
     if (isLevelCEnabled()) {
       const access = await resolveAuthorizedAdvisor()
       if (!access.authorized) {
         const status = access.reason === 'no-session' ? 401 : 403
         return NextResponse.json({ error: accessDenialMessage(access.reason) }, { status })
       }
+      levelCActor = { advisorIdentifier: access.advisorIdentifier, role: access.role }
     } else if (!isLegacyIdentityModeEnabled()) {
       return NextResponse.json(
         { error: 'Sales Copilot is not currently enabled in this environment.' },
@@ -71,6 +79,45 @@ export async function POST(request: Request) {
           { error: 'Invalid loss reason. Expected "price", "trust", "timing", "competitor", or "other".' },
           { status: 400 }
         )
+      }
+    }
+
+    // Phase 6A.1: object-ownership authorization. Resolves the owning session's
+    // advisorIdentifier via whichever identifier the caller supplied (sessionId
+    // preferred; falls back to resolving via exchangeId, mirroring how
+    // updateCopilotOutcome itself resolves the target session below). Only
+    // applies in Level C mode. If the record cannot be found, deliberately fall
+    // through unchanged — updateCopilotOutcome performs its own existence check
+    // and the catch block below preserves the exact pre-6A.1 404 response.
+    if (levelCActor) {
+      let ownerAdvisorIdentifier: string | undefined
+      let recordExists = true
+      try {
+        if (typeof sessionId === 'string') {
+          const sessionCheck = await getActiveCopilotSession(sessionId)
+          if (sessionCheck.valid || sessionCheck.reason === 'session-completed') {
+            ownerAdvisorIdentifier = sessionCheck.session.advisorIdentifier
+          } else {
+            recordExists = false
+          }
+        } else if (typeof exchangeId === 'string') {
+          const ownership = await getCopilotExchangeOwnership(exchangeId)
+          if (ownership.exists) {
+            ownerAdvisorIdentifier = ownership.advisorIdentifier
+          } else {
+            recordExists = false
+          }
+        }
+      } catch (lookupErr) {
+        console.error('[API /api/copilot/outcome] Ownership lookup error:', lookupErr)
+        return NextResponse.json(
+          { error: 'Database persistence error while saving outcome.' },
+          { status: 500 }
+        )
+      }
+
+      if (recordExists && ownerAdvisorIdentifier && !isOwnerOrAdmin(levelCActor, ownerAdvisorIdentifier)) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       }
     }
 

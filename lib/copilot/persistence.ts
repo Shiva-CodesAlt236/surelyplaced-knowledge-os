@@ -107,6 +107,47 @@ export async function getActiveCopilotSession(sessionId: string) {
   return { valid: true, session } as const
 }
 
+export interface ExchangeOwnershipLookup {
+  exists: boolean
+  sessionId?: string
+  advisorIdentifier?: string
+}
+
+/**
+ * Phase 6A.1 — Resolve an exchange's owning session and its advisorIdentifier.
+ *
+ * Exchanges carry no advisor identity of their own; ownership is always derived
+ * from the session that contains them (a join, not a duplicated column), so this
+ * is the single source of truth both the feedback route and the outcome route
+ * (when only an exchangeId is supplied) use to authorize cross-advisor access.
+ *
+ * Deliberately returns a lookup result rather than throwing on "not found" —
+ * callers preserve their own existing not-found response semantics; only a
+ * genuine database error should throw (and callers must fail closed on that).
+ */
+export async function getCopilotExchangeOwnership(exchangeId: string): Promise<ExchangeOwnershipLookup> {
+  if (!isValidUuid(exchangeId)) {
+    return { exists: false }
+  }
+
+  const db = getDb()
+  const [row] = await db
+    .select({
+      sessionId: copilotExchanges.sessionId,
+      advisorIdentifier: copilotSessions.advisorIdentifier,
+    })
+    .from(copilotExchanges)
+    .innerJoin(copilotSessions, eq(copilotExchanges.sessionId, copilotSessions.id))
+    .where(eq(copilotExchanges.id, exchangeId))
+    .limit(1)
+
+  if (!row) {
+    return { exists: false }
+  }
+
+  return { exists: true, sessionId: row.sessionId, advisorIdentifier: row.advisorIdentifier }
+}
+
 /**
  * Record a completed reasoning exchange linked to an active session.
  */

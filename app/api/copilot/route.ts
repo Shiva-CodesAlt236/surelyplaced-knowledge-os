@@ -10,6 +10,7 @@ import { validateAdvisorIdentifier } from '@/lib/copilot/advisor'
 import { MAX_OBJECTION_TEXT_LENGTH } from '@/lib/copilot/limits'
 import { isLevelCEnabled, isLegacyIdentityModeEnabled } from '@/lib/auth/level-c-flags'
 import { resolveAuthorizedAdvisor, accessDenialMessage } from '@/lib/auth/access'
+import { isOwnerOrAdmin, type OwnershipActor } from '@/lib/auth/ownership'
 
 export async function POST(request: Request) {
   try {
@@ -37,6 +38,11 @@ export async function POST(request: Request) {
     //      default: no silent fallback to spoofable client-supplied identity.
     // ---------------------------------------------------------------------
     let normalizedAdvisor: string
+    // Phase 6A.1: the authenticated actor's identity/role, used below to authorize
+    // access to an EXISTING sessionId (object-ownership check). Only ever populated
+    // in Level C mode — legacy mode has no Auth.js actor model and must never
+    // participate in ownership checks (see lib/auth/ownership.ts).
+    let levelCActor: OwnershipActor | null = null
     if (isLevelCEnabled()) {
       const access = await resolveAuthorizedAdvisor()
       if (!access.authorized) {
@@ -44,6 +50,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: accessDenialMessage(access.reason) }, { status })
       }
       normalizedAdvisor = access.advisorIdentifier
+      levelCActor = { advisorIdentifier: access.advisorIdentifier, role: access.role }
     } else if (isLegacyIdentityModeEnabled()) {
       const advisorIdRaw = body?.advisorId || body?.advisorIdentifier
       const advisorValidation = validateAdvisorIdentifier(advisorIdRaw)
@@ -109,6 +116,18 @@ export async function POST(request: Request) {
             { error: 'Invalid or inactive session.' },
             { status: 400 }
           )
+        }
+
+        // Phase 6A.1: object-ownership authorization. Only applies in Level C
+        // mode (legacy mode has no Auth.js actor model, so levelCActor is null
+        // and this branch never runs there). Not-found/inactive responses above
+        // are untouched — this only intercepts a session that DOES exist and IS
+        // active but belongs to a different advisor than the authenticated actor.
+        // A DB error thrown here propagates to the outer catch below, which
+        // returns a generic sanitized 500 and never reaches pipeline execution
+        // or persistence — i.e. ownership-lookup failure fails closed.
+        if (levelCActor && !isOwnerOrAdmin(levelCActor, sessionCheck.session.advisorIdentifier)) {
+          return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
       }
     }

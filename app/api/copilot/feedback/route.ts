@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
-import { recordCopilotFeedback, isValidUuid } from '@/lib/copilot/persistence'
+import { recordCopilotFeedback, getCopilotExchangeOwnership, isValidUuid } from '@/lib/copilot/persistence'
 import { isLevelCEnabled, isLegacyIdentityModeEnabled } from '@/lib/auth/level-c-flags'
 import { resolveAuthorizedAdvisor, accessDenialMessage } from '@/lib/auth/access'
+import { isOwnerOrAdmin, type OwnershipActor } from '@/lib/auth/ownership'
 
 export async function POST(request: Request) {
   try {
@@ -18,6 +19,9 @@ export async function POST(request: Request) {
     // Phase 6A: Advisor Identity Resolution (see app/api/copilot/route.ts for the
     // full three-mode explanation; identical contract applies here).
     let normalizedAdvisor: string | undefined
+    // Phase 6A.1: authenticated actor identity/role, used below for the
+    // exchange-ownership check. Null in legacy mode by construction.
+    let levelCActor: OwnershipActor | null = null
     if (isLevelCEnabled()) {
       const access = await resolveAuthorizedAdvisor()
       if (!access.authorized) {
@@ -25,6 +29,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: accessDenialMessage(access.reason) }, { status })
       }
       normalizedAdvisor = access.advisorIdentifier
+      levelCActor = { advisorIdentifier: access.advisorIdentifier, role: access.role }
     } else if (isLegacyIdentityModeEnabled()) {
       normalizedAdvisor = typeof body?.advisorId === 'string' ? body.advisorId : undefined
     } else {
@@ -49,6 +54,32 @@ export async function POST(request: Request) {
         { error: 'Invalid rating. Expected "thumbs-up", "neutral", or "thumbs-down".' },
         { status: 400 }
       )
+    }
+
+    // Phase 6A.1: object-ownership authorization. OWNER = the advisor who owns
+    // the exchange's session (persisted server-side). ACTOR = the authenticated
+    // caller resolved above. These are deliberately distinct: normalizedAdvisor
+    // (the ACTOR) is still what gets stamped onto the feedback row below as who
+    // submitted it — an admin correcting another advisor's feedback is recorded
+    // as the admin, not silently reattributed to the original owner. Only
+    // applies in Level C mode; legacy mode has no actor model to check against.
+    // If the exchange does not exist, deliberately fall through unchanged —
+    // recordCopilotFeedback performs its own existence check and the catch
+    // block below preserves the exact pre-6A.1 404 response.
+    if (levelCActor) {
+      let ownership
+      try {
+        ownership = await getCopilotExchangeOwnership(exchangeId)
+      } catch (lookupErr) {
+        console.error('[API /api/copilot/feedback] Ownership lookup error:', lookupErr)
+        return NextResponse.json(
+          { error: 'Database persistence error while saving feedback.' },
+          { status: 500 }
+        )
+      }
+      if (ownership.exists && !isOwnerOrAdmin(levelCActor, ownership.advisorIdentifier as string)) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      }
     }
 
     try {
