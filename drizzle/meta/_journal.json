@@ -8,6 +8,13 @@
       "when": 1786398868853,
       "tag": "0000_new_shriek",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1787149001979,
+      "tag": "0001_amusing_radioactive_man",
+      "breakpoints": true
     }
   ]
 }

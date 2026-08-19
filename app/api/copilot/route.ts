@@ -8,6 +8,8 @@ import {
 } from '@/lib/copilot/persistence'
 import { validateAdvisorIdentifier } from '@/lib/copilot/advisor'
 import { MAX_OBJECTION_TEXT_LENGTH } from '@/lib/copilot/limits'
+import { isLevelCEnabled, isLegacyIdentityModeEnabled } from '@/lib/auth/level-c-flags'
+import { resolveAuthorizedAdvisor, accessDenialMessage } from '@/lib/auth/access'
 
 export async function POST(request: Request) {
   try {
@@ -21,8 +23,45 @@ export async function POST(request: Request) {
       )
     }
 
+    // ---------------------------------------------------------------------
+    // Phase 6A: Advisor Identity Resolution
+    //
+    // Exactly one of three mutually-exclusive-by-construction modes applies:
+    //   1. Level C enabled  -> server-derived identity from the authenticated
+    //      Auth.js session ONLY. Client-supplied advisorId/advisorIdentifier in
+    //      the request body is never read as identity in this mode.
+    //   2. Legacy compatibility mode enabled (and Level C is NOT enabled) ->
+    //      preserves the exact pre-Phase-6A self-entered/client-supplied
+    //      identity behavior. Temporary technical debt; see lib/auth/level-c-flags.ts.
+    //   3. Neither flag set -> Copilot is unavailable. This is the fail-closed
+    //      default: no silent fallback to spoofable client-supplied identity.
+    // ---------------------------------------------------------------------
+    let normalizedAdvisor: string
+    if (isLevelCEnabled()) {
+      const access = await resolveAuthorizedAdvisor()
+      if (!access.authorized) {
+        const status = access.reason === 'no-session' ? 401 : 403
+        return NextResponse.json({ error: accessDenialMessage(access.reason) }, { status })
+      }
+      normalizedAdvisor = access.advisorIdentifier
+    } else if (isLegacyIdentityModeEnabled()) {
+      const advisorIdRaw = body?.advisorId || body?.advisorIdentifier
+      const advisorValidation = validateAdvisorIdentifier(advisorIdRaw)
+      if (!advisorValidation.valid || !advisorValidation.normalized) {
+        return NextResponse.json(
+          { error: advisorValidation.error || 'Advisor identifier is required.' },
+          { status: 400 }
+        )
+      }
+      normalizedAdvisor = advisorValidation.normalized
+    } else {
+      return NextResponse.json(
+        { error: 'Sales Copilot is not currently enabled in this environment.' },
+        { status: 503 }
+      )
+    }
+
     const objectionText = body?.objectionText || body?.input || ''
-    const advisorIdRaw = body?.advisorId || body?.advisorIdentifier
     const contextModuleId = body?.contextModuleId
     const previousObjectionId = body?.previousObjectionId
     let sessionId = body?.sessionId
@@ -40,16 +79,6 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
-
-    // Require and validate self-entered advisor identifier
-    const advisorValidation = validateAdvisorIdentifier(advisorIdRaw)
-    if (!advisorValidation.valid || !advisorValidation.normalized) {
-      return NextResponse.json(
-        { error: advisorValidation.error || 'Advisor identifier is required.' },
-        { status: 400 }
-      )
-    }
-    const normalizedAdvisor = advisorValidation.normalized
 
     // Server-side validation of client-supplied sessionId
     if (sessionId) {

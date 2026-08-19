@@ -16,14 +16,10 @@ import { CopilotResponseCard } from "@/components/copilot/CopilotResponseCard"
 import { OutcomeRecorder } from "@/components/copilot/OutcomeRecorder"
 import type { CopilotResponse, OutcomeStatus, LostReason } from "@/lib/copilot/types"
 import {
-  ADVISOR_STORAGE_KEY,
-  validateAdvisorIdentifier,
-  normalizeAdvisorIdentifier,
-} from "@/lib/copilot/advisor"
-import {
   SESSION_STORAGE_KEY,
   isStaleSessionError,
 } from "@/lib/copilot/session"
+import { useSession, signIn, signOut } from "next-auth/react"
 import {
   Sparkles,
   Send,
@@ -36,7 +32,7 @@ import {
   AlertCircle,
   RefreshCw,
   UserCheck,
-  Edit2,
+  LogOut,
 } from "lucide-react"
 
 export interface AskAIPanelProps {
@@ -61,11 +57,11 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   const [analysisError, setAnalysisError] = useState<string | null>(null)
   const [lastInput, setLastInput] = useState<string>("")
 
-  // Self-entered Advisor Attribution State (NOT authenticated identity)
-  const [advisorId, setAdvisorId] = useState<string>("")
-  const [advisorInput, setAdvisorInput] = useState<string>("")
-  const [isEditingAdvisor, setIsEditingAdvisor] = useState(false)
-  const [advisorError, setAdvisorError] = useState<string | null>(null)
+  // Phase 6A: authenticated advisor identity (Level C). Replaces the former
+  // self-entered/localStorage advisor attribution — identity now comes exclusively
+  // from the server-verified Auth.js session; the client never supplies or edits it.
+  const { data: session, status: sessionStatus } = useSession()
+  const advisorEmail = session?.user?.email || null
 
   // Shared session boundary reset helper
   const clearCopilotSessionBoundary = () => {
@@ -79,19 +75,10 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     }
   }
 
-  // Initialize Advisor Identifier from localStorage & Session ID from sessionStorage
+  // Initialize Session ID from sessionStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const storedAdvisor = localStorage.getItem(ADVISOR_STORAGE_KEY)
-        if (storedAdvisor) {
-          const validation = validateAdvisorIdentifier(storedAdvisor)
-          if (validation.valid && validation.normalized) {
-            setAdvisorId(validation.normalized)
-            setAdvisorInput(validation.normalized)
-          }
-        }
-
         const storedSession = sessionStorage.getItem(SESSION_STORAGE_KEY)
         if (storedSession) {
           setSessionId(storedSession)
@@ -102,34 +89,6 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     }
   }, [])
 
-  const handleSaveAdvisorId = (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
-    const validation = validateAdvisorIdentifier(advisorInput)
-    if (!validation.valid || !validation.normalized) {
-      setAdvisorError(validation.error || "Invalid advisor identifier.")
-      return
-    }
-
-    const newNormalized = validation.normalized
-    const currentNormalized = normalizeAdvisorIdentifier(advisorId)
-
-    setAdvisorError(null)
-    setAdvisorId(newNormalized)
-    setAdvisorInput(newNormalized)
-    setIsEditingAdvisor(false)
-
-    try {
-      localStorage.setItem(ADVISOR_STORAGE_KEY, newNormalized)
-    } catch {
-      // Ignore localStorage write failure
-    }
-
-    // Only establish a new session boundary if the normalized advisor identifier genuinely changed
-    if (currentNormalized && newNormalized !== currentNormalized) {
-      clearCopilotSessionBoundary()
-    }
-  }
-
   const handleSendQA = () => {
     if (!qaInput.trim() || isResponding) return
     sendMessage(qaInput.trim())
@@ -137,12 +96,6 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   }
 
   const handleAnalyzeObjection = async (input: string, isRetryAfterStaleSession = false) => {
-    if (!advisorId) {
-      setIsEditingAdvisor(true)
-      setAdvisorError("Please enter your advisor name before analyzing objections.")
-      return
-    }
-
     setIsAnalyzing(true)
     setAnalysisError(null)
     setLastInput(input)
@@ -156,7 +109,6 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
         body: JSON.stringify({
           objectionText: input,
           sessionId: activeSessionId,
-          advisorId: advisorId,
           previousObjectionId: copilotResponse?.objectionId,
         }),
       })
@@ -250,7 +202,6 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
       body: JSON.stringify({
         exchangeId: copilotResponse.exchangeId,
         rating,
-        advisorId: advisorId,
       }),
     })
 
@@ -324,49 +275,48 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
              SALES COPILOT MVP MODE (Guided Decision-Support Tool)
              =================================================================== */
           <div className="flex-1 overflow-y-auto p-4 space-y-4" aria-live="polite">
-            {/* Advisor Identity Attribution Header / Prompt */}
-            {(!advisorId || isEditingAdvisor) ? (
-              <form
-                onSubmit={handleSaveAdvisorId}
-                className="rounded-xl border border-primary/30 bg-primary/5 p-3.5 space-y-2 animate-in fade-in duration-150"
-              >
-                <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-                  <UserCheck className="h-4 w-4 text-primary" />
-                  <span>Enter Your Advisor Name</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground">
-                  Your name is used for local browser session attribution on this device (NOT authenticated login).
-                </p>
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={advisorInput}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAdvisorInput(e.target.value)}
-                    placeholder="e.g. Yash Mishra"
-                    className="h-8 text-xs flex-1 bg-card"
-                  />
-                  <Button type="submit" size="sm" className="h-8 text-xs font-bold px-3">
-                    Save
-                  </Button>
-                </div>
-                {advisorError && (
-                  <p className="text-[11px] text-rose-500 font-medium">{advisorError}</p>
-                )}
-              </form>
-            ) : (
+            {/* Phase 6A: Authenticated Advisor Identity (Level C). Sign-in is
+                required to attribute and persist Copilot activity; identity comes
+                exclusively from the verified Google Workspace session and cannot
+                be edited client-side. */}
+            {sessionStatus === "loading" ? (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 border border-border text-xs text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <span>Checking sign-in status...</span>
+              </div>
+            ) : advisorEmail ? (
               <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/50 border border-border text-xs">
                 <div className="flex items-center gap-2 text-muted-foreground font-medium">
                   <UserCheck className="h-3.5 w-3.5 text-primary" />
                   <span>Advisor:</span>
-                  <strong className="text-foreground font-bold">{advisorId}</strong>
+                  <strong className="text-foreground font-bold">{advisorEmail}</strong>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsEditingAdvisor(true)}
+                  onClick={() => signOut()}
                   className="text-[11px] text-primary hover:underline font-semibold flex items-center gap-1"
                 >
-                  <Edit2 className="h-3 w-3" />
-                  Change
+                  <LogOut className="h-3 w-3" />
+                  Sign out
                 </button>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-3.5 space-y-2 animate-in fade-in duration-150">
+                <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                  <UserCheck className="h-4 w-4 text-primary" />
+                  <span>Sign In Required</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Sign in with your SurelyPlaced Google Workspace account to use Sales Copilot.
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => signIn("google")}
+                  className="h-8 text-xs font-bold px-3"
+                >
+                  Sign in with Google
+                </Button>
               </div>
             )}
 

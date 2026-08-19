@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { updateCopilotOutcome, isValidUuid } from '@/lib/copilot/persistence'
+import { isLevelCEnabled, isLegacyIdentityModeEnabled } from '@/lib/auth/level-c-flags'
+import { resolveAuthorizedAdvisor, accessDenialMessage } from '@/lib/auth/access'
 
 export async function POST(request: Request) {
   try {
@@ -10,6 +12,24 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Invalid request JSON payload.' },
         { status: 400 }
+      )
+    }
+
+    // Phase 6A: Advisor Identity/Access Gate (see app/api/copilot/route.ts for the
+    // full three-mode explanation). The outcome record itself carries no per-call
+    // advisor field today (only the session it belongs to does, set at session
+    // creation), so this gate is purely an access-control check — it does not
+    // change what gets persisted.
+    if (isLevelCEnabled()) {
+      const access = await resolveAuthorizedAdvisor()
+      if (!access.authorized) {
+        const status = access.reason === 'no-session' ? 401 : 403
+        return NextResponse.json({ error: accessDenialMessage(access.reason) }, { status })
+      }
+    } else if (!isLegacyIdentityModeEnabled()) {
+      return NextResponse.json(
+        { error: 'Sales Copilot is not currently enabled in this environment.' },
+        { status: 503 }
       )
     }
 

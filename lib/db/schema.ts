@@ -9,6 +9,7 @@ import {
   pgEnum,
   index,
   check,
+  primaryKey,
 } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
 
@@ -124,4 +125,83 @@ export const copilotFeedback = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   }
+)
+
+/**
+ * Sales Copilot — Level C Application Authentication Schema (Phase 6A Foundation)
+ *
+ * Auth.js (NextAuth v5) Drizzle-adapter-compatible tables, defined explicitly here
+ * (rather than relying on the adapter's built-in defaults) so that:
+ * - table names follow this schema file's existing `snake_case`/domain-prefixed
+ *   convention instead of Auth.js's bare `user`/`account`/`session` defaults, and
+ * - two Sales-Copilot-specific authorization columns (`role`, `level_c_enabled`)
+ *   can live directly on the user record without a separate settings table.
+ *
+ * PostgreSQL Enums:
+ * - copilot_user_role ('advisor', 'admin')
+ *
+ * Security default: `levelCEnabled` defaults to `false`. Auth.js's Drizzle adapter
+ * auto-creates a user row on first successful sign-in (`createUser`) using only the
+ * fields it knows about (id/name/email/emailVerified/image); it never sets `role` or
+ * `levelCEnabled` explicitly, so every newly-authenticated account is provisioned
+ * with zero Sales Copilot access by default and must be explicitly enabled by an
+ * operator. This is a schema-level fail-closed guarantee, not application logic that
+ * could be bypassed by a code path forgetting to check something.
+ */
+
+export const copilotUserRoleEnum = pgEnum('copilot_user_role', ['advisor', 'admin'])
+
+export const authUsers = pgTable('auth_users', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text('name'),
+  email: text('email').unique(),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
+  image: text('image'),
+  role: copilotUserRoleEnum('role').default('advisor').notNull(),
+  levelCEnabled: boolean('level_c_enabled').default(false).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const authAccounts = pgTable(
+  'auth_accounts',
+  {
+    userId: text('userId')
+      .notNull()
+      .references(() => authUsers.id, { onDelete: 'cascade' }),
+    type: text('type').notNull(),
+    provider: text('provider').notNull(),
+    providerAccountId: text('providerAccountId').notNull(),
+    refresh_token: text('refresh_token'),
+    access_token: text('access_token'),
+    expires_at: integer('expires_at'),
+    token_type: text('token_type'),
+    scope: text('scope'),
+    id_token: text('id_token'),
+    session_state: text('session_state'),
+  },
+  (account) => [
+    primaryKey({ columns: [account.provider, account.providerAccountId] }),
+  ]
+)
+
+export const authSessions = pgTable('auth_sessions', {
+  sessionToken: text('sessionToken').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => authUsers.id, { onDelete: 'cascade' }),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
+})
+
+export const authVerificationTokens = pgTable(
+  'auth_verification_tokens',
+  {
+    identifier: text('identifier').notNull(),
+    token: text('token').notNull(),
+    expires: timestamp('expires', { mode: 'date' }).notNull(),
+  },
+  (vt) => [
+    primaryKey({ columns: [vt.identifier, vt.token] }),
+  ]
 )

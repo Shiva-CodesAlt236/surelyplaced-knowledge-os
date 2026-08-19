@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { recordCopilotFeedback, isValidUuid } from '@/lib/copilot/persistence'
+import { isLevelCEnabled, isLegacyIdentityModeEnabled } from '@/lib/auth/level-c-flags'
+import { resolveAuthorizedAdvisor, accessDenialMessage } from '@/lib/auth/access'
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +15,26 @@ export async function POST(request: Request) {
       )
     }
 
-    const { exchangeId, rating, advisorId } = body || {}
+    // Phase 6A: Advisor Identity Resolution (see app/api/copilot/route.ts for the
+    // full three-mode explanation; identical contract applies here).
+    let normalizedAdvisor: string | undefined
+    if (isLevelCEnabled()) {
+      const access = await resolveAuthorizedAdvisor()
+      if (!access.authorized) {
+        const status = access.reason === 'no-session' ? 401 : 403
+        return NextResponse.json({ error: accessDenialMessage(access.reason) }, { status })
+      }
+      normalizedAdvisor = access.advisorIdentifier
+    } else if (isLegacyIdentityModeEnabled()) {
+      normalizedAdvisor = typeof body?.advisorId === 'string' ? body.advisorId : undefined
+    } else {
+      return NextResponse.json(
+        { error: 'Sales Copilot is not currently enabled in this environment.' },
+        { status: 503 }
+      )
+    }
+
+    const { exchangeId, rating } = body || {}
 
     if (!exchangeId || typeof exchangeId !== 'string' || !isValidUuid(exchangeId)) {
       return NextResponse.json(
@@ -34,7 +55,7 @@ export async function POST(request: Request) {
       const feedback = await recordCopilotFeedback({
         exchangeId,
         rating: rating as 'thumbs-up' | 'neutral' | 'thumbs-down',
-        advisorIdentifier: typeof advisorId === 'string' ? advisorId : undefined,
+        advisorIdentifier: normalizedAdvisor,
       })
 
       return NextResponse.json({ success: true, feedback })

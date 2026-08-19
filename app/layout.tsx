@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { SearchProvider } from '@/components/providers/SearchProvider';
 import { AIProvider } from '@/components/providers/AIProvider';
+import { AuthSessionProvider } from '@/components/providers/AuthSessionProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -70,7 +71,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <RootProvider>
           <ThemeProvider>
             <SearchProvider>
-              <AIProvider>{children}</AIProvider>
+              <AuthSessionProvider>
+                <AIProvider>{children}</AIProvider>
+              </AuthSessionProvider>
             </SearchProvider>
           </ThemeProvider>
         </RootProvider>
