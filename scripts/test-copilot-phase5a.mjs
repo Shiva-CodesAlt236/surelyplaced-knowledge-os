@@ -1,6 +1,18 @@
 import assert from 'assert'
 import fs from 'fs'
 import path from 'path'
+
+// Phase 6A note: this suite exercises the route's legacy (pre-Phase-6A) input-
+// validation/passthrough behavior directly via in-process invocation, not through
+// an authenticated session. As of Phase 6A, /api/copilot fails closed (503) unless
+// LEVEL_C_ENABLED or COPILOT_LEGACY_IDENTITY_MODE is explicitly set — so this
+// suite must explicitly opt into the disclosed, default-OFF legacy compatibility
+// mode to reach the same validation code path it has always tested. This does not
+// change, weaken, or bypass any assertion below; it only makes explicit which
+// identity mode this suite is testing, matching Phase 6A's fail-closed design.
+process.env.LEVEL_C_ENABLED = ''
+process.env.COPILOT_LEGACY_IDENTITY_MODE = 'true'
+
 import { POST as copilotRoute } from '../app/api/copilot/route.ts'
 import { MAX_OBJECTION_TEXT_LENGTH } from '../lib/copilot/limits.ts'
 
