@@ -4,9 +4,9 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 5F.1 Complete — Context-Guard Remediation Verified — Level B Pilot Continues
+**Current Phase:** Phase 6A Complete — Application Authentication, Advisor Identity & Object Ownership Verified
 **Branch:** `feature/sales-copilot-mvp`
-**Authoritative Implementation Freeze SHA:** `b09c9287f2cc9996fae209a6c01cf7cb41e14877`
+**Authoritative Implementation Freeze SHA:** `758187b6456ba2ff7e891e763b71fb369a1b512a`
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
 
 ---
@@ -25,11 +25,16 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
 - `lib/copilot/limits.ts`: Canonical application limits (`MAX_OBJECTION_TEXT_LENGTH = 4000`).
 - `lib/copilot/advisor.ts`: Advisor attribution normalization & validation utilities (`surelyplaced_advisor_identifier`).
 - `lib/copilot/session.ts`: Session storage continuity & stale session recovery helpers (`surelyplaced_copilot_session_id`).
-- `lib/copilot/persistence.ts`: Server-side database persistence service (`createCopilotSession`, `recordCopilotExchange`, `recordCopilotFeedback`, `updateCopilotOutcome`, `getActiveCopilotSession`).
-- `app/api/copilot/route.ts`: Server API endpoint (wires session creation, exchange persistence, explicit `persistenceStatus`, 4000-char input limit).
-- `app/api/copilot/feedback/route.ts`: Server API endpoint for exchange feedback ratings.
-- `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording (sanitized generic 500 error messages, explicitly returns HTTP 400 on completed session reopening attempts).
+- `lib/copilot/persistence.ts`: Server-side database persistence service (`createCopilotSession`, `recordCopilotExchange`, `recordCopilotFeedback`, `updateCopilotOutcome`, `getActiveCopilotSession`, `getCopilotExchangeOwnership`).
+- `app/api/copilot/route.ts`: Server API endpoint (wires session creation, exchange persistence, explicit `persistenceStatus`, 4000-char input limit, Phase 6A advisor identity gate, Phase 6A.1 object-ownership check).
+- `app/api/copilot/feedback/route.ts`: Server API endpoint for exchange feedback ratings (Phase 6A advisor identity gate, Phase 6A.1 object-ownership check).
+- `app/api/copilot/outcome/route.ts`: Server API endpoint for student outcome recording (sanitized generic 500 error messages, explicitly returns HTTP 400 on completed session reopening attempts; Phase 6A advisor identity gate, Phase 6A.1 object-ownership check).
 - `lib/copilot/providers/mock.ts`: Active offline/mock AI provider (implements `ICopilotAIProvider` for AI reasoning only).
+- `app/api/auth/[...nextauth]/route.ts`: Auth.js (NextAuth v5) route handler — Google OAuth sign-in/callback/session endpoints (Phase 6A).
+- `lib/auth/config.ts`: Auth.js configuration — Google provider, `@auth/drizzle-adapter` database session strategy, fail-closed `ALLOWED_GOOGLE_WORKSPACE_DOMAIN` restriction (Phase 6A).
+- `lib/auth/level-c-flags.ts`: `isLevelCEnabled()` / `isLegacyIdentityModeEnabled()` — two mutually-exclusive-by-construction environment gates controlling authenticated vs. legacy client-supplied identity behavior (Phase 6A).
+- `lib/auth/access.ts`: `resolveAuthorizedAdvisor()` — server-derived advisor identity/role resolution from the authenticated Auth.js session; `accessDenialMessage()` (Phase 6A).
+- `lib/auth/ownership.ts`: `isOwnerOrAdmin()` — single shared object-ownership authorization decision function used by all three Copilot routes (Phase 6A.1).
 
 ### Phase 4B.3 HTTP Contract Architecture:
 - Self-entered advisor attribution: Required self-entered advisor name stored in browser `localStorage` (`surelyplaced_advisor_identifier`). Preserves human casing locally, normalized on client/server (`validateAdvisorIdentifier`). Includes UI header (`Advisor: [Name] [Change]`). NOT authenticated login or RBAC.
@@ -222,6 +227,27 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
   - *Pre-Existing Consultancy Breadth (Not a Phase 5F.1 Defect):* Statements such as `"I already paid another company because they designed my website."` may still classify as `already-working-with-consultancy`. This is caused by a pre-existing exact-phrase match (`"I already paid another company"` in `objection-categories.ts` `examplePhrases`), independent of the Step 4.6 override — the Phase 5F.1 Step 4.6 narrowing (Should-Fix 6 above) is confirmed working correctly and is not the cause. Recorded as residual generic-classifier breadth for future precision hardening, not attributable to this phase's remediation.
   - *Timing Design Note (Not a Defect):* `"We'll decide next week."` remains unclassified because the candidate-subject restriction only recognizes singular first-person framing (`"I'll"`, `"I will"`, `"let me"`), not plural `"we'll"`, since "we" may still refer to a third party. This is a defensible design choice, documented here for clarity rather than as a bug.
 
+### Phase 6A Application Authentication, Advisor Identity & Object Ownership Architecture:
+- Purpose: Phase 6A replaced the self-entered, client-supplied `localStorage` advisor identifier (Phase 4B.3, never authenticated, trivially spoofable) with real server-side authentication, and closed a subsequent object-level authorization gap discovered during independent verification. This phase touched authentication and per-request authorization only — it did not change the classifier, taxonomy, confidence engine, scripts registry, or MDX content.
+- Authentication Architecture (initial Phase 6A implementation): Added Auth.js (`next-auth@5.0.0-beta.32`) with `@auth/drizzle-adapter@1.11.3`, Google OAuth provider, and a database session strategy. Sign-in is fail-closed restricted to a single configured Google Workspace domain via the `ALLOWED_GOOGLE_WORKSPACE_DOMAIN` environment variable (never a hardcoded domain). `lib/auth/access.ts` exposes `resolveAuthorizedAdvisor()`, which derives advisor identity and role (`advisor` / `admin`) solely from the authenticated Auth.js session — never from any client-supplied request field.
+- Dual-Gate Rollout Control: Two mutually-exclusive-by-construction environment flags in `lib/auth/level-c-flags.ts` control behavior: `LEVEL_C_ENABLED` (new authenticated flow, default OFF) and `COPILOT_LEGACY_IDENTITY_MODE` (temporary technical-debt compatibility mode preserving the exact pre-Phase-6A self-entered identity behavior, default OFF). `isLegacyIdentityModeEnabled()` returns `false` immediately whenever Level C is enabled, so the two modes can never both apply to the same request. If neither flag is set, all three Copilot API routes fail closed with HTTP 503 rather than silently falling back to spoofable client-supplied identity.
+- Verification-Blocker History (preserved for accuracy — this was a real finding, not a hypothetical): Independent read-only verification of the initial Phase 6A implementation, performed twice from fresh clones, found that while advisor **authentication** was implemented correctly (real identity, fail-closed domain/flag gating), Phase 6A as originally implemented never checked object-level **ownership** on `/api/copilot` (session append), `/api/copilot/feedback`, or `/api/copilot/outcome`. Concretely: any authenticated advisor who knew or guessed another advisor's session/exchange UUID could append exchanges to, submit feedback against, or record outcomes on that other advisor's records, because none of the three routes compared the authenticated actor's identity against the persisted owning advisor before performing the write. Both independent verification passes reproduced this identical finding from a fresh clone and fresh source read (`grep -n "advisorIdentifier ===" ...` returned zero matches across the route files). This was correctly assessed as a BLOCKING defect and Phase 6A was held at "requires remediation" rather than being frozen in this state. This history is recorded here deliberately and must not be read as resolved prior to the Phase 6A.1 remediation described below.
+- Phase 6A Commit History (authentication implementation, pre-remediation): `2cb8cc0` and `40e9217`.
+
+### Phase 6A.1 Object-Ownership Authorization Remediation Architecture:
+- Purpose: Phase 6A.1 is a narrow, schema-free remediation that closes the object-ownership gap identified above, without altering the Phase 6A authentication mechanism, the classifier, or any persisted data shape.
+- Authorization Model: Distinguishes AUTHENTICATION (who the caller is, established by Phase 6A) from AUTHORIZATION (what that caller may touch, added by Phase 6A.1). Locked policy: an actor with role `advisor` may access/mutate only Copilot records owned by that same advisor; an actor with role `admin` may access/mutate records owned by any advisor. Ownership is always resolved from the persisted, server-side `advisorIdentifier` recorded on the owning session at creation time — never from any client-supplied field, and this is structural rather than merely policy: the shared decision function does not accept a client-supplied identity parameter at all.
+- Shared Decision Function: `lib/auth/ownership.ts` exports a single pure function, `isOwnerOrAdmin(actor, ownerAdvisorIdentifier)`, reused by all three routes rather than duplicated. `lib/copilot/persistence.ts` adds `getCopilotExchangeOwnership(exchangeId)`, which resolves an exchange's owning advisor via a join from the exchange to its owning session (exchanges carry no advisor identity of their own); `getActiveCopilotSession` was reused unchanged, since it already returns the session's `advisorIdentifier`.
+- Per-Route Enforcement: `app/api/copilot/route.ts` checks ownership when a client-supplied `sessionId` refers to an existing, active session before allowing an exchange append. `app/api/copilot/feedback/route.ts` checks ownership of the exchange being rated, while deliberately keeping the feedback row's own `advisorIdentifier` (the ACTOR who submitted the feedback, e.g. an admin correcting another advisor's session) distinct from the OWNER identity used for the authorization decision — an admin's correction is recorded as the admin, not silently reattributed. `app/api/copilot/outcome/route.ts` resolves ownership via whichever identifier (`sessionId` preferred, `exchangeId` fallback) the caller supplied, mirroring `updateCopilotOutcome`'s own existing resolution precedence. In all three routes, the ownership check only applies in Level C mode (`levelCActor` is `null` by construction in legacy mode) and only intercepts records that exist and are otherwise valid — pre-existing not-found/inactive responses are unchanged.
+- Fail-Closed Behavior: Ownership checks are not wrapped in a route-local try/catch; a thrown DB error during an ownership lookup propagates to each route's existing outer error handling and returns a generic sanitized 500, never allowing the write to proceed on lookup failure ("authorization uncertainty = deny"). Denied requests return `{ "error": "Forbidden" }` with HTTP 403 and zero interpolation of any owner-identity value into the response body (confirmed by source read and grep).
+- Test/Verification Truth (exact, not combined with classifier test counts): The Phase 6A/6A.1 authentication-and-ownership test suite (`scripts/test-copilot-phase6a.mjs`) contains **34 assertions**, covering route access-gate behavior, legacy-mode compatibility, and 7 pure unit assertions plus 1 static source assertion directly exercising `isOwnerOrAdmin` and its call sites. This 34-assertion count is reported separately from, and must never be added to, the 686 Phase 3/4A/5A/5C/5D/5E/5F/5F.1 classifier-suite assertions reported above — they test different subsystems (authentication/authorization vs. objection classification) and are not a combined "720 classifier tests" figure.
+- DB-Backed Ownership Integration Test Provenance: `scripts/test-copilot-phase6a.mjs` includes real, complete, executable DB-backed integration test code (covering ownership scenarios OWN1, OWN2, OWN3, OWN4, OWN5, OWN6, OWN8, OWN9, OWN11, OWN12, OWN20 against actual persisted session/exchange rows), gated behind explicit non-production DB opt-in environment variables. In every verification pass to date, this sandbox environment has no reachable non-production database (confirmed negatively: no `DATABASE_URL`, no `.env` file, no `psql`, no `docker`), so this code path has never executed. **ENVIRONMENT BLOCKED — DB-BACKED OWNERSHIP INTEGRATION NOT EXECUTED.** This must not be read as a passing result, an E2E-Neon-verified result, or evidence the DB-backed scenarios have ever run; it is disclosed as blocked, not passing. OWN13 (DB-failure fail-closed) and OWN18 (`levelCEnabled=false` inert-check) are additionally not covered even when the DB guard passes.
+- Playwright Provenance: Local Playwright execution was environment-blocked during Phase 6A/6A.1 verification passes (sandbox could not invoke the configured webServer command). **ENVIRONMENT BLOCKED.** No claim is made that Claude reproduced the historical local Playwright 8/8 result during these passes, and Preview Playwright was not rerun (current automation bypass secret unavailable).
+- Security/Privacy Truth: Ownership denial responses are sanitized (`{"error":"Forbidden"}`, HTTP 403) with no owner-identity interpolation. No secret values (database connection strings, OAuth client secrets, `AUTH_SECRET`, Vercel bypass secrets, session tokens) are referenced anywhere in code or in this document — only environment variable *names* (`DATABASE_URL`, `ALLOWED_GOOGLE_WORKSPACE_DOMAIN`, `LEVEL_C_ENABLED`, `COPILOT_LEGACY_IDENTITY_MODE`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_SECRET`). Legacy compatibility mode is untouched by Phase 6A.1 and continues to exhibit its pre-existing, disclosed, temporary-technical-debt spoofable-identity behavior by design.
+- Implementation Scope: Changed/added paths: `lib/auth/ownership.ts` (new), `lib/copilot/persistence.ts` (added `getCopilotExchangeOwnership`; `getActiveCopilotSession` unchanged), `app/api/copilot/route.ts`, `app/api/copilot/feedback/route.ts`, `app/api/copilot/outcome/route.ts`, `scripts/test-copilot-phase6a.mjs`. Zero schema or migration changes — ownership authorization is derived entirely from already-persisted `advisorIdentifier` data.
+- Independent Verification Outcome: The Phase 6A.1 remediation was independently re-verified from a fresh clone (fetched via GitHub origin plus a local-remote fast-forward merge to include unpushed commits), with a full source re-read, live HTTP re-probing of all three routes, fresh historical-suite and Phase-6A-suite reruns, code-quality checks, and a security review. The fix was confirmed correct, complete, and honestly tested/disclosed (including the DB-backed and Playwright environment-blocked provenance above). Verdict: **APPROVED — PHASE 6A.1 OBJECT-OWNERSHIP REMEDIATION VERIFIED; PHASE 6A FROZEN.**
+- Phase 6A.1 Commit History: `bd27d1d` (implementation) and `758187b` (tests). Authoritative Phase 6A implementation freeze SHA: `758187b6456ba2ff7e891e763b71fb369a1b512a`.
+
 ---
 
 ## Progress Checklist
@@ -371,15 +397,30 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
   - Independent verification found no blocking defects; 3 non-blocking residual Should-Fix hardening items recorded above.
   - Implementation verified and frozen at SHA: `b09c9287f2cc9996fae209a6c01cf7cb41e14877`.
 
+- [x] **Phase 6A — Application Authentication, Advisor Identity & Object Ownership — COMPLETE**
+  - Authentication commits: `2cb8cc0` `feat(copilot): add authjs authentication and advisor identity`, `40e9217` (Phase 6A test/QA completion).
+  - Remediation commits: `bd27d1d` `fix(copilot): enforce object-ownership authorization on session/exchange/feedback/outcome routes`, `758187b` `test(copilot): add phase6a1 object-ownership regression coverage`.
+  - Auth.js (`next-auth@5.0.0-beta.32` + `@auth/drizzle-adapter@1.11.3`) Google OAuth, database session strategy, fail-closed `ALLOWED_GOOGLE_WORKSPACE_DOMAIN` restriction. Dual mutually-exclusive gates `LEVEL_C_ENABLED` / `COPILOT_LEGACY_IDENTITY_MODE`, fail-closed 503 default when neither is set.
+  - Independent verification (2 passes) found initial Phase 6A implemented authentication correctly but omitted object-level ownership checks — a BLOCKING defect, reproduced identically both times. See narrative section above for full history; this finding is preserved, not erased.
+  - Phase 6A.1 remediation added a single shared `isOwnerOrAdmin()` decision function (`lib/auth/ownership.ts`) and per-route ownership checks on `/api/copilot`, `/api/copilot/feedback`, `/api/copilot/outcome`, resolved from persisted `advisorIdentifier` data only (zero schema/migration changes).
+  - Test/Verification Truth: `scripts/test-copilot-phase6a.mjs` — **34/34 assertions PASS** (authentication, legacy-mode compatibility, ownership unit + static assertions), reported separately from the 686 Phase 3–5F.1 classifier assertions (not combined). Historical classifier suites reconfirmed passing alongside these runs.
+  - DB-Backed Ownership Integration: **ENVIRONMENT BLOCKED — DB-BACKED OWNERSHIP INTEGRATION NOT EXECUTED** (no reachable non-production database in this sandbox; not claimed as passing or E2E-Neon-verified).
+  - Playwright: **ENVIRONMENT BLOCKED** (local webServer command not invokable in sandbox); Preview Playwright not rerun (bypass secret unavailable). No claim of historical 8/8 reproduction during these passes.
+  - Code Quality: `pnpm lint` 0 errors, 0 warnings; `tsc --noEmit` 0 errors after normal project codegen.
+  - Independent re-verification (fresh clone, live HTTP re-probing, security review) confirmed the fix correct, complete, and honestly disclosed. Verdict: APPROVED — PHASE 6A.1 OBJECT-OWNERSHIP REMEDIATION VERIFIED; PHASE 6A FROZEN.
+  - Implementation verified and frozen at SHA: `758187b6456ba2ff7e891e763b71fb369a1b512a`.
+
 ---
 
 ## Current Release Stance
 
-**PHASE 5F.1 IMPLEMENTATION VERIFIED AND FROZEN.**
+**PHASE 6A IMPLEMENTATION (APPLICATION AUTHENTICATION, ADVISOR IDENTITY & OBJECT OWNERSHIP) VERIFIED AND FROZEN AT `758187b6456ba2ff7e891e763b71fb369a1b512a`.**
 
-**LEVEL B CONTROLLED INTERNAL ADVISOR PILOT CONTINUES.**
+**LEVEL B CONTROLLED INTERNAL ADVISOR PILOT CONTINUES — AUTHORIZED.**
 
-**LEVEL C NOT AUTHORIZED.**
+**LEVEL C READINESS WORK (AUTHENTICATION & OBJECT-OWNERSHIP FOUNDATIONS) IS AUTHORIZED TO CONTINUE.**
+
+**LEVEL C ACTIVATION (public/general availability) REMAINS NOT AUTHORIZED.** Do not prematurely close Level C readiness — the authentication and ownership foundations above are necessary but not, by themselves, sufficient for Level C activation; the remaining pre-activation requirements below must still be satisfied and separately authorized.
 
 **PRODUCTION NOT AUTHORIZED / NOT DEPLOYED.**
 
@@ -390,6 +431,14 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
 - No candidate PII permitted in objection input text.
 - Production deployment is NOT authorized and NOT deployed.
 - Level C / public release is NOT authorized.
+
+### Remaining Pre-Level-C-Activation Requirements (not exhaustive, none yet authorized as complete):
+- DB-backed object-ownership integration scenarios (OWN1–OWN20, see Phase 6A.1 above) must actually execute and pass against a reachable non-production database — this has not yet occurred in any verification pass to date (environment-blocked every time).
+- Local and/or Preview Playwright E2E suites must be rerun end-to-end against the Level C authenticated flow, including the ownership-denial paths — not yet rerun since Phase 6A.1 (environment-blocked locally; Preview bypass secret unavailable).
+- Application-level rate limiting on the three Copilot routes (see Future/Deferred Work below) remains unimplemented.
+- Production LLM provider integration remains unimplemented (mock provider still active).
+- Broader advisor/admin provisioning, offboarding, and role-management operational process has not been formally defined beyond the current Auth.js + domain-restriction mechanism.
+- Explicit Product Owner sign-off to move from "Level C readiness" to "Level C activation" has not been given.
 
 ---
 
@@ -415,3 +464,4 @@ The following items are deferred to future Level C / post-pilot phases and do NO
 17. **`DATA_SCHEMA_CONTEXT_TERMS` Residual Breadth (Should-Fix, Non-Blocking, identified in Phase 5F.1 independent verification):** The technical-context term list does not cover every technical term (e.g. `parameter`, `variable`, `backend`, `function` are absent), so statements like `"I don't want another fee parameter."` or `"Send the pricing variable to the function."` may still misclassify. Future hardening should extend the term list or use a more general technical-context heuristic.
 18. **Pre-Existing Consultancy Breadth (Should-Fix, Non-Blocking, identified in Phase 5F.1 independent verification):** Statements such as `"I already paid another company because they designed my website."` may still classify as `already-working-with-consultancy` due to a pre-existing exact-phrase match in `examplePhrases`, independent of the (correctly narrowed) Step 4.6 override. Recorded as residual generic-classifier breadth for future precision hardening.
 19. **Timing Design Note — Plural Candidate Framing (Non-Blocking, Not a Defect):** `"We'll decide next week."` remains unclassified since the Phase 5F.1 candidate-subject restriction only recognizes singular first-person framing (`"I'll"`, `"I will"`, `"let me"`). This is a defensible design choice recorded for clarity, not a bug.
+20. **Phase 6B — Correction Capture & Classifier-Version Audit Trail (Planning Authorized; Implementation NOT Started):** Previously-approved planning scope only. Not yet implemented and not authorized to be implemented or expanded beyond this planning-language description by this documentation pass. Intended direction: capture advisor corrections to Copilot-suggested classifications and persist a per-exchange classifier-version audit trail, building on the Phase 6A/6A.1 authenticated advisor identity and object-ownership foundations above. Scope, schema, and routes remain undesigned pending a dedicated Phase 6B planning/implementation pass.
