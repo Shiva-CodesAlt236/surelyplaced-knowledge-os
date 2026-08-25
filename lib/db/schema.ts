@@ -101,6 +101,16 @@ export const copilotExchanges = pgTable(
     selectedLevel: integer('selected_level'),
     safetyFallback: boolean('safety_fallback').default(false).notNull(),
     isPersonalized: boolean('is_personalized').default(false).notNull(),
+    // Phase 6B: which classifier engine version produced this exchange's
+    // classification. NOT NULL with no ORM-level default — every INSERT (see
+    // lib/copilot/persistence.ts's recordCopilotExchange) must explicitly supply
+    // this value (CLASSIFIER_VERSION from lib/copilot/classifier-version.ts for
+    // new rows). Historical rows predating this column are backfilled by the
+    // migration itself with the explicit LEGACY_UNVERSIONED_CLASSIFIER_VERSION
+    // sentinel, not silently assumed to be "phase5f.1" (see
+    // lib/copilot/classifier-version.ts's doc comment for why that assumption
+    // would be factually false).
+    classifierVersion: text('classifier_version').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
@@ -108,6 +118,7 @@ export const copilotExchanges = pgTable(
     index('copilot_exchanges_primary_objection_idx').on(table.primaryObjectionId),
     index('copilot_exchanges_created_at_idx').on(table.createdAt),
     index('copilot_exchanges_confidence_band_idx').on(table.confidenceBand),
+    index('copilot_exchanges_classifier_version_idx').on(table.classifierVersion),
     check('copilot_exchanges_selected_level_check', sql`${table.selectedLevel} IS NULL OR ${table.selectedLevel} IN (1, 2)`),
   ]
 )
@@ -125,6 +136,50 @@ export const copilotFeedback = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   }
+)
+
+/**
+ * Sales Copilot — Correction Audit Trail (Phase 6B)
+ *
+ * Append-only history, NOT a one-row-per-exchange upsert table: deliberately no
+ * UNIQUE constraint on exchangeId. Each submitted correction becomes a new
+ * immutable row; the current corrected interpretation of an exchange is
+ * whichever correction row has the latest createdAt (see
+ * getLatestCopilotCorrection in lib/copilot/persistence.ts). Prior correction
+ * rows are never edited or deleted during normal operation, preserving a real
+ * audit trail (e.g. if Advisor A's correction is later revised by Admin B, both
+ * events remain queryable).
+ *
+ * This table intentionally does NOT duplicate objectionText or the exchange's
+ * original primaryObjectionId/secondaryObjectionIds — those remain the single
+ * source of truth on copilot_exchanges (which this table's write path never
+ * modifies) and are joined via exchangeId when needed.
+ *
+ * advisorIdentifier here is always the ACTOR who submitted the correction (may
+ * be an admin correcting another advisor's exchange), never silently rewritten
+ * to the exchange's owning advisor — the same OWNER-vs-ACTOR distinction Phase
+ * 6A.1 already established for copilot_feedback.
+ */
+export const copilotCorrections = pgTable(
+  'copilot_corrections',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    exchangeId: uuid('exchange_id')
+      .notNull()
+      .references(() => copilotExchanges.id, { onDelete: 'cascade' }),
+    correctedPrimaryCategoryId: text('corrected_primary_category_id').notNull(),
+    correctedSecondaryCategoryIds: text('corrected_secondary_category_ids')
+      .array()
+      .default(sql`'{}'::text[]`)
+      .notNull(),
+    correctionReason: text('correction_reason'),
+    advisorIdentifier: text('advisor_identifier').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('copilot_corrections_exchange_id_idx').on(table.exchangeId),
+    index('copilot_corrections_created_at_idx').on(table.createdAt),
+  ]
 )
 
 /**

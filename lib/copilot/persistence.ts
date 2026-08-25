@@ -1,7 +1,8 @@
 import { getDb } from '@/lib/db/client'
-import { copilotSessions, copilotExchanges, copilotFeedback } from '@/lib/db/schema'
-import { eq, sql } from 'drizzle-orm'
+import { copilotSessions, copilotExchanges, copilotFeedback, copilotCorrections } from '@/lib/db/schema'
+import { eq, sql, desc } from 'drizzle-orm'
 import { validateAdvisorIdentifier } from './advisor'
+import { CLASSIFIER_VERSION } from './classifier-version'
 
 /**
  * Sales Copilot MVP — Server-Side Persistence Service (Phase 4B.2 Remediation)
@@ -49,6 +50,14 @@ export interface RecordOutcomeParams {
   outcomeStatus: 'enrolled' | 'follow-up' | 'lost'
   outcomeReason?: 'price' | 'trust' | 'timing' | 'competitor' | 'other'
   outcomeNotes?: string
+}
+
+export interface RecordCorrectionParams {
+  exchangeId: string
+  correctedPrimaryCategoryId: string
+  correctedSecondaryCategoryIds?: string[]
+  correctionReason?: string
+  advisorIdentifier: string
 }
 
 /**
@@ -200,6 +209,9 @@ export async function recordCopilotExchange(params: RecordExchangeParams) {
       selectedLevel: params.selectedLevel || null,
       safetyFallback: params.safetyFallback ?? false,
       isPersonalized: params.isPersonalized ?? false,
+      // Phase 6B: explicitly stamped on every new exchange, server-side only.
+      // Never sourced from client input.
+      classifierVersion: CLASSIFIER_VERSION,
     })
     .returning({ id: copilotExchanges.id })
 
@@ -352,4 +364,104 @@ export async function updateCopilotOutcome(params: RecordOutcomeParams) {
     })
 
   return { success: true, session: updated }
+}
+
+/**
+ * Phase 6B — Record a classification correction as a new, immutable append-only
+ * audit row. Never updates or deletes a prior correction row (no upsert), and
+ * never modifies the original copilot_exchanges row's classifier output fields
+ * (primaryObjectionId, secondaryObjectionIds, confidence fields, matchedScriptId,
+ * objectionText, session ownership) in any way — this function only ever
+ * performs a single INSERT into copilot_corrections.
+ *
+ * Taxonomy/shape validation (valid category IDs, explicit-refusal/unclassified
+ * secondary-emptiness rules, primary-not-in-secondaries, duplicate rejection,
+ * reason length) is the caller's responsibility (app/api/copilot/correction/route.ts),
+ * mirroring the existing convention where API routes validate enums/shape before
+ * calling persistence (see outcome/feedback routes). This function only verifies
+ * the target exchange actually exists, matching recordCopilotFeedback's existing
+ * pre-insert existence check (avoids a raw FK-violation 500).
+ */
+export async function recordCopilotCorrection(params: RecordCorrectionParams) {
+  if (!params.exchangeId || !isValidUuid(params.exchangeId)) {
+    throw new Error('Valid exchangeId UUID is required to record a correction.')
+  }
+  if (!params.correctedPrimaryCategoryId) {
+    throw new Error('correctedPrimaryCategoryId is required to record a correction.')
+  }
+  if (!params.advisorIdentifier) {
+    throw new Error('advisorIdentifier is required to record a correction.')
+  }
+
+  const db = getDb()
+
+  // Verify exchange exists before inserting to avoid raw FK violation 500 error
+  // (same guard recordCopilotFeedback already uses).
+  const [existingExchange] = await db
+    .select({ id: copilotExchanges.id })
+    .from(copilotExchanges)
+    .where(eq(copilotExchanges.id, params.exchangeId))
+    .limit(1)
+
+  if (!existingExchange) {
+    throw new Error(`Exchange not found for ID: ${params.exchangeId}`)
+  }
+
+  const correctedSecondaryCategoryIds = Array.isArray(params.correctedSecondaryCategoryIds)
+    ? params.correctedSecondaryCategoryIds
+    : []
+
+  const [correction] = await db
+    .insert(copilotCorrections)
+    .values({
+      exchangeId: params.exchangeId,
+      correctedPrimaryCategoryId: params.correctedPrimaryCategoryId,
+      correctedSecondaryCategoryIds,
+      correctionReason: params.correctionReason?.trim() || null,
+      advisorIdentifier: params.advisorIdentifier,
+    })
+    .returning({
+      id: copilotCorrections.id,
+      exchangeId: copilotCorrections.exchangeId,
+      correctedPrimaryCategoryId: copilotCorrections.correctedPrimaryCategoryId,
+      correctedSecondaryCategoryIds: copilotCorrections.correctedSecondaryCategoryIds,
+      correctionReason: copilotCorrections.correctionReason,
+      advisorIdentifier: copilotCorrections.advisorIdentifier,
+      createdAt: copilotCorrections.createdAt,
+    })
+
+  return correction
+}
+
+/**
+ * Phase 6B — Resolve the current corrected classification for an exchange: the
+ * single most-recent correction row by createdAt (ties broken by id, since
+ * timestamp precision could theoretically collide). Returns null if the
+ * exchange has never been corrected. Historical (older) correction rows remain
+ * in the table for audit purposes but are not returned here — a future Phase 6C
+ * reporting layer that needs full correction history should query
+ * copilot_corrections directly rather than through this function.
+ */
+export async function getLatestCopilotCorrection(exchangeId: string) {
+  if (!isValidUuid(exchangeId)) {
+    return null
+  }
+
+  const db = getDb()
+  const [latest] = await db
+    .select({
+      id: copilotCorrections.id,
+      exchangeId: copilotCorrections.exchangeId,
+      correctedPrimaryCategoryId: copilotCorrections.correctedPrimaryCategoryId,
+      correctedSecondaryCategoryIds: copilotCorrections.correctedSecondaryCategoryIds,
+      correctionReason: copilotCorrections.correctionReason,
+      advisorIdentifier: copilotCorrections.advisorIdentifier,
+      createdAt: copilotCorrections.createdAt,
+    })
+    .from(copilotCorrections)
+    .where(eq(copilotCorrections.exchangeId, exchangeId))
+    .orderBy(desc(copilotCorrections.createdAt), desc(copilotCorrections.id))
+    .limit(1)
+
+  return latest || null
 }
