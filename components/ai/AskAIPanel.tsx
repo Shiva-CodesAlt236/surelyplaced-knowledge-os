@@ -56,6 +56,10 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisError, setAnalysisError] = useState<string | null>(null)
   const [lastInput, setLastInput] = useState<string>("")
+  // Phase 6B: incremented each time the thumbs-down nudge's "Correct it" is
+  // clicked, so CopilotResponseCard's correction panel opens even if it was
+  // previously closed. A counter (not a boolean) so repeated clicks re-open it.
+  const [correctionNudgeSignal, setCorrectionNudgeSignal] = useState(0)
 
   // Phase 6A: authenticated advisor identity (Level C). Replaces the former
   // self-entered/localStorage advisor attribution — identity now comes exclusively
@@ -216,6 +220,42 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
     }
   }
 
+  // Phase 6B: submit an advisor's classification correction. Does not modify
+  // copilotResponse's own objectionId/secondaryObjections state — the
+  // original classifier output shown in the card stays exactly as returned,
+  // corrections are a separate additive audit record (see
+  // lib/copilot/persistence.ts's recordCopilotCorrection).
+  const handleCorrection = async (payload: {
+    correctedPrimaryCategoryId: string
+    correctedSecondaryCategoryIds: string[]
+    correctionReason?: string
+  }) => {
+    if (!copilotResponse?.exchangeId || copilotResponse?.persistenceStatus === "not-persisted") {
+      throw new Error("Correction unavailable because this response was not saved.")
+    }
+
+    const res = await fetch("/api/copilot/correction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        exchangeId: copilotResponse.exchangeId,
+        correctedPrimaryCategoryId: payload.correctedPrimaryCategoryId,
+        correctedSecondaryCategoryIds: payload.correctedSecondaryCategoryIds,
+        correctionReason: payload.correctionReason,
+      }),
+    })
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}))
+      throw new Error(errData.error || "Could not save classification correction.")
+    }
+
+    const data = await res.json()
+    if (!data || data.success !== true) {
+      throw new Error("Database error saving classification correction.")
+    }
+  }
+
   const isPersisted = copilotResponse?.persistenceStatus !== "not-persisted" && Boolean(copilotResponse?.exchangeId || sessionId)
 
   return (
@@ -361,11 +401,17 @@ export function AskAIPanel({ open, onOpenChange }: AskAIPanelProps) {
 
             {copilotResponse && !isAnalyzing && (
               <div className="space-y-4 animate-in fade-in duration-200">
-                <CopilotResponseCard response={copilotResponse} />
+                <CopilotResponseCard
+                  response={copilotResponse}
+                  onCorrect={handleCorrection}
+                  isPersisted={isPersisted}
+                  openCorrectionSignal={correctionNudgeSignal}
+                />
                 {!copilotResponse.isRefusal && (
                   <OutcomeRecorder
                     onSaveOutcome={handleSaveOutcome}
                     onFeedback={handleFeedback}
+                    onOpenCorrection={() => setCorrectionNudgeSignal((n) => n + 1)}
                     isPersisted={isPersisted}
                   />
                 )}

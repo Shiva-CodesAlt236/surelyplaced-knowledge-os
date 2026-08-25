@@ -9,9 +9,23 @@ export interface OutcomeRecorderProps {
   onSaveOutcome: (outcome: OutcomeStatus, reason?: LostReason) => Promise<void> | void
   onFeedback?: (rating: "thumbs-up" | "neutral" | "thumbs-down") => Promise<void> | void
   isPersisted?: boolean
+  /**
+   * Phase 6B: nudge, not force. Invoked when the advisor clicks the
+   * "Correct it" link shown after a thumbs-down rating. The correction UI
+   * itself lives in CopilotResponseCard, not here — this callback is the
+   * only coupling between the two, and remains available independently of
+   * this nudge (response quality and classification correctness are
+   * deliberately treated as separate signals).
+   */
+  onOpenCorrection?: () => void
 }
 
-export function OutcomeRecorder({ onSaveOutcome, onFeedback, isPersisted = true }: OutcomeRecorderProps) {
+export function OutcomeRecorder({
+  onSaveOutcome,
+  onFeedback,
+  isPersisted = true,
+  onOpenCorrection,
+}: OutcomeRecorderProps) {
   const [selectedOutcome, setSelectedOutcome] = useState<OutcomeStatus | null>(null)
   const [lostReason, setLostReason] = useState<LostReason>("price")
   const [feedbackRating, setFeedbackRating] = useState<"thumbs-up" | "neutral" | "thumbs-down" | null>(null)
@@ -208,6 +222,24 @@ export function OutcomeRecorder({ onSaveOutcome, onFeedback, isPersisted = true 
             </Button>
           </div>
         </div>
+
+        {/* Phase 6B: thumbs-down nudge toward correction. Nudge only, never
+            forced or auto-submitted — response quality (this rating) and
+            classification correctness (a separate correction) are distinct
+            signals, and correction remains independently available from the
+            response card regardless of this nudge. */}
+        {feedbackRating === "thumbs-down" && !feedbackError && onOpenCorrection && (
+          <div className="flex items-center justify-between gap-2 text-[11px]">
+            <span className="text-muted-foreground">Was the objection classification also wrong?</span>
+            <button
+              type="button"
+              onClick={onOpenCorrection}
+              className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline shrink-0"
+            >
+              Correct it
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
