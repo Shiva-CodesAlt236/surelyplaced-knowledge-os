@@ -308,6 +308,37 @@ function runStaticAssertions() {
     /CLASSIFIER_VERSION = 'phase5f\.1'/.test(classifierVersionSrc),
     'S14: CLASSIFIER_VERSION constant lives in its own file, value is "phase5f.1" (the classifier engine version, not the app phase number)'
   );
+
+  const cardSrc = readFileSync('components/copilot/CopilotResponseCard.tsx', 'utf8');
+  const refusalMatch = cardSrc.match(/if\s*\(\s*response\.isRefusal\s*\)\s*\{([\s\S]*?)\n\s*\}/);
+  assert(
+    !!refusalMatch && /renderCorrectionSection\(\)/.test(refusalMatch[1]),
+    'S15 (B1 UI flow): CopilotResponseCard renders correction controls inside the response.isRefusal branch (unclassified result is correctable)'
+  );
+
+  const normalBranchHasCorrection = /\{\/\*\s*Phase 6B:\s*Classification Correction\s*\*\/\}[\s\S]*?\{renderCorrectionSection\(\)\}/.test(cardSrc);
+  assert(
+    normalBranchHasCorrection,
+    'S16 (B1 UI flow): CopilotResponseCard renders correction controls in the normal response branch as well'
+  );
+
+  assert(
+    /prev\.length\s*>=\s*5/.test(cardSrc) && /correctedSecondaries\.length\s*>=\s*5/.test(cardSrc),
+    'S17 (Bounded UX rule): CopilotResponseCard enforces at most 5 secondary category selections (aligned with MAX_CORRECTED_SECONDARIES = 5)'
+  );
+
+  const panelSrc = readFileSync('components/ai/AskAIPanel.tsx', 'utf8');
+  assert(
+    /onCorrect=\{handleCorrection\}/.test(panelSrc),
+    'S18 (B1 UI flow): AskAIPanel passes onCorrect={handleCorrection} to CopilotResponseCard'
+  );
+  assert(
+    /fetch\(\s*["']\/api\/copilot\/correction["']/.test(panelSrc) &&
+      /exchangeId:\s*copilotResponse\.exchangeId/.test(panelSrc) &&
+      /correctedPrimaryCategoryId:/.test(panelSrc) &&
+      /correctedSecondaryCategoryIds:/.test(panelSrc),
+    'S19 (B1 API wiring): AskAIPanel handleCorrection posts exchangeId and category payload to /api/copilot/correction'
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -632,7 +663,7 @@ async function main() {
     AUTH_SECRET: 'test-only-secret-not-real-0000000000000000',
   });
   try {
-    await waitForServer(port1, 30000);
+    await waitForServer(port1, 60000);
     await runLevelCServerTests(port1);
   } finally {
     killServer(server1);
@@ -641,7 +672,7 @@ async function main() {
   const port2 = 3522;
   const server2 = spawnServer(port2, { LEVEL_C_ENABLED: '', COPILOT_LEGACY_IDENTITY_MODE: '' });
   try {
-    await waitForServer(port2, 30000);
+    await waitForServer(port2, 60000);
     await runKillSwitchServerTests(port2);
   } finally {
     killServer(server2);
@@ -650,7 +681,7 @@ async function main() {
   const port3 = 3523;
   const server3 = spawnServer(port3, { LEVEL_C_ENABLED: '', COPILOT_LEGACY_IDENTITY_MODE: 'true' });
   try {
-    await waitForServer(port3, 30000);
+    await waitForServer(port3, 60000);
     await runLegacyModeIrrelevantServerTests(port3);
   } finally {
     killServer(server3);

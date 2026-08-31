@@ -4,7 +4,7 @@
 **Local Path:** `E:\SurelyPlacedOS\surelyplaced-knowledge-os`  
 **GitHub Repository:** `Shiva-CodesAlt236/surelyplaced-knowledge-os`  
 **Hosting / Deployment:** Vercel (`spartans-53e3/surelyplaced-knowledge-os`)  
-**Current Phase:** Phase 6A Complete — Application Authentication, Advisor Identity & Object Ownership Verified
+**Current Phase:** Phase 6B Remediation Complete (Pending Independent Verification) — Correction Capture & Classifier-Version Audit Trail Implemented
 **Branch:** `feature/sales-copilot-mvp`
 **Authoritative Implementation Freeze SHA:** `758187b6456ba2ff7e891e763b71fb369a1b512a`
 **Architecture Stance:** Grounded decision-support tool embedded inside `AskAIPanel.tsx`, consuming existing `lib/scripts-registry.ts` via an adapter layer. No duplicate script databases or copied content exist.
@@ -410,6 +410,15 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
   - Independent re-verification (fresh clone, live HTTP re-probing, security review) confirmed the fix correct, complete, and honestly disclosed. Verdict: APPROVED — PHASE 6A.1 OBJECT-OWNERSHIP REMEDIATION VERIFIED; PHASE 6A FROZEN.
   - Implementation verified and frozen at SHA: `758187b6456ba2ff7e891e763b71fb369a1b512a`.
 
+- [ ] **Phase 6B — Correction Capture & Classifier-Version Audit Trail — REMEDIATION COMPLETE (Pending Independent Verification)**
+  - Schema & Migration: `copilot_corrections` table added via additive migration `0002_strong_paper_doll.sql`; `classifier_version` column added to `copilot_exchanges` with historical 4-step honesty sequence (`legacy-unversioned` backfill -> redundant UPDATE -> SET NOT NULL -> DROP DEFAULT).
+  - Validation: Pure unit-level taxonomy validation `validateCorrectionInput` (`lib/copilot/correction-validation.ts`) enforcing valid primary, max 5 secondaries, mutual exclusivity, and reason length (max 500 chars).
+  - Authorization & Routing: Level-C-only POST `/api/copilot/correction` endpoint with strict server-derived actor identity and Phase 6A.1 object-ownership verification (`isOwnerOrAdmin`).
+  - UI & Remediation (B1): `CopilotResponseCard.tsx` shared `renderCorrectionSection` rendered in both normal and `isRefusal`/`unclassified` branches with bounded UX (max 5 secondaries); `AskAIPanel.tsx` wired with `onCorrect`.
+  - Non-Production DB Gate: Executed and passing live against isolated non-production Neon database (10/10 DB assertions, `CORR-D1` through `CORR-D9`).
+  - Test Truth: `scripts/test-copilot-phase6b.mjs` — **52/52 assertions PASS** (Part A Unit 17/17, Part B Static 19/19, Part C HTTP 6/6, Part D DB-backed 10/10).
+  - Closure Stance: Remediation implemented and tested; formal closure pending fresh independent verification.
+
 ---
 
 ## Current Release Stance
@@ -418,9 +427,9 @@ Sales Copilot uses the single source of truth `lib/scripts-registry.ts` (396 scr
 
 **LEVEL B CONTROLLED INTERNAL ADVISOR PILOT CONTINUES — AUTHORIZED.**
 
-**LEVEL C READINESS WORK (AUTHENTICATION & OBJECT-OWNERSHIP FOUNDATIONS) IS AUTHORIZED TO CONTINUE.**
+**LEVEL C READINESS WORK (AUTHENTICATION, OBJECT-OWNERSHIP & CORRECTION AUDIT FOUNDATIONS) IS AUTHORIZED TO CONTINUE.**
 
-**LEVEL C ACTIVATION (public/general availability) REMAINS NOT AUTHORIZED.** Do not prematurely close Level C readiness — the authentication and ownership foundations above are necessary but not, by themselves, sufficient for Level C activation; the remaining pre-activation requirements below must still be satisfied and separately authorized.
+**LEVEL C ACTIVATION (public/general availability) REMAINS NOT AUTHORIZED.** Do not prematurely close Level C readiness — the authentication, ownership, and correction audit foundations above are necessary but not, by themselves, sufficient for Level C activation; the remaining pre-activation requirements below must still be satisfied and separately authorized.
 
 **PRODUCTION NOT AUTHORIZED / NOT DEPLOYED.**
 
@@ -464,4 +473,4 @@ The following items are deferred to future Level C / post-pilot phases and do NO
 17. **`DATA_SCHEMA_CONTEXT_TERMS` Residual Breadth (Should-Fix, Non-Blocking, identified in Phase 5F.1 independent verification):** The technical-context term list does not cover every technical term (e.g. `parameter`, `variable`, `backend`, `function` are absent), so statements like `"I don't want another fee parameter."` or `"Send the pricing variable to the function."` may still misclassify. Future hardening should extend the term list or use a more general technical-context heuristic.
 18. **Pre-Existing Consultancy Breadth (Should-Fix, Non-Blocking, identified in Phase 5F.1 independent verification):** Statements such as `"I already paid another company because they designed my website."` may still classify as `already-working-with-consultancy` due to a pre-existing exact-phrase match in `examplePhrases`, independent of the (correctly narrowed) Step 4.6 override. Recorded as residual generic-classifier breadth for future precision hardening.
 19. **Timing Design Note — Plural Candidate Framing (Non-Blocking, Not a Defect):** `"We'll decide next week."` remains unclassified since the Phase 5F.1 candidate-subject restriction only recognizes singular first-person framing (`"I'll"`, `"I will"`, `"let me"`). This is a defensible design choice recorded for clarity, not a bug.
-20. **Phase 6B — Correction Capture & Classifier-Version Audit Trail (Planning Authorized; Implementation NOT Started):** Previously-approved planning scope only. Not yet implemented and not authorized to be implemented or expanded beyond this planning-language description by this documentation pass. Intended direction: capture advisor corrections to Copilot-suggested classifications and persist a per-exchange classifier-version audit trail, building on the Phase 6A/6A.1 authenticated advisor identity and object-ownership foundations above. Scope, schema, and routes remain undesigned pending a dedicated Phase 6B planning/implementation pass.
+20. **Phase 6B — Correction Capture & Classifier-Version Audit Trail (IMPLEMENTED & REMEDIATED — DB Gate Passing; Pending Fresh Independent Verification):** Append-only classification correction logging (`copilot_corrections` table) and classifier engine version stamping (`classifier_version` on `copilot_exchanges` initialized with 4-step honesty sequence) implemented and protected under Level C authenticated ownership authorization (`/api/copilot/correction`). B1 UI control-flow remediation connects correction interface to both normal and unclassified/refusal outcomes with bounded secondary selection (max 5). Phase 6B DB-backed integration gate verified live on isolated non-production database (10/10 assertions PASS). Formal closure remains pending fresh independent verification.

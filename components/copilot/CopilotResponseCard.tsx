@@ -100,9 +100,15 @@ export function CopilotResponseCard({
 
   const toggleCorrectedSecondary = (categoryId: string) => {
     if (secondariesLocked) return
-    setCorrectedSecondaries((prev) =>
-      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
-    )
+    setCorrectedSecondaries((prev) => {
+      if (prev.includes(categoryId)) {
+        return prev.filter((id) => id !== categoryId)
+      }
+      if (prev.length >= 5) {
+        return prev
+      }
+      return [...prev, categoryId]
+    })
   }
 
   const handleSaveCorrection = async () => {
@@ -130,6 +136,179 @@ export function CopilotResponseCard({
   const categoryName = (id: string) =>
     CORRECTION_CATEGORY_OPTIONS.find((c) => c.id === id)?.name || id
 
+  const renderCorrectionSection = () => {
+    if (!onCorrect) return null
+
+    return (
+      <div className="pt-2 border-t border-border/60 space-y-2">
+        {!correctionOpen && (
+          <div className="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              disabled={!isPersisted}
+              onClick={() => setCorrectionOpen(true)}
+              className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:no-underline"
+              title={!isPersisted ? "Unavailable because this response was not saved." : undefined}
+            >
+              <PenLine className="h-3 w-3" />
+              Correct classification
+            </button>
+            {correctionSaved && (
+              <span className="text-[10px] font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                Classification corrected
+              </span>
+            )}
+          </div>
+        )}
+
+        {correctionSaved && !correctionOpen && (
+          <p className="text-[10px] text-muted-foreground">
+            Original:{" "}
+            <span className="font-semibold text-foreground">
+              {response.objectionTitle || "Unclassified (Low Confidence)"}
+            </span>
+            {" -> "}
+            Corrected:{" "}
+            <span className="font-semibold text-foreground">{categoryName(correctionSaved.primary)}</span>
+            {correctionSaved.secondaries.length > 0 && (
+              <>
+                {" "}(+{correctionSaved.secondaries.map((id) => categoryName(id)).join(", ")})
+              </>
+            )}
+          </p>
+        )}
+
+        {correctionOpen && (
+          <div className="space-y-2.5 rounded-lg border border-indigo-500/20 bg-indigo-500/5 p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+                <PenLine className="h-3.5 w-3.5" />
+                Correct Classification
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setCorrectionOpen(false)
+                  setCorrectionError(null)
+                }}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Cancel correction"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            {correctionError && (
+              <div className="flex items-center gap-1.5 p-1.5 text-[11px] text-rose-600 bg-rose-500/10 rounded border border-rose-500/20">
+                <AlertTriangle className="h-3 w-3 shrink-0" />
+                <span>{correctionError}</span>
+              </div>
+            )}
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
+                Correct Primary Objection
+              </label>
+              <select
+                value={correctedPrimary}
+                onChange={(e) => handleCorrectedPrimaryChange(e.target.value)}
+                className="w-full h-8 text-xs rounded-md border border-border bg-card px-2 text-foreground font-medium"
+              >
+                {CORRECTION_CATEGORY_OPTIONS.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label
+                className={`text-[10px] font-bold uppercase tracking-wide ${
+                  secondariesLocked ? "text-muted-foreground/50" : "text-muted-foreground"
+                }`}
+              >
+                Correct Secondary Objections (optional, max 5)
+              </label>
+              <div className="grid grid-cols-1 gap-1 max-h-28 overflow-y-auto pr-1">
+                {CORRECTION_CATEGORY_OPTIONS.filter((c) => c.id !== UNCLASSIFIED && c.id !== correctedPrimary).map(
+                  (c) => {
+                    const isChecked = correctedSecondaries.includes(c.id)
+                    const isMaxReached = !isChecked && correctedSecondaries.length >= 5
+                    const isDisabled = secondariesLocked || isMaxReached
+                    return (
+                      <label
+                        key={c.id}
+                        className={`flex items-center gap-1.5 text-[11px] ${
+                          isDisabled ? "text-muted-foreground/40 cursor-not-allowed" : "text-foreground"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          disabled={isDisabled}
+                          checked={isChecked}
+                          onChange={() => toggleCorrectedSecondary(c.id)}
+                          className="h-3 w-3"
+                        />
+                        {c.name}
+                      </label>
+                    )
+                  }
+                )}
+              </div>
+              {secondariesLocked ? (
+                <p className="text-[10px] text-muted-foreground italic">
+                  Not available for "{categoryName(correctedPrimary)}" corrections.
+                </p>
+              ) : correctedSecondaries.length >= 5 ? (
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                  Maximum 5 secondary categories selected.
+                </p>
+              ) : null}
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
+                Reason (optional)
+              </label>
+              <input
+                type="text"
+                value={correctionReason}
+                onChange={(e) => setCorrectionReason(e.target.value.slice(0, 500))}
+                placeholder="Short note on why this correction is being made"
+                className="w-full h-8 text-xs rounded-md border border-border bg-card px-2 text-foreground font-medium"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-1.5 pt-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setCorrectionOpen(false)
+                  setCorrectionError(null)
+                }}
+                className="h-7 px-2.5 text-[11px] font-bold"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                disabled={correctionSaving}
+                onClick={handleSaveCorrection}
+                className="h-7 px-2.5 text-[11px] font-bold"
+              >
+                {correctionSaving ? "Saving..." : "Save Correction"}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   // Handle Refusal State
   if (response.isRefusal) {
     return (
@@ -151,6 +330,9 @@ export function CopilotResponseCard({
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+
+        {/* Phase 6B: Classification Correction available on unclassified / refusal responses */}
+        {renderCorrectionSection()}
       </div>
     )
   }
@@ -363,162 +545,7 @@ export function CopilotResponseCard({
       </div>
 
       {/* Phase 6B: Classification Correction */}
-      {onCorrect && (
-        <div className="pt-2 border-t border-border/60 space-y-2">
-          {!correctionOpen && (
-            <div className="flex items-center justify-between gap-2">
-              <button
-                type="button"
-                disabled={!isPersisted}
-                onClick={() => setCorrectionOpen(true)}
-                className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:no-underline"
-                title={!isPersisted ? "Unavailable because this response was not saved." : undefined}
-              >
-                <PenLine className="h-3 w-3" />
-                Correct classification
-              </button>
-              {correctionSaved && (
-                <span className="text-[10px] font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                  Classification corrected
-                </span>
-              )}
-            </div>
-          )}
-
-          {correctionSaved && !correctionOpen && (
-            <p className="text-[10px] text-muted-foreground">
-              Original: <span className="font-semibold text-foreground">{response.objectionTitle}</span>
-              {" -> "}
-              Corrected:{" "}
-              <span className="font-semibold text-foreground">{categoryName(correctionSaved.primary)}</span>
-              {correctionSaved.secondaries.length > 0 && (
-                <>
-                  {" "}(+{correctionSaved.secondaries.map((id) => categoryName(id)).join(", ")})
-                </>
-              )}
-            </p>
-          )}
-
-          {correctionOpen && (
-            <div className="space-y-2.5 rounded-lg border border-indigo-500/20 bg-indigo-500/5 p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
-                  <PenLine className="h-3.5 w-3.5" />
-                  Correct Classification
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCorrectionOpen(false)
-                    setCorrectionError(null)
-                  }}
-                  className="text-muted-foreground hover:text-foreground"
-                  aria-label="Cancel correction"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-
-              {correctionError && (
-                <div className="flex items-center gap-1.5 p-1.5 text-[11px] text-rose-600 bg-rose-500/10 rounded border border-rose-500/20">
-                  <AlertTriangle className="h-3 w-3 shrink-0" />
-                  <span>{correctionError}</span>
-                </div>
-              )}
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
-                  Correct Primary Objection
-                </label>
-                <select
-                  value={correctedPrimary}
-                  onChange={(e) => handleCorrectedPrimaryChange(e.target.value)}
-                  className="w-full h-8 text-xs rounded-md border border-border bg-card px-2 text-foreground font-medium"
-                >
-                  {CORRECTION_CATEGORY_OPTIONS.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label
-                  className={`text-[10px] font-bold uppercase tracking-wide ${
-                    secondariesLocked ? "text-muted-foreground/50" : "text-muted-foreground"
-                  }`}
-                >
-                  Correct Secondary Objections (optional)
-                </label>
-                <div className="grid grid-cols-1 gap-1 max-h-28 overflow-y-auto pr-1">
-                  {CORRECTION_CATEGORY_OPTIONS.filter((c) => c.id !== UNCLASSIFIED && c.id !== correctedPrimary).map(
-                    (c) => (
-                      <label
-                        key={c.id}
-                        className={`flex items-center gap-1.5 text-[11px] ${
-                          secondariesLocked ? "text-muted-foreground/40 cursor-not-allowed" : "text-foreground"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          disabled={secondariesLocked}
-                          checked={correctedSecondaries.includes(c.id)}
-                          onChange={() => toggleCorrectedSecondary(c.id)}
-                          className="h-3 w-3"
-                        />
-                        {c.name}
-                      </label>
-                    )
-                  )}
-                </div>
-                {secondariesLocked && (
-                  <p className="text-[10px] text-muted-foreground italic">
-                    Not available for "{categoryName(correctedPrimary)}" corrections.
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
-                  Reason (optional)
-                </label>
-                <input
-                  type="text"
-                  value={correctionReason}
-                  onChange={(e) => setCorrectionReason(e.target.value.slice(0, 500))}
-                  placeholder="Short note on why this correction is being made"
-                  className="w-full h-8 text-xs rounded-md border border-border bg-card px-2 text-foreground font-medium"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-1.5 pt-1">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setCorrectionOpen(false)
-                    setCorrectionError(null)
-                  }}
-                  className="h-7 px-2.5 text-[11px] font-bold"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={correctionSaving}
-                  onClick={handleSaveCorrection}
-                  className="h-7 px-2.5 text-[11px] font-bold"
-                >
-                  {correctionSaving ? "Saving..." : "Save Correction"}
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      {renderCorrectionSection()}
     </div>
   )
 }
